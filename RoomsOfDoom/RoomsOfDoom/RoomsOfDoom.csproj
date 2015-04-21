@@ -42,12 +42,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dungeon.cs" />
+    <Compile Include="GameManager.cs" />
     <Compile Include="IHittable.cs" />
     <Compile Include="Items\IItem.cs" />
     <Compile Include="IMonster.cs" />
     <Compile Include="Items\MagicScroll.cs" />
     <Compile Include="Items\Potion.cs" />
     <Compile Include="Items\TimeCrystal.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

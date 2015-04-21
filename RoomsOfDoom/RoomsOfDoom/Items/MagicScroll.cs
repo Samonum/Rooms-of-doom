@@ -8,5 +8,14 @@ namespace RoomsOfDoom.Items
 {
     class MagicScroll : IItem
     {
+        public MagicScroll()
+        {
+
+        }
+
+        public override void Use()
+        {
+
+        }
     }
 }

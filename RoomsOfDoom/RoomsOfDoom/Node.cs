@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    interface IItem
+    class Node
     {
-        public void Use();
     }
 }

@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoomsOfDoom", "RoomsOfDoom\RoomsOfDoom.csproj", "{BF54D2E4-1AF1-4213-ACD2-3149B6881EC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRoomsOfDoom", "TestRoomsOfDoom\TestRoomsOfDoom.csproj", "{FE23870B-EA73-4CB5-A97B-1285AEC0C2B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BF54D2E4-1AF1-4213-ACD2-3149B6881EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF54D2E4-1AF1-4213-ACD2-3149B6881EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF54D2E4-1AF1-4213-ACD2-3149B6881EC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE23870B-EA73-4CB5-A97B-1285AEC0C2B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE23870B-EA73-4CB5-A97B-1285AEC0C2B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE23870B-EA73-4CB5-A97B-1285AEC0C2B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE23870B-EA73-4CB5-A97B-1285AEC0C2B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

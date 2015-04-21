@@ -8,5 +8,14 @@ namespace RoomsOfDoom.Items
 {
     class Potion : IItem
     {
+        public Potion()
+        {
+
+        }
+
+        public override void Use()
+        {
+
+        }
     }
 }

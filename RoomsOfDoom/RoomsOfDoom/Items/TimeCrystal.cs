@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
-    class TimeCrystal ::IItem
+    class TimeCrystal : IItem
     {
+        public TimeCrystal()
+        {
+
+        }
+
+        public override void Use()
+        {
+
+        }
     }
 }
