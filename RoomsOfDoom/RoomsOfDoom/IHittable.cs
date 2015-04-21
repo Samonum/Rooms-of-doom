@@ -8,5 +8,15 @@ namespace RoomsOfDoom
 {
     interface IHittable
     {
+        int CurrentHP
+        {
+            get;
+            set;
+        }
+
+        int MaxHP
+        {
+            get;
+        }
     }
 }

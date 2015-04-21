@@ -8,5 +8,12 @@ namespace RoomsOfDoom
 {
     class Player
     {
+        int currentHP, maxHP;
+
+        public Player()
+        {
+
+        }
+
     }
 }

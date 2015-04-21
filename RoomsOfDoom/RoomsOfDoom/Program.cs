@@ -10,6 +10,10 @@ namespace RoomsOfDoom
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("日本語");
+            Console.WriteLine("木日人");
+            Console.WriteLine("端路菱");
+            Console.ReadLine();
         }
     }
 }

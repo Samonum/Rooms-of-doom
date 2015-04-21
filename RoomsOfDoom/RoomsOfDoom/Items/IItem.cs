@@ -8,6 +8,6 @@ namespace RoomsOfDoom
 {
     interface IItem
     {
-        public void Use();
+        void Use();
     }
 }
