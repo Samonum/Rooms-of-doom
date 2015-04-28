@@ -13,7 +13,7 @@ namespace RoomsOfDoom.Items
 
         }
 
-        public override void Use()
+        public void Use()
         {
 
         }
