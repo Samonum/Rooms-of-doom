@@ -6,14 +6,49 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    class Player
+    public class Player : IHittable
     {
-        int currentHP, maxHP;
 
         public Player()
         {
-
+            MaxHP = 100;
+            currentHP = MaxHP;
+            Alive = true;
+        }
+        
+        public int Hit(int damage)
+        {
+            CurrentHP -= damage;
+            return CurrentHP;
         }
 
+        public bool Alive
+        {
+            get;
+            private set;
+        }
+
+        int currentHP;
+        public int CurrentHP
+        {
+            get
+            {
+                return currentHP;
+            }
+            set
+            {
+                currentHP = value;
+                if (currentHP <= 0)
+                    Alive = false;
+                if (currentHP > MaxHP)
+                    currentHP = MaxHP;
+            }
+        }
+
+        public int MaxHP
+        {
+            get;
+            private set;
+        }
     }
 }

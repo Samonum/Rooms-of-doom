@@ -8,6 +8,11 @@ namespace RoomsOfDoom
 {
     interface IHittable
     {
+        bool Alive
+        {
+            get;
+        }
+
         int CurrentHP
         {
             get;
@@ -18,5 +23,7 @@ namespace RoomsOfDoom
         {
             get;
         }
+
+        int Hit(int damage);
     }
 }
