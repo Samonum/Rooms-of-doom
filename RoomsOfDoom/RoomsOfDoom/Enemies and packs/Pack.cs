@@ -31,7 +31,6 @@ namespace RoomsOfDoom
         public List<Enemy> Enemies
         {
             get{return this.enemies;}
-            set { this.enemies = value; }
         }
 
     }
