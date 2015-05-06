@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    class Enemy : IHittable
+    public class Enemy : IHittable
     {
 
         public string name;

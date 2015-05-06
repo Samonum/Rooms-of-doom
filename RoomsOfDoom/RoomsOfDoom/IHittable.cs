@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    interface IHittable
+    public interface IHittable
     {
         bool Alive
         {
