@@ -33,5 +33,10 @@ namespace RoomsOfDoom
             get{return this.enemies;}
         }
 
+        Enemy this[int index]
+        {
+            get { return enemies[index]; }
+        }
+
     }
 }

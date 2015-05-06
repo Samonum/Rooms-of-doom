@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
+
     class Node
     {
+        List<Pack> pack;
+
+        Node[] Neighbours;
+        bool bridge;
+
+        Node(Node[] Neighbours, bool bridge)
+        {
+
+        }
     }
 }
