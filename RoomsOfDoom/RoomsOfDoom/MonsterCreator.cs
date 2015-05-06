@@ -19,7 +19,7 @@ namespace RoomsOfDoom
 
         public Pack GeneratePack(int difficulty)
         {
-            Pack P = new Pack(r.Next(0, maximumPackSize));
+            Pack P = new Pack(r.Next(1, maximumPackSize));
             Enemy e = CreateMonster(difficulty);
             for (int i = 0; i < P.Enemies.Capacity; i++ )
             {
