@@ -48,8 +48,8 @@ namespace RoomsOfDoom
 
         public string GenerateName()
         {
-            string[] adjectives = new string[] {"Giant", "Smelly", "Tiny", "Powerful", "Shady","Evil","Funky", "Fast", "Partying","Hooded","Infernal","Mutant","Sparkling","Shiny"};
-            string[] names = new string[] {"Goblin", "Wolf", "Orc","Dwarf","Elf","Bat","Bug", "NullreferenceException","Pony","Alien","Robot","Slime","Imp","Centipede" };            
+            string[] adjectives = new string[] {"Giant", "Smelly", "Tiny", "Powerful", "Shady","Evil","Funky", "Quick", "Partying","Hooded","Infernal","Mutant","Sparkling","Shiny","Teenage","Ninja","Sneaky","Magnificent","Hairy","Quantum","Mighty","Bearded","Magical","Arcane","Divine","Jolly","Royal","Sophisticated","Overpowered","Travelling","Wandering","Awkward","Confident","Well-Mannered","Strange","Exotic"};
+            string[] names = new string[] {"Goblin", "Wolf", "Orc","Dwarf","Elf","Bat","Bug", "NullreferenceException","Pony","Alien","Robot","Slime","Imp","Centipede","Turtle","Pirate","Dolphin","Wizard","Dragon","Programmer","Hexagon","Android","T-Rex","Sphinx","Bandit","Cultist","Necromancer","Spider","Salesman","Monster", "Pidgeon","Ooze","Skeleton","Zombie","Vampire","Werewolf","Witch","Shaman","Construct","Gnome","Kobold","Beholder" };            
             string createName = adjectives[r.Next(0,adjectives.Length)] + " " + names[r.Next(0,names.Length)];
             return createName;
         }
