@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="TestRoomsOfDoom.MonsterCreatorTest.MonsterGenTest" /><Add Test="TestRoomsOfDoom.MonsterCreatorTest.ConstructorTest" /><Add Test="TestRoomsOfDoom.MonsterCreatorTest.GeneratePackTest" /><Add Test="TestRoomsOfDoom.MonsterCreatorTest.NameGenTest" /></Playlist>
