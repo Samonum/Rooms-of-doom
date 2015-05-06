@@ -15,7 +15,7 @@ namespace TestRoomsOfDoom
 
         [TestMethod]
         [Timeout(3000)]
-        public void ConstructorTest()//tests if the constructor creates a working object and if the maxpacksize is not below 1
+        public void MonsterCreatorConstructorTest()//tests if the constructor creates a working object and if the maxpacksize is not below 1
         {
             for (int i = 0; i < 100; i++)
             {
