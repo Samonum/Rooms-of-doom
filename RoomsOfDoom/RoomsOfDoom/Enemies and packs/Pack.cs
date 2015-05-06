@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    class Pack
+    public class Pack
     {
         int packSize;
         List<Enemy> enemies;
