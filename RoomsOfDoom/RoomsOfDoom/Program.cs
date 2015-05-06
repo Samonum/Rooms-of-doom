@@ -9,14 +9,18 @@ namespace RoomsOfDoom
 {
     class Program
     {
+
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
             Stopwatch stop = new Stopwatch();
             Random rand = new Random();
+            GameManager manager = new GameManager();
             while (true)
             {
+                manager.IncreaseScore(rand.Next(100000));
                 stop.Restart();
+                manager.DrawHud();
                 StringBuilder s = new StringBuilder(60 * 25);
                        
                 for (int j = 0; j < 23; j++)
