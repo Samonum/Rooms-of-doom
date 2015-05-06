@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    class MonsterCreator
+    public class MonsterCreator
     {
-        int maximumPackSize;
+        public int maximumPackSize;
         Random r;
 
         public MonsterCreator(Random r, int maximumPackSize)
         {
-            this.maximumPackSize = maximumPackSize;
+            if (maximumPackSize <= 0)//packsize cannot be smaller than 1
+                this.maximumPackSize = 1;
+            else
+                this.maximumPackSize = maximumPackSize;
             this.r = r;
         }
 
@@ -31,8 +34,15 @@ namespace RoomsOfDoom
 
         public Enemy CreateMonster(int difficulty)
         {
-            Enemy e = new Enemy(GenerateName(), r.Next(5*difficulty, 50 * difficulty));
+            if (difficulty <= 0)//diff cannot be negative
+                difficulty = 1;
+            else if(difficulty >= 1000000)//difficulty cannot be extremely large(might exceed maxint when multiplied)
+                difficulty = 1000000;
+            Enemy e = new Enemy(GenerateName(), r.Next(5*difficulty, 10 * difficulty));
+            
             return e;
+            //unit testing revealed bug with inputting negative difficulties
+            //unit testing revealed bug with inputting very large numbers
 
         }
 
