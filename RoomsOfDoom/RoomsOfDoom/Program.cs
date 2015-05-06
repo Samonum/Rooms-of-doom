@@ -32,6 +32,14 @@ namespace RoomsOfDoom
                 Console.WriteLine(stop.ElapsedMilliseconds);
                 Console.Write(s.ToString());
                 Console.WriteLine(stop.ElapsedMilliseconds);
+                
+                //code to show pack creation works
+                MonsterCreator M = new MonsterCreator(rand, 10);
+                Pack P = M.GeneratePack(1);
+                foreach(Enemy e in P.Enemies)
+                {
+                    Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");
+                }
             }
         }
     }
