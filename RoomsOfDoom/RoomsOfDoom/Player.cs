@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    public class Player : IHittable
+    public class Player : IHittable, ITile
     {
 
         public Player()
@@ -49,6 +49,17 @@ namespace RoomsOfDoom
         {
             get;
             private set;
+        }
+
+        public char Glyph
+        {
+            get { return '☺'; }
+        }
+
+        public Point Location
+        {
+            get;
+            set;
         }
     }
 }

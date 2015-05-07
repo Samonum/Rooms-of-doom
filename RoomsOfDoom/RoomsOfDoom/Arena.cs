@@ -24,6 +24,7 @@ namespace RoomsOfDoom
         int width = 37, height = 25;
         Exit exits;
         Pack enemies;
+        Player player;
 
         public Arena(Exit openExits, Pack enemies, Player player, Exit entrance)
         {
@@ -35,7 +36,27 @@ namespace RoomsOfDoom
             botExit = 10 + r.Next(width - 20);
             this.enemies = enemies;
             foreach (Enemy e in enemies)
-                e.Location = new Point(r.Next(width - 2) + 1, r.Next(height - 2) + 1);
+                e.Location = new Point(r.Next(width - 5) + 1, r.Next(height - 5) + 1);
+
+            this.player = player;
+            switch(entrance)
+            {
+                case Exit.Top:
+                    player.Location = new Point(topExit, 3);
+                    break;
+                case Exit.Bot:
+                    player.Location = new Point(botExit, height - 3);
+                    break;
+                case Exit.Right:
+                    player.Location = new Point(3, rightExit);
+                    break;
+                case Exit.Left:
+                    player.Location = new Point(width - 3, leftExit);
+                    break;
+                default:
+                    player.Location = new Point(r.Next(width - 5) + 1, r.Next(height - 5) + 1);
+                    break;
+            }
         }
 
         public void UpdateMap()
@@ -43,11 +64,11 @@ namespace RoomsOfDoom
             CreateBackground();
             foreach (Enemy e in enemies)
                 map[e.Location.Y][e.Location.X] = e.Glyph;
+            map[player.Location.Y][player.Location.X] = player.Glyph;
         }
 
         public void CreateBackground()
         {
-
             map = new char[height][];
             map[0] = new char[width];
             for (int j = 0; j < map[0].Length; j++)
