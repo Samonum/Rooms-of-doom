@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace RoomsOfDoom
 {
@@ -23,9 +24,9 @@ namespace RoomsOfDoom
         public Pack GeneratePack(int difficulty)
         {
             Pack P = new Pack(r.Next(1, maximumPackSize));
-            Enemy e = CreateMonster(difficulty);
             for (int i = 0; i < P.Enemies.Capacity; i++ )
             {
+                Enemy e = CreateMonster(difficulty);
                 P.Add(e);
             }
 
@@ -49,9 +50,21 @@ namespace RoomsOfDoom
         public string GenerateName()
         {
             string[] adjectives = new string[] {"Giant", "Smelly", "Tiny", "Powerful", "Shady","Evil","Funky", "Quick", "Partying","Hooded","Infernal","Mutant","Sparkling","Shiny","Teenage","Ninja","Sneaky","Magnificent","Hairy","Quantum","Mighty","Bearded","Magical","Arcane","Divine","Jolly","Royal","Sophisticated","Overpowered","Travelling","Wandering","Awkward","Confident","Well-Mannered","Strange","Exotic"};
-            string[] names = new string[] {"Goblin", "Wolf", "Orc","Dwarf","Elf","Bat","Bug", "NullreferenceException","Pony","Alien","Robot","Slime","Imp","Centipede","Turtle","Pirate","Dolphin","Wizard","Dragon","Programmer","Hexagon","Android","T-Rex","Sphinx","Bandit","Cultist","Necromancer","Spider","Salesman","Monster", "Pidgeon","Ooze","Skeleton","Zombie","Vampire","Werewolf","Witch","Shaman","Construct","Gnome","Kobold","Beholder" };            
-            string createName = adjectives[r.Next(0,adjectives.Length)] + " " + names[r.Next(0,names.Length)];
-            return createName;
+            Dictionary<string,string> names = new Dictionary<string,string>();
+            
+            using (StreamReader reader = new StreamReader("Enemies and packs/Names.txt"))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] splitLine = line.Split('|');
+                    names.Add(splitLine[1], splitLine[0]);
+                }
+            }
+
+            KeyValuePair<string, string> randomKVP = names.ElementAt(r.Next(0, names.Count));
+            string randomName = randomKVP.Key + " " + adjectives[r.Next(0, adjectives.Length)] + " " + randomKVP.Value;           
+            return randomName;
         }
 
     }
