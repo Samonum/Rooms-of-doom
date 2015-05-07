@@ -25,12 +25,13 @@ namespace RoomsOfDoom
             availibleNodes = new List<Node>();
             int split = size / (difficulty + 1);
 
+            int bridgeTarget = split;
             int counter = 0;
 
             for (int i = 0; i < size; i++)
             {
                 Node n;
-                if (counter == split)
+                if (i == bridgeTarget)
                     n = new Bridge(i);
                 else
                     n = new Node(i);
@@ -52,25 +53,17 @@ namespace RoomsOfDoom
                             availibleNodes.Remove(newNeighbour);
                     }
                 }
-                if (counter == split)
+                if (bridgeTarget == i)
                 {
                     availibleNodes.Clear();
-                    counter = 0;
+                    if (counter < difficulty - 1)
+                    {
+                        bridgeTarget += split;
+                        counter++;
+                    }
                 }
                 
-                counter++;
-                
                 availibleNodes.Add(n);
-                
-
-
-                /*   1   
-                 *   2  
-                 *   3
-                 *   4 
-                 * 
-                 * 
-                 */
             }
 
             // 100 7 =  14 (+ 2) {0 14 28 42 56 70 84 98}
