@@ -53,7 +53,7 @@ namespace RoomsOfDoom
 
         public char Glyph
         {
-            get { return '☺'; }
+            get { return '☻'; }
         }
 
         public Point Location

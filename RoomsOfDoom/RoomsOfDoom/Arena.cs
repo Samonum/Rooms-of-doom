@@ -17,45 +17,75 @@ namespace RoomsOfDoom
 
     public class Arena
     {
-        Random r;
-        char[][] map;
-        ITile tiles;
-        int topExit, leftExit, rightExit, botExit;
-        int width = 37, height = 25;
-        Exit exits;
-        Pack enemies;
-        Player player;
+        Random random;
 
-        public Arena(Exit openExits, Pack enemies, Player player, Exit entrance)
+        private char[][] map;
+        private int width = 37, height = 25;
+        private Exit exits;
+        private int topExit, leftExit, rightExit, botExit;
+
+        private Pack enemies;
+        private Player player;
+
+        public Arena(Exit openExits, Pack enemies, Player player, Exit entrance, Random random)
         {
+            this.random = random;
+
             exits = openExits;
-            r = new Random();
-            topExit = 10 + r.Next(width - 20);
-            leftExit = 10 + r.Next(height - 20);
-            rightExit = 10 + r.Next(height - 20);
-            botExit = 10 + r.Next(width - 20);
+            topExit = 10 + random.Next(width - 20);
+            leftExit = 10 + random.Next(height - 20);
+            rightExit = 10 + random.Next(height - 20);
+            botExit = 10 + random.Next(width - 20);
+
             this.enemies = enemies;
-            foreach (Enemy e in enemies)
-                e.Location = new Point(r.Next(width - 5) + 1, r.Next(height - 5) + 1);
+            PlaceEnemies(enemies);
 
             this.player = player;
-            switch(entrance)
+            PlacePlayer(entrance);
+        }
+
+        public void PlacePlayer(Exit entrance)
+        {
+            switch (entrance)
             {
                 case Exit.Top:
-                    player.Location = new Point(topExit, 3);
+                    player.Location = new Point(topExit, 2);
                     break;
                 case Exit.Bot:
                     player.Location = new Point(botExit, height - 3);
                     break;
                 case Exit.Right:
-                    player.Location = new Point(3, rightExit);
+                    player.Location = new Point(width - 3, rightExit);
                     break;
                 case Exit.Left:
-                    player.Location = new Point(width - 3, leftExit);
+                    player.Location = new Point(2, leftExit);
                     break;
                 default:
-                    player.Location = new Point(r.Next(width - 5) + 1, r.Next(height - 5) + 1);
+                    player.Location = new Point(random.Next(width - 8) + 4, random.Next(height - 8) + 4);
+                    for (int i = 0; i < enemies.Size; i++)
+                    {
+                        if (enemies[i].Location == player.Location)
+                        {
+                            i = 0;
+                            player.Location = new Point(random.Next(width - 5) + 1, random.Next(height - 5) + 1);
+                            break;
+                        }
+                    }
                     break;
+            }
+        }
+
+        public void PlaceEnemies(Pack enemies)
+        {
+            for (int i = 0; i < enemies.Size; i++)
+            {
+                enemies[i].Location = new Point(random.Next(width - 8) + 4, random.Next(height - 8) + 4);
+                for (int j = 0; j < i; j++)
+                    if (enemies[i].Location == enemies[j].Location)
+                    {
+                        i--;
+                        break;
+                    }
             }
         }
 
@@ -67,7 +97,7 @@ namespace RoomsOfDoom
             map[player.Location.Y][player.Location.X] = player.Glyph;
         }
 
-        public void CreateBackground()
+        private void CreateBackground()
         {
             map = new char[height][];
             map[0] = new char[width];

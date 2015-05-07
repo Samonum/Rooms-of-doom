@@ -34,7 +34,7 @@ namespace RoomsOfDoom
             get{return this.enemies;}
         }
 
-        Enemy this[int index]
+        public Enemy this[int index]
         {
             get { return enemies[index]; }
         }
@@ -42,6 +42,10 @@ namespace RoomsOfDoom
         public IEnumerator<Enemy> GetEnumerator()
         {
             return enemies.GetEnumerator();
+        }
+        public int Size
+        {
+            get { return enemies.Count; }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()

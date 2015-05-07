@@ -22,7 +22,7 @@ namespace RoomsOfDoom
             {
                 stop.Restart();
                 Pack P = M.GeneratePack(1);
-                Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Bot);
+                Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Top, rand);
                 a.UpdateMap();
                 a.Draw();
                 manager.IncreaseScore(rand.Next(100000));
