@@ -62,24 +62,44 @@ namespace RoomsOfDoom
             set;
         }
 
-        public void Move(Direction direction, Pack enemies)
+        public bool Move(Direction direction, Pack enemies)
         {
-            Point loc;
+            Point loc = new Point();
             switch (direction)
             {
                 case Direction.Up:
                     loc = new Point(Location.X, Location.Y - 1);
+                    if (loc.Y == 0)
+                        return false;
                     break;
                 case Direction.Down:
                     loc = new Point(Location.X, Location.Y + 1);
+                    if (loc.X == Arena.Height)
+                        return false;
                     break;
                 case Direction.Left:
                     loc = new Point(Location.X - 1, Location.Y);
+                    if (loc.X == 0)
+                        return false;
                     break;
                 case Direction.Right:
                     loc = new Point(Location.X + 1, Location.Y - 1);
+                    if (loc.X == Arena.Width)
+                        return false;
                     break;
             }
+            foreach(Enemy enemy in enemies)
+                if(enemy.Location == loc)
+                {
+                    Combat(enemy, enemies);
+                    return true;
+                }
+            Location = loc;
+            return true;
+        }
+
+        public void Combat(Enemy enemy, Pack pack)
+        {
 
         }
 

@@ -20,7 +20,7 @@ namespace RoomsOfDoom
         Random random;
 
         private char[][] map;
-        private int width = 37, height = 25;
+        public const int Width = 37, Height = 25;
         private Exit exits;
         private int topExit, leftExit, rightExit, botExit;
 
@@ -32,10 +32,10 @@ namespace RoomsOfDoom
             this.random = random;
 
             exits = openExits;
-            topExit = 10 + random.Next(width - 20);
-            leftExit = 10 + random.Next(height - 20);
-            rightExit = 10 + random.Next(height - 20);
-            botExit = 10 + random.Next(width - 20);
+            topExit = 10 + random.Next(Width - 20);
+            leftExit = 10 + random.Next(Height - 20);
+            rightExit = 10 + random.Next(Height - 20);
+            botExit = 10 + random.Next(Width - 20);
 
             this.enemies = enemies;
             PlaceEnemies(enemies);
@@ -52,22 +52,22 @@ namespace RoomsOfDoom
                     player.Location = new Point(topExit, 2);
                     break;
                 case Exit.Bot:
-                    player.Location = new Point(botExit, height - 3);
+                    player.Location = new Point(botExit, Height - 3);
                     break;
                 case Exit.Right:
-                    player.Location = new Point(width - 3, rightExit);
+                    player.Location = new Point(Width - 3, rightExit);
                     break;
                 case Exit.Left:
                     player.Location = new Point(2, leftExit);
                     break;
                 default:
-                    player.Location = new Point(random.Next(width - 8) + 4, random.Next(height - 8) + 4);
+                    player.Location = new Point(random.Next(Width - 8) + 4, random.Next(Height - 8) + 4);
                     for (int i = 0; i < enemies.Size; i++)
                     {
                         if (enemies[i].Location == player.Location)
                         {
                             i = 0;
-                            player.Location = new Point(random.Next(width - 5) + 1, random.Next(height - 5) + 1);
+                            player.Location = new Point(random.Next(Width - 5) + 1, random.Next(Height - 5) + 1);
                             break;
                         }
                     }
@@ -79,7 +79,7 @@ namespace RoomsOfDoom
         {
             for (int i = 0; i < enemies.Size; i++)
             {
-                enemies[i].Location = new Point(random.Next(width - 8) + 4, random.Next(height - 8) + 4);
+                enemies[i].Location = new Point(random.Next(Width - 8) + 4, random.Next(Height - 8) + 4);
                 for (int j = 0; j < i; j++)
                     if (enemies[i].Location == enemies[j].Location)
                     {
@@ -99,8 +99,8 @@ namespace RoomsOfDoom
 
         private void CreateBackground()
         {
-            map = new char[height][];
-            map[0] = new char[width];
+            map = new char[Height][];
+            map[0] = new char[Width];
             for (int j = 0; j < map[0].Length; j++)
                 if ((exits & Exit.Top) != Exit.Top || j < topExit - 2 || j > topExit + 2)
                     map[0][j] = '█';
@@ -108,7 +108,7 @@ namespace RoomsOfDoom
                     map[0][j] = '▒';
             for (int i = 1; i < map.Length - 1; i++)
             {
-                map[i] = new char[width];
+                map[i] = new char[Width];
                 for (int j = 0; j < map[i].Length; j++)
                     if (j == 0)
                     {
@@ -126,7 +126,7 @@ namespace RoomsOfDoom
                     }
                     else
                         map[i][j] = '.';
-                map[map.Length - 1] = new char[width];
+                map[map.Length - 1] = new char[Width];
                 for (int j = 0; j < map[0].Length; j++)
                     if ((exits & Exit.Bot) != Exit.Bot || j < botExit - 2 || j > botExit + 2)
                         map[map.Length - 1][j] = '█';
