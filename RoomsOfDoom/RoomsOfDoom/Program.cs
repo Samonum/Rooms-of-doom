@@ -16,8 +16,11 @@ namespace RoomsOfDoom
             Random rand = new Random();
             GameManager manager = new GameManager();
             Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, new Pack(1), manager.GetPlayer, Exit.Bot);
+            DungeonCreator D = new DungeonCreator(rand);
+            Dungeon dungeon = D.GenerateDungeon(20, 2);
             while (true)
             {
+                Console.WriteLine(dungeon.ToString());
                 a.UpdateMap();
                 a.Draw();
 
@@ -35,11 +38,9 @@ namespace RoomsOfDoom
                 {
                     Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");
                 }
-                Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
 
-                DungeonCreator D = new DungeonCreator(rand);
-                Dungeon dungeon = D.GenerateDungeon(20, 2);
-                Console.WriteLine(dungeon.ToString());
+                Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
+                Console.Clear();
             }
         }
     }
