@@ -15,7 +15,7 @@ namespace TestRoomsOfDoom
 
         public override IHittable getHittable()
         {
-            return new Enemy("test", 100);
+            return new Enemy("test",'T', 100);
         }
     }
 }

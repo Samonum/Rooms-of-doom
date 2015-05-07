@@ -24,8 +24,8 @@ namespace RoomsOfDoom
         {
             String s = "B" + id + "(";
 
-            foreach (Node n in adjacencyList)
-                s += n.id + ",";
+            foreach (KeyValuePair<Direction, Node> n in adjacencyList)
+                s += n.Value.id + ",";
 
             s += ")";
 

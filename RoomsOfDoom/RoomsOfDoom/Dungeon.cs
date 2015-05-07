@@ -10,13 +10,12 @@ namespace RoomsOfDoom
     {
         private int difficulty;
         public List<Node> nodes;
-        public Node startNode, endNode;
+        public Node endNode;
 
         public Dungeon(int difficulty, List<Node> nodes)
         {
             this.difficulty = difficulty;
             this.nodes = nodes;
-            startNode = nodes[0];
             endNode = nodes[nodes.Count - 1];
         }
 
@@ -27,12 +26,7 @@ namespace RoomsOfDoom
             return path;
         }
 
-        public void Destroy(Node node)
-        {
-            
-        }
-
-        public bool IsValidDungeon(Node rNode)
+        public bool Destroy(Node rNode)
         {
             List<Node> pre = new List<Node>();
             Queue<Node> queue = new Queue<Node>();
@@ -40,30 +34,23 @@ namespace RoomsOfDoom
             if (rNode.isBridge())
                 return false;
 
-            if (rNode == startNode)
-                return false;
-
             if (rNode == endNode)
                 return false;
 
-            pre.Add(rNode);
-            queue.Enqueue(rNode);
-
-            bool foundIt = false;
+            pre.Add(endNode);
+            queue.Enqueue(endNode);
 
             while (queue.Count > 0)
             {
                 Node curNode = queue.Dequeue();
 
-                foreach(Node nextNode in curNode.AdjacencyList)
+                foreach (KeyValuePair<Direction, Node> kvp in curNode.AdjacencyList)
                 {
+                    Node nextNode = kvp.Value;
                     if (!pre.Contains(nextNode))
                     {
                         if (nextNode == rNode)
                             continue;
-
-                        if (nextNode == endNode)
-                            foundIt = true;
 
                         queue.Enqueue(nextNode);
                         pre.Add(nextNode);
@@ -71,31 +58,31 @@ namespace RoomsOfDoom
                 }
             }
 
-            if (foundIt)
-            {
-                List<Node> toBeRemoved = new List<Node>();
-                
-                foreach(Node n in nodes)
-                {
-                    if (!pre.Contains(n))
-                    {
-                        toBeRemoved.Add(n);
+            List<Node> toBeRemoved = new List<Node>();
 
-                        if (n == rNode)
+            foreach (Node n in nodes)
+            {
+                if (!pre.Contains(n))
+                {
+                    toBeRemoved.Add(n);
+
+                    if (n == rNode)
+                    {
+                        foreach (KeyValuePair<Direction, Node> neighbour in n.AdjacencyList)
                         {
-                            foreach (Node neighbour in n.AdjacencyList)
-                                neighbour.AdjacencyList.Remove(rNode);
+                            Direction direction = neighbour.Value.AdjacencyList.First(kvp => kvp.Value == rNode).Key;
+                            neighbour.Value.AdjacencyList.Remove(direction);
                         }
+
+                        Dictionary<int, int> a = new Dictionary<int, int>();
                     }
                 }
-
-                foreach (Node n in toBeRemoved)
-                    nodes.Remove(n);
-
-                return true;
             }
 
-            return false;
+            foreach (Node n in toBeRemoved)
+                nodes.Remove(n);
+
+            return true;
         }
                     
         public String ToString()

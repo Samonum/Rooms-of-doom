@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    public class Enemy : IHittable
+    public class Enemy : IHittable, ITile
     {
-
+        
         public string name;
         protected int maxHP;
         protected int currentHP;
         protected bool alive;
+        protected char glyph;
 
-
-        public Enemy(string name,int hp)
+        public Enemy(string name,char glyph, int hp)
         {
             this.name = name;
             myPack = null;
             maxHP = hp;
             currentHP = hp;
             alive = true;
+            this.glyph = glyph;
         }
 
         public int Hit(int damage)
@@ -62,6 +63,17 @@ namespace RoomsOfDoom
         {
             get { return alive; }
             set { alive = value; }
+        }
+
+        public char Glyph
+        {
+            get { return glyph; }
+        }
+
+        public Point Location
+        {
+        get;
+        set;
         }
     }
 }

@@ -59,10 +59,20 @@ namespace RoomsOfDoom
                     int neighbourIndex = random.Next(availibleNodes.Count);
                     Node newNeighbour = availibleNodes[neighbourIndex];
 
-                    if (!n.AdjacencyList.Contains(newNeighbour))
+                    if (!n.AdjacencyList.ContainsValue(newNeighbour))
                     {
-                        n.AdjacencyList.Add(newNeighbour);
-                        newNeighbour.AdjacencyList.Add(n);
+                        int rn = random.Next(maxNeighbours);
+                        while (n.AdjacencyList.ContainsKey((Direction) rn))
+                            rn = random.Next(maxNeighbours);
+
+                        n.AdjacencyList.Add((Direction)rn, newNeighbour);
+
+                        rn = random.Next(maxNeighbours);
+                        while (newNeighbour.AdjacencyList.ContainsKey((Direction)rn))
+                            rn = random.Next(maxNeighbours);
+
+                        newNeighbour.AdjacencyList.Add((Direction)rn, n);
+
                         if (newNeighbour.AdjacencyList.Count >= maxNeighbours)
                             availibleNodes.Remove(newNeighbour);
                     }

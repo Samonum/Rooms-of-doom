@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,26 +17,90 @@ namespace RoomsOfDoom
 
     public class Arena
     {
-        Random r;
-        char[][] map;
-        ITile tiles;
-        int topExit, leftExit, rightExit, botExit;
-        int width = 37, height = 25;
-        Exit exits;
-        public Arena(Exit openExits, Pack enemies, Player player, Exit entrance)
+        Random random;
+
+        private char[][] map;
+        public const int Width = 37, Height = 25;
+        private Exit exits;
+        private int topExit, leftExit, rightExit, botExit;
+
+        private Pack enemies;
+        private Player player;
+
+        public Arena(Exit openExits, Pack enemies, Player player, Exit entrance, Random random)
         {
+            this.random = random;
+
             exits = openExits;
-            r = new Random();
-            topExit = 10 + r.Next(width - 20);
-            leftExit = 10 + r.Next(height - 20);
-            rightExit = 10 + r.Next(height - 20);
-            botExit = 10 + r.Next(width - 20);
+            topExit = 10 + random.Next(Width - 20);
+            leftExit = 10 + random.Next(Height - 20);
+            rightExit = 10 + random.Next(Height - 20);
+            botExit = 10 + random.Next(Width - 20);
+
+            this.enemies = enemies;
+            PlaceEnemies(enemies);
+
+            this.player = player;
+            PlacePlayer(entrance);
+        }
+
+        public void PlacePlayer(Exit entrance)
+        {
+            switch (entrance)
+            {
+                case Exit.Top:
+                    player.Location = new Point(topExit, 2);
+                    break;
+                case Exit.Bot:
+                    player.Location = new Point(botExit, Height - 3);
+                    break;
+                case Exit.Right:
+                    player.Location = new Point(Width - 3, rightExit);
+                    break;
+                case Exit.Left:
+                    player.Location = new Point(2, leftExit);
+                    break;
+                default:
+                    player.Location = new Point(random.Next(Width - 8) + 4, random.Next(Height - 8) + 4);
+                    for (int i = 0; i < enemies.Size; i++)
+                    {
+                        if (enemies[i].Location == player.Location)
+                        {
+                            i = 0;
+                            player.Location = new Point(random.Next(Width - 5) + 1, random.Next(Height - 5) + 1);
+                            break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        public void PlaceEnemies(Pack enemies)
+        {
+            for (int i = 0; i < enemies.Size; i++)
+            {
+                enemies[i].Location = new Point(random.Next(Width - 8) + 4, random.Next(Height - 8) + 4);
+                for (int j = 0; j < i; j++)
+                    if (enemies[i].Location == enemies[j].Location)
+                    {
+                        i--;
+                        break;
+                    }
+            }
         }
 
         public void UpdateMap()
         {
-            map = new char[height][];
-            map[0] = new char[width];
+            CreateBackground();
+            foreach (Enemy e in enemies)
+                map[e.Location.Y][e.Location.X] = e.Glyph;
+            map[player.Location.Y][player.Location.X] = player.Glyph;
+        }
+
+        private void CreateBackground()
+        {
+            map = new char[Height][];
+            map[0] = new char[Width];
             for (int j = 0; j < map[0].Length; j++)
                 if ((exits & Exit.Top) != Exit.Top || j < topExit - 2 || j > topExit + 2)
                     map[0][j] = '█';
@@ -44,7 +108,7 @@ namespace RoomsOfDoom
                     map[0][j] = '▒';
             for (int i = 1; i < map.Length - 1; i++)
             {
-                map[i] = new char[width];
+                map[i] = new char[Width];
                 for (int j = 0; j < map[i].Length; j++)
                     if (j == 0)
                     {
@@ -62,7 +126,7 @@ namespace RoomsOfDoom
                     }
                     else
                         map[i][j] = '.';
-                map[map.Length - 1] = new char[width];
+                map[map.Length - 1] = new char[Width];
                 for (int j = 0; j < map[0].Length; j++)
                     if ((exits & Exit.Bot) != Exit.Bot || j < botExit - 2 || j > botExit + 2)
                         map[map.Length - 1][j] = '█';
