@@ -42,6 +42,29 @@ namespace TestRoomsOfDoom
             }
             Assert.AreEqual(score, testSubject.GetScore, "Scores don't add up well.");
             HudTest();
+            testSubject.IncreaseScore(int.MaxValue);
+            Assert.AreEqual(testSubject.GetScore, int.MaxValue);
+            testSubject.IncreaseScore(1000);
+            Assert.AreEqual(testSubject.GetScore, int.MaxValue);
+            HudTest();
+            try
+            {
+                testSubject.IncreaseScore(-1);
+                Assert.Fail("Didn't crash");
+            }
+            catch(ArgumentOutOfRangeException e)
+            {}
+            catch(Exception e)
+            {
+                Assert.Fail("Threw wrong error");
+            }
+        }
+        [TestMethod]
+        public void ScreenWidthTest()
+        {
+            string[] screen = testSubject.CreateEnemyOverview();
+            foreach(string s in screen)
+                Assert.IsTrue(s.Length <= Console.WindowWidth);
         }
 
         [TestMethod]

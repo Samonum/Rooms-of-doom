@@ -61,7 +61,7 @@ namespace RoomsOfDoom
         public void IncreaseScore(int i)
         {
             if (i < 0)
-                throw new Exception("Parameter may not be < 0");
+                throw new ArgumentOutOfRangeException();
 
             score += i;
 
