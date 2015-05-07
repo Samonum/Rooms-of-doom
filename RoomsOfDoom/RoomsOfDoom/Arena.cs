@@ -41,7 +41,7 @@ namespace RoomsOfDoom
         public void UpdateMap()
         {
             CreateBackground();
-            foreach(Enemy e in enemies)
+            foreach (Enemy e in enemies)
                 map[e.Location.Y][e.Location.X] = e.Glyph;
         }
 
