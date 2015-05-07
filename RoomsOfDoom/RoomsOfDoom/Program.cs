@@ -20,7 +20,7 @@ namespace RoomsOfDoom
             Pack P = M.GeneratePack(1);
             Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Bot);
             DungeonCreator D = new DungeonCreator(rand);
-            Dungeon dungeon = D.GenerateDungeon(20, 2);
+            Dungeon dungeon = D.GenerateDungeon(97, 4);
             while (true)
             {
                 Console.WriteLine(dungeon.ToString());
@@ -43,8 +43,6 @@ namespace RoomsOfDoom
                 
                 Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
                    
-
-                Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
                 Console.Clear();
             }
         }
