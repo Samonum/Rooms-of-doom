@@ -30,13 +30,13 @@ namespace RoomsOfDoom
             char k = Console.ReadKey().KeyChar;
             switch(k)
             {
-                case 'w': //player.moveforard()
+                case 'w': player.Move(Direction.Up, new Pack(5));
                     break;
-                case 'a'://player.moveLeft()
+                case 'a': player.Move(Direction.Left, new Pack(5));
                     break;
-                case 's'://Player.movedown()
+                case 's': player.Move(Direction.Down, new Pack(5));
                     break;
-                case 'd'://player.moveright()
+                case 'd': player.Move(Direction.Right, new Pack(5));
                     break;
                 case '1'://usepotion()
                     break;
