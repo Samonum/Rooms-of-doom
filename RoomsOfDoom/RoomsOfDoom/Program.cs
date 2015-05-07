@@ -38,6 +38,9 @@ namespace RoomsOfDoom
                 {
                     Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");
                 }
+                
+                Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
+                   
 
                 Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
                 Console.Clear();
