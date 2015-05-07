@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -114,6 +115,34 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
         public void DrawHud()
         {
             Console.WriteLine(FormatHud());
+        }
+
+        public void Save()
+        {
+            using (StreamWriter writer = new StreamWriter("save.txt"))
+            {
+                writer.Write(GetPlayer.CurrentHP + ";" + GetScore + ";" + GetPotCount + ";" + GetCrystalCount + ";" + GetScrollCount);
+            }
+        }
+
+        public void Load()
+        {
+            using (StreamReader reader = new StreamReader("save.txt"))
+            {
+                string line = reader.ReadLine();
+                if (line != null)
+                {
+                    string[] data = line.Split(';');
+                    score = int.Parse(data[0]);
+                    player = new Player(int.Parse(data[1]));
+                    inventory = new byte[3]
+                    {
+                        byte.Parse(data[2]),
+                        byte.Parse(data[3]),
+                        byte.Parse(data[4])
+                    };
+                }
+            }
         }
     }
 }

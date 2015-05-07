@@ -9,13 +9,18 @@ namespace RoomsOfDoom
     public class Player : IHittable, ITile
     {
 
-        public Player()
+        public Player(int curHp = -1)
         {
             MaxHP = 100;
-            currentHP = MaxHP;
+            if (curHp == -1)
+                currentHP = MaxHP;
+            else if (curHp > MaxHP)
+                currentHP = MaxHP;
+            else
+                currentHP = curHp;
             Alive = true;
         }
-        
+
         public int Hit(int damage)
         {
             CurrentHP -= damage;
