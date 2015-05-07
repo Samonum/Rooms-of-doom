@@ -110,7 +110,7 @@ namespace RoomsOfDoom
                     player.UseItem(new TimeCrystal(), null);
                     break;
                 case '3': 
-                    player.UseItem(new MagicScroll(), null);
+                    player.UseItem(new MagicScroll(random), null);
                     break;
             }
 

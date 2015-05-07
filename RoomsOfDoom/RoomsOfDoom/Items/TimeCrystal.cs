@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
-    class TimeCrystal : IItem
+    public class TimeCrystal : IItem
     {
         public TimeCrystal()
         {
