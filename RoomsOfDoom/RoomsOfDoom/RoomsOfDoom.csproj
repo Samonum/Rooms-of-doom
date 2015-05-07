@@ -50,6 +50,7 @@
     <Compile Include="Enemies and packs\Pack.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="IHittable.cs" />
+    <Compile Include="InputHandler.cs" />
     <Compile Include="Items\IItem.cs" />
     <Compile Include="Items\MagicScroll.cs" />
     <Compile Include="Items\Potion.cs" />
