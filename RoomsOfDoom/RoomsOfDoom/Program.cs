@@ -18,7 +18,6 @@ namespace RoomsOfDoom
             MonsterCreator M = new MonsterCreator(rand, 10);
             DungeonCreator D = new DungeonCreator(rand);
             Dungeon dungeon = D.GenerateDungeon(97, 4);
-            InputHandler inputHandler = new InputHandler();
             while (true)
             {
                 stop.Restart();
@@ -29,7 +28,6 @@ namespace RoomsOfDoom
                 manager.IncreaseScore(rand.Next(100000));
                 manager.DrawHud();
                 //Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
-                inputHandler.HandleInput();
                 Console.Clear();
             }
         }
