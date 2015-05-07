@@ -25,18 +25,18 @@ namespace RoomsOfDoom
             player = new Player();
         }
 
-        public void HandleInput()
+        public void HandleInput(Arena a)
         {
             char k = Console.ReadKey().KeyChar;
             switch(k)
             {
-                case 'w': //player.moveforard()
+                case 'w': player.Move(Direction.Up, a.enemies);
                     break;
-                case 'a'://player.moveLeft()
+                case 'a': player.Move(Direction.Left, a.enemies);
                     break;
-                case 's'://Player.movedown()
+                case 's': player.Move(Direction.Down, a.enemies);
                     break;
-                case 'd'://player.moveright()
+                case 'd': player.Move(Direction.Right, a.enemies);
                     break;
                 case '1'://usepotion()
                     break;

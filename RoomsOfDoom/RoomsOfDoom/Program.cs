@@ -17,21 +17,12 @@ namespace RoomsOfDoom
             GameManager manager = new GameManager();
             DungeonCreator D = new DungeonCreator(rand);
             Dungeon dungeon = D.GenerateDungeon(1);
+            MonsterCreator M = new MonsterCreator(rand, 10);
+            Pack P = M.GeneratePack(1);
+            Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Top, rand);
             while (true)
             {
                 stop.Restart();
-                
-                manager.IncreaseScore(rand.Next(100000));
-                
-
-                StringBuilder s = new StringBuilder(60 * 25);
-
-                
-                //code to show pack creation works
-                MonsterCreator M = new MonsterCreator(rand, 10);
-                Pack P = M.GeneratePack(1);
-
-                Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Top, rand);
                 a.UpdateMap();
                 a.Draw();
                 manager.DrawHud();
@@ -44,10 +35,9 @@ namespace RoomsOfDoom
                 Console.WriteLine(dungeon.ToString());
                 
                 //Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
-                Console.ReadLine();
+              
+                manager.HandleInput(a);
 
-                dungeon.Destroy(dungeon.nodes[rand.Next(dungeon.nodes.Count)]);
-                
                 Console.Clear();
             }
         }

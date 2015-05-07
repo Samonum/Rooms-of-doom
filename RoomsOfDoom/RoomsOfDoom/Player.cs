@@ -74,7 +74,7 @@ namespace RoomsOfDoom
                     break;
                 case Direction.Down:
                     loc = new Point(Location.X, Location.Y + 1);
-                    if (loc.X == Arena.Height)
+                    if (loc.Y == Arena.Height - 1)
                         return false;
                     break;
                 case Direction.Left:
@@ -83,22 +83,22 @@ namespace RoomsOfDoom
                         return false;
                     break;
                 case Direction.Right:
-                    loc = new Point(Location.X + 1, Location.Y - 1);
-                    if (loc.X == Arena.Width)
+                    loc = new Point(Location.X + 1, Location.Y);
+                    if (loc.X == Arena.Width - 1)
                         return false;
                     break;
             }
             foreach(Enemy enemy in enemies)
                 if(enemy.Location == loc)
                 {
-                    Combat(enemy, enemies);
+                    Combat(enemy);
                     return true;
                 }
             Location = loc;
             return true;
         }
 
-        public void Combat(Enemy enemy, Pack pack)
+        public void Combat(Enemy enemy)
         {
 
         }
