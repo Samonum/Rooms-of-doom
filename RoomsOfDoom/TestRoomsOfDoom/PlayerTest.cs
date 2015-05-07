@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RoomsOfDoom;
+using RoomsOfDoom.Items;
 using System.Drawing;
 
 namespace TestRoomsOfDoom
@@ -135,5 +136,35 @@ namespace TestRoomsOfDoom
             }
             Assert.AreEqual(scrolls, p.GetScrollCount, "Scrolls don't add up well.");
         }
+
+        [TestMethod]
+        public void CombatItemEffectTest()
+        {
+            Pack enemies = new Pack(4);
+            int initHp = 10 * Player.strength;
+            for (int i = 0; i < 4; i++)
+                enemies.Add(new Enemy("Test", 't', initHp));
+            p.Combat(enemies[0]);
+
+            Assert.AreEqual(initHp - Player.strength, enemies[0].CurrentHP);
+            for (int i = 1; i < 3; i++)
+                Assert.AreEqual(100, enemies[i].CurrentHP);
+            
+            p.UseItem(new TimeCrystal(), null);
+
+            p.Combat(enemies[1]);
+
+            Assert.AreEqual(initHp - 2 * Player.strength, enemies[0].CurrentHP);
+            for (int i = 1; i < 3; i++)
+                Assert.AreEqual(initHp - Player.strength, enemies[i].CurrentHP);
+            p.UseItem(new MagicScroll(new NotSoRandom(0.0)), null);
+
+            p.Combat(enemies[2]);
+
+            Assert.AreEqual(initHp - 4 * Player.strength, enemies[0].CurrentHP);
+            for (int i = 1; i < 3; i++)
+                Assert.AreEqual(initHp - 3 * Player.strength, enemies[i].CurrentHP);
+        }
+
     }
 }

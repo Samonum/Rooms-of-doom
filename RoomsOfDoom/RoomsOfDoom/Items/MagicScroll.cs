@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
-    class MagicScroll : IItem
+    public class MagicScroll : IItem
     {
-        public MagicScroll()
+        public MagicScroll(Random r)
         {
             Duration = 10;
         }

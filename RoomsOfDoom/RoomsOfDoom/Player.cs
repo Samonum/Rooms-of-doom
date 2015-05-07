@@ -8,7 +8,7 @@ namespace RoomsOfDoom
 {
     public class Player : IHittable, ITile
     {
-        private int strength;
+        public const int strength = 10;
         //Healing Potions, Time Crystals, Magic Scrolls
         private byte[] inventory = new byte[3] { 2, 2, 2 };
         List<IItem> activeItems;
@@ -122,10 +122,10 @@ namespace RoomsOfDoom
             {
                 Enemy[] enemies = (Enemy[])enemy.myPack.Enemies.ToArray().Clone();
                 foreach (Enemy e in enemies)
-                    e.Hit(10 * Multiplier);
+                    e.Hit(strength * Multiplier);
             }
             else
-                enemy.Hit(10 * Multiplier);
+                enemy.Hit(strength * Multiplier);
         }
 
         public void UpdateItems()
