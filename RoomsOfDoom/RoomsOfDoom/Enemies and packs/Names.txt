@@ -40,3 +40,7 @@ Construct|~
 Gnome|g
 Kobold|K
 Beholder|☺
+Koblin|k
+Chrit|©
+Sam|※
+Maguell|§
