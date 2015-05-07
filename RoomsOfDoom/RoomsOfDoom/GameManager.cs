@@ -25,6 +25,29 @@ namespace RoomsOfDoom
             player = new Player();
         }
 
+        public void HandleInput()
+        {
+            char k = Console.ReadKey().KeyChar;
+            switch(k)
+            {
+                case 'w': //player.moveforard()
+                    break;
+                case 'a'://player.moveLeft()
+                    break;
+                case 's'://Player.movedown()
+                    break;
+                case 'd'://player.moveright()
+                    break;
+                case '1'://usepotion()
+                    break;
+                case '2'://useScroll
+                    break;
+                case '3'://useCrystal
+                    break;
+            }
+
+        }
+
         public void CreateDungeon(int size, int packs, int difficulty, int maxCapacity)
         {
 
