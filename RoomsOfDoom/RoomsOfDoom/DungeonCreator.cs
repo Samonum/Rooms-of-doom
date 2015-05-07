@@ -10,7 +10,7 @@ namespace RoomsOfDoom
     {
         Random random;
 
-        const int maxNeighbours = 4;
+        public const int maxNeighbours = 4;
 
         List<Node> availibleNodes;
 
@@ -19,12 +19,26 @@ namespace RoomsOfDoom
             this.random = random;
         }
 
-        public Dungeon GenerateDungeon(int size, int difficulty)
+        public Dungeon GenerateDungeon(int difficulty)
         {
+            int size = (int)(difficulty * (3f + random.NextDouble()) + 4);
+
+            // Added due to memoryoutofrangeexception
+            if (size > 1000)
+                size = 1000;
+
+            int split;
+            if (difficulty >= size)
+            {
+                difficulty = size;
+                split = 1;
+            }
+            else
+                split = size / (difficulty + 1);
+
             List<Node> nodes = new List<Node>();
             availibleNodes = new List<Node>();
-            int split = size / (difficulty + 1);
-
+            
             int bridgeTarget = split;
             int counter = 0;
 
@@ -32,7 +46,7 @@ namespace RoomsOfDoom
             {
                 Node n;
                 if (i == bridgeTarget)
-                    n = new Bridge(i);
+                    n = new Bridge(i, counter);
                 else
                     n = new Node(i);
 
@@ -45,10 +59,20 @@ namespace RoomsOfDoom
                     int neighbourIndex = random.Next(availibleNodes.Count);
                     Node newNeighbour = availibleNodes[neighbourIndex];
 
-                    if (!n.AdjacencyList.Contains(newNeighbour))
+                    if (!n.AdjacencyList.ContainsValue(newNeighbour))
                     {
-                        n.AdjacencyList.Add(newNeighbour);
-                        newNeighbour.AdjacencyList.Add(n);
+                        int rn = random.Next(maxNeighbours);
+                        while (n.AdjacencyList.ContainsKey((Direction) rn))
+                            rn = random.Next(maxNeighbours);
+
+                        n.AdjacencyList.Add((Direction)rn, newNeighbour);
+
+                        rn = random.Next(maxNeighbours);
+                        while (newNeighbour.AdjacencyList.ContainsKey((Direction)rn))
+                            rn = random.Next(maxNeighbours);
+
+                        newNeighbour.AdjacencyList.Add((Direction)rn, n);
+
                         if (newNeighbour.AdjacencyList.Count >= maxNeighbours)
                             availibleNodes.Remove(newNeighbour);
                     }
@@ -71,36 +95,5 @@ namespace RoomsOfDoom
             Dungeon dungeon = new Dungeon(difficulty, nodes);
             return dungeon;
         }
-
-        private Node CreateNode(bool isBridge, int id)
-        {
-            Node n;
-            if (isBridge)
-                n = new Bridge(id);
-            else
-                n = new Node(id);
-
-            int neighbourAmount = random.Next(maxNeighbours);
-            for (int j = 0; j < neighbourAmount; j++)
-            {
-                if (availibleNodes.Count == 0)
-                    continue;
-                int neighbourIndex = random.Next(availibleNodes.Count);
-                Node newNeighbour = availibleNodes[neighbourIndex];
-
-                if (!n.AdjacencyList.Contains(newNeighbour))
-                {
-                    n.AdjacencyList.Add(newNeighbour);
-                    newNeighbour.AdjacencyList.Add(n);
-                    if (newNeighbour.AdjacencyList.Count >= maxNeighbours)
-                        availibleNodes.Remove(newNeighbour);
-                }
-            }
-            if (isBridge)
-                availibleNodes.Clear();
-            availibleNodes.Add(n);
-            return n;
-        }
-
     }
 }

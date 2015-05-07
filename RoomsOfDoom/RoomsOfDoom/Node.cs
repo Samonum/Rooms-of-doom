@@ -8,28 +8,33 @@ namespace RoomsOfDoom
 {
     public class Node
     {
-        protected List<Node> adjacencyList;
+        protected Dictionary<Direction, Node> adjacencyList;
         public int id;
         List<Pack> pack;
 
         public Node(int id)
         {
             this.id = id;
-            adjacencyList = new List<Node>();
+            adjacencyList = new Dictionary<Direction, Node>();
         }
 
-        public List<Node> AdjacencyList
+        public Dictionary<Direction, Node> AdjacencyList
         {
             get { return adjacencyList; }
             set { adjacencyList = value; }
+        }
+
+        public virtual bool isBridge()
+        {
+            return false;
         }
 
         public virtual String ToString()
         {
             String s = "N" + id + "(";
 
-            foreach (Node n in adjacencyList)
-                s += n.id + ",";
+            foreach (KeyValuePair<Direction, Node> n in adjacencyList)
+                s += n.Value.id + ",";
 
             s += ")";
 
