@@ -8,10 +8,16 @@ namespace RoomsOfDoom
 {
     public class Bridge : Node
     {
-
-        public Bridge(int id)
+        int bridgeNr;
+        public Bridge(int id, int bridgeNr)
             :base(id)
         {
+            this.bridgeNr = bridgeNr;
+        }
+
+        public override bool isBridge()
+        {
+            return true;
         }
 
         public override String ToString()

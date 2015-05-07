@@ -24,6 +24,11 @@ namespace RoomsOfDoom
             set { adjacencyList = value; }
         }
 
+        public virtual bool isBridge()
+        {
+            return false;
+        }
+
         public virtual String ToString()
         {
             String s = "N" + id + "(";

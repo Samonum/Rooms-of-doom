@@ -10,7 +10,7 @@ namespace RoomsOfDoom
     {
         Random random;
 
-        const int maxNeighbours = 4;
+        public const int maxNeighbours = 4;
 
         List<Node> availibleNodes;
 
@@ -19,12 +19,26 @@ namespace RoomsOfDoom
             this.random = random;
         }
 
-        public Dungeon GenerateDungeon(int size, int difficulty)
+        public Dungeon GenerateDungeon(int difficulty)
         {
+            int size = (int)(difficulty * (3f + random.NextDouble()) + 4);
+
+            // Added due to memoryoutofrangeexception
+            if (size > 1000)
+                size = 1000;
+
+            int split;
+            if (difficulty >= size)
+            {
+                difficulty = size;
+                split = 1;
+            }
+            else
+                split = size / (difficulty + 1);
+
             List<Node> nodes = new List<Node>();
             availibleNodes = new List<Node>();
-            int split = size / (difficulty + 1);
-
+            
             int bridgeTarget = split;
             int counter = 0;
 
@@ -32,7 +46,7 @@ namespace RoomsOfDoom
             {
                 Node n;
                 if (i == bridgeTarget)
-                    n = new Bridge(i);
+                    n = new Bridge(i, counter);
                 else
                     n = new Node(i);
 
