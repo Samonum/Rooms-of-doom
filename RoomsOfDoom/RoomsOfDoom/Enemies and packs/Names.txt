@@ -1,4 +1,4 @@
-Goblin|G
+﻿Goblin|G
 Wolf|w
 Orc|o
 Dwarf|d
@@ -42,5 +42,5 @@ Kobold|K
 Beholder|☺
 Koblin|k
 Chrit|©
-Sam|※
+Sam|¶
 Maguell|§
