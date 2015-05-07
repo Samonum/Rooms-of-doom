@@ -10,12 +10,28 @@ namespace RoomsOfDoom.Items
     {
         public MagicScroll()
         {
-
+            Duration = 10;
         }
 
-        public void Use()
+        public void Use(Player player, Dungeon dungeon)
         {
+            player.Multiplier *= 2;
+        }
 
+        public void Finish(Player player)
+        {
+            player.Multiplier /= 2; ;
+        }
+
+        public int Duration
+        {
+            get;
+            set;
+        }
+
+        public int Id
+        {
+            get { return 2; }
         }
     }
 }

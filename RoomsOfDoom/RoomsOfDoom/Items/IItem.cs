@@ -6,8 +6,21 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    interface IItem
+    public interface IItem
     {
-        void Use();
+        void Use(Player player, Dungeon dungeon);
+
+        void Finish(Player player);
+
+        int Duration
+        {
+            get;
+            set;
+        }
+
+        int Id
+        {
+            get;
+        }
     }
 }
