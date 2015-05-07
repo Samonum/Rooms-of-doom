@@ -109,6 +109,15 @@ namespace TestRoomsOfDoom
                 pots++;
             }
             Assert.AreEqual(pots, p.GetPotCount, "Pots don't add up well.");
+            
+            p.CurrentHP -= (int)(1.5 * Potion.healPower);
+            p.UseItem(new Potion(), null);
+            Assert.AreEqual(p.CurrentHP, p.MaxHP - (int)(.5 * Potion.healPower), "Simple healing");
+            p.UpdateItems();
+            Assert.AreEqual(p.CurrentHP, p.MaxHP - (int)(.5 * Potion.healPower), "Nothing happens");
+            p.UseItem(new Potion(), null);
+            Assert.AreEqual(p.CurrentHP, p.MaxHP, "No overcharging HP");
+
         }
 
         [TestMethod]
@@ -146,24 +155,56 @@ namespace TestRoomsOfDoom
                 enemies.Add(new Enemy("Test", 't', initHp));
             p.Combat(enemies[0]);
 
-            Assert.AreEqual(initHp - Player.strength, enemies[0].CurrentHP);
+            Assert.AreEqual(initHp - Player.strength, enemies[0].CurrentHP, "base");
             for (int i = 1; i < 3; i++)
-                Assert.AreEqual(100, enemies[i].CurrentHP);
-            
-            p.UseItem(new TimeCrystal(), null);
+                Assert.AreEqual(100, enemies[i].CurrentHP, "base");
+
+            TimeCrystal crystal = new TimeCrystal();
+            crystal.Duration = 1;
+            p.UseItem(crystal, null);
 
             p.Combat(enemies[1]);
-
-            Assert.AreEqual(initHp - 2 * Player.strength, enemies[0].CurrentHP);
+            Assert.AreEqual(initHp - 2 * Player.strength, enemies[0].CurrentHP, "Crystal");
             for (int i = 1; i < 3; i++)
-                Assert.AreEqual(initHp - Player.strength, enemies[i].CurrentHP);
-            p.UseItem(new MagicScroll(new NotSoRandom(0.0)), null);
+                Assert.AreEqual(initHp - Player.strength, enemies[i].CurrentHP, "Crystal");
+            
+            MagicScroll scroll = new MagicScroll(new NotSoRandom(0.0));
+            scroll.Duration = 2;
+            p.UseItem(scroll, null);
 
             p.Combat(enemies[2]);
-
-            Assert.AreEqual(initHp - 4 * Player.strength, enemies[0].CurrentHP);
+            Assert.AreEqual(initHp - 4 * Player.strength, enemies[0].CurrentHP, "Scroll and Crystal");
             for (int i = 1; i < 3; i++)
-                Assert.AreEqual(initHp - 3 * Player.strength, enemies[i].CurrentHP);
+                Assert.AreEqual(initHp - 3 * Player.strength, enemies[i].CurrentHP, "Scroll and Crystal");
+
+            p.UpdateItems();
+            p.Combat(enemies[3]);
+            Assert.AreEqual(initHp - 6 * Player.strength, enemies[0].CurrentHP, "Scroll and Crystal last time");
+            for (int i = 1; i < 3; i++)
+                Assert.AreEqual(initHp - 5 * Player.strength, enemies[i].CurrentHP, "Scroll and Crystal last time");
+
+            p.UpdateItems();
+            p.Combat(enemies[0]);
+            Assert.AreEqual(initHp - 8 * Player.strength, enemies[0].CurrentHP, "Scroll and no more Crystal");
+            for (int i = 1; i < 3; i++)
+                Assert.AreEqual(initHp - 5 * Player.strength, enemies[i].CurrentHP, "Scroll and no more Crystal");
+            
+            MagicScroll scroll2 = new MagicScroll(new NotSoRandom(0.0));
+            scroll2.Duration = 0;
+            p.UseItem(scroll2, null);
+
+            p.Combat(enemies[1]);
+            Assert.AreEqual(initHp - 8 * Player.strength, enemies[0].CurrentHP, "Back to Normal");
+            Assert.AreEqual(initHp - 9 * Player.strength, enemies[1].CurrentHP, "Back to Normal");
+            for (int i = 2; i < 3; i++)
+                Assert.AreEqual(initHp - 5 * Player.strength, enemies[i].CurrentHP, "Back to Normal");
+
+            p.UpdateItems();
+            p.Combat(enemies[0]);
+            Assert.AreEqual(initHp - 9 * Player.strength, enemies[0].CurrentHP, "Back to Normal");
+            Assert.AreEqual(initHp - 9 * Player.strength, enemies[1].CurrentHP, "Back to Normal");
+            for (int i = 2; i < 3; i++)
+                Assert.AreEqual(initHp - 5 * Player.strength, enemies[i].CurrentHP, "Back to Normal");
         }
 
     }

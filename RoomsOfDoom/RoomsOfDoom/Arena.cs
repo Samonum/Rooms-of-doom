@@ -95,13 +95,17 @@ namespace RoomsOfDoom
         {
             switch (input)
             {
-                case 'w': player.Move(Direction.Up, enemies);
+                case 'w': 
+                    player.Move(Direction.Up, enemies);
                     break;
-                case 'a': player.Move(Direction.Left, enemies);
+                case 'a': 
+                    player.Move(Direction.Left, enemies);
                     break;
-                case 's': player.Move(Direction.Down, enemies);
+                case 's': 
+                    player.Move(Direction.Down, enemies);
                     break;
-                case 'd': player.Move(Direction.Right, enemies);
+                case 'd': 
+                    player.Move(Direction.Right, enemies);
                     break;
                 case '1': 
                     player.UseItem(new Potion(), null);

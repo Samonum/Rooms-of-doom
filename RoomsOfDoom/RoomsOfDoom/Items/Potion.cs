@@ -8,7 +8,7 @@ namespace RoomsOfDoom.Items
 {
     public class Potion : IItem
     {
-        int healPower = 10;
+        public const int healPower = 10;
         public Potion()
         {
 
