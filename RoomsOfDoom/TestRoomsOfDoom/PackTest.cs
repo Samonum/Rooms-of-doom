@@ -21,7 +21,7 @@ namespace TestRoomsOfDoom
                 //Arrange
                 int size = r.Next(-1000000,1000000);
                 Pack P = new Pack(size);
-                Enemy e = new Enemy("Giant Goblin", 30);
+                Enemy e = new Enemy("Giant Goblin",'G', 30);
 
                 if (size <= 0)
                     size = 1;
