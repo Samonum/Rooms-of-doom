@@ -12,7 +12,6 @@ namespace RoomsOfDoom
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
-            Stopwatch stop = new Stopwatch();
             Random rand = new Random();
             GameManager manager = new GameManager();
             MonsterCreator M = new MonsterCreator(rand, 10);
@@ -24,14 +23,7 @@ namespace RoomsOfDoom
             Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Top, rand);
             while (true)
             {
-                stop.Restart();
-                a.UpdateMap();
-                a.Draw();
-                manager.IncreaseScore(rand.Next(100000));
-                manager.DrawHud();
-                //Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
-                manager.HandleInput(a);
-                Console.Clear();
+                manager.Update();
             }
         }
     }

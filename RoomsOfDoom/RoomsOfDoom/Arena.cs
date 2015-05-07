@@ -90,12 +90,40 @@ namespace RoomsOfDoom
             }
         }
 
-        public void UpdateMap()
+        public void HandleCombatRound(char input)
+        {
+            switch (input)
+            {
+                case 'w': player.Move(Direction.Up, enemies);
+                    break;
+                case 'a': player.Move(Direction.Left, enemies);
+                    break;
+                case 's': player.Move(Direction.Down, enemies);
+                    break;
+                case 'd': player.Move(Direction.Right, enemies);
+                    break;
+                case '1'://usepotion()
+                    break;
+                case '2'://useScroll
+                    break;
+                case '3'://useCrystal
+                    break;
+            }
+
+            foreach (Enemy e in enemies)
+            {
+                e.Move(player);
+            }
+        }
+
+        public char[][] GetUpdatedMap()
         {
             CreateBackground();
             foreach (Enemy e in enemies)
-                map[e.Location.Y][e.Location.X] = e.Glyph;
+                if(e.Alive)
+                    map[e.Location.Y][e.Location.X] = e.Glyph;
             map[player.Location.Y][player.Location.X] = player.Glyph;
+            return map;
         }
 
         private void CreateBackground()
@@ -134,12 +162,6 @@ namespace RoomsOfDoom
                     else
                         map[map.Length - 1][j] = '▒';
             }
-        }
-
-        public void Draw()
-        {
-            for (int i = 0; i < map.Length; i++)
-                Console.WriteLine(map[i]);
         }
     }
 }

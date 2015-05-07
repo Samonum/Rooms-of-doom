@@ -47,7 +47,10 @@ namespace RoomsOfDoom
             {
                 currentHP = value;
                 if (currentHP <= 0)
+                {
+                    myPack.Enemies.Remove(this);
                     alive = false;
+                }
                 if (currentHP > MaxHP)
                     currentHP = MaxHP;
             }
@@ -76,5 +79,42 @@ namespace RoomsOfDoom
         set;
         }
 
+        public virtual bool Move(Player p)
+        {
+            int x = p.Location.X - Location.X;
+            int y = p.Location.Y - Location.Y;
+            Point loc = Math.Abs(x) > Math.Abs(y) ? 
+                new Point(Location.X + Math.Sign(x), Location.Y) : 
+                new Point(Location.X, Location.Y + Math.Sign(y));
+
+            foreach(Enemy teammate in myPack)
+            {
+                if(teammate.Location == loc)
+                {
+                    loc = Math.Abs(x) <= Math.Abs(y) ?
+                        new Point(Location.X + Math.Sign(x), Location.Y) :
+                        new Point(Location.X, Location.Y + Math.Sign(y));
+                    foreach (Enemy teamy in myPack)
+                    {
+                        if (teamy.Location == loc)
+                            return false;
+                    }
+                    break;
+                }
+            }
+
+            if (loc == p.Location)
+            {
+                KillTheHeretic(p);
+                return true;
+            }
+            Location = loc;
+            return true;
+        }
+
+        public void KillTheHeretic(Player p)
+        {
+            p.Hit(1);
+        }
     }
 }
