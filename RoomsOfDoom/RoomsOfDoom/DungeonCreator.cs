@@ -71,36 +71,5 @@ namespace RoomsOfDoom
             Dungeon dungeon = new Dungeon(difficulty, nodes);
             return dungeon;
         }
-
-        private Node CreateNode(bool isBridge, int id)
-        {
-            Node n;
-            if (isBridge)
-                n = new Bridge(id);
-            else
-                n = new Node(id);
-
-            int neighbourAmount = random.Next(maxNeighbours);
-            for (int j = 0; j < neighbourAmount; j++)
-            {
-                if (availibleNodes.Count == 0)
-                    continue;
-                int neighbourIndex = random.Next(availibleNodes.Count);
-                Node newNeighbour = availibleNodes[neighbourIndex];
-
-                if (!n.AdjacencyList.Contains(newNeighbour))
-                {
-                    n.AdjacencyList.Add(newNeighbour);
-                    newNeighbour.AdjacencyList.Add(n);
-                    if (newNeighbour.AdjacencyList.Count >= maxNeighbours)
-                        availibleNodes.Remove(newNeighbour);
-                }
-            }
-            if (isBridge)
-                availibleNodes.Clear();
-            availibleNodes.Add(n);
-            return n;
-        }
-
     }
 }
