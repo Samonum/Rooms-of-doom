@@ -36,9 +36,9 @@ namespace RoomsOfDoom
         {
             if (difficulty <= 0)//diff cannot be negative
                 difficulty = 1;
-            else if(difficulty >= 1000000)//difficulty cannot be extremely large(might exceed maxint when multiplied)
-                difficulty = 1000000;
-            Enemy e = new Enemy(GenerateName(), r.Next(5*difficulty, 10 * difficulty));
+            else if(difficulty >= 10000)//difficulty cannot be extremely large(might exceed maxint when multiplied)
+                difficulty = 10000;
+            Enemy e = new Enemy(GenerateName(), r.Next(5*difficulty, 20 * difficulty));
             
             return e;
             //unit testing revealed bug with inputting negative difficulties
