@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    class GameManager
+    public class GameManager
     {
-        Dungeon dungeon;
-        Random random;
-        Player player;
+        private Dungeon dungeon;
+        private Random random;
+        private Player player;
+        private int score = 0;
+        //Healing Potions, Time Crystals, Magic Scrolls
+        private byte[] inventory = new byte[3] { 0, 0, 0 };
 
         public GameManager(int seed = -1)
         {
@@ -27,16 +30,67 @@ namespace RoomsOfDoom
 
         }
 
+        public void IncreaseScore(int i)
+        {
+            score += i;
+        }
+
+        public void AddPotion()
+        {
+            inventory[0]++;
+        }
+
+        public void AddCrystal()
+        {
+            inventory[1]++;
+        }
+
+        public void AddScroll()
+        {
+            inventory[2]++;
+        }
+
+        public int GetScore
+        {
+            get { return score; }
+        }
+
+        public Player GetPlayer
+        {
+            get { return player; }
+        }
+
+        public int GetPotCount
+        {
+            get { return inventory[0]; }
+        }
+
+        public int GetCrystalCount
+        {
+            get { return inventory[1]; }
+        }
+
+        public int GetScrollCount
+        {
+            get { return inventory[2]; }
+        }
+
+        public string FormatHud()
+        {
+            return String.Format(
+@" ________________________________________________ 
+/                                                \
+| HP: {0}        POINTS: {1}         |
+| POT: {2}        TC: {3}        MS: {4}         |
+\________________________________________________/ ",
+
+new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(14), 
+    inventory[0].ToString().PadLeft(3), inventory[1].ToString().PadLeft(3), inventory[2].ToString().PadLeft(3) });
+        }
+
         public void DrawHud()
         {
-            Console.WriteLine(String.Format(
-@" ______________________________________
-/                                      \\
-| HP: {0}      POINTS: {1}   |
-| 
-|"),
- 
-new String[] {player.CurrentHP.ToString().PadLeft(4), "1".PadLeft(12)});
+            Console.WriteLine(FormatHud());
         }
     }
 }

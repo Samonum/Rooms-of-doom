@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bridge.cs" />
+    <Compile Include="Arena.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="DungeonCreator.cs" />
     <Compile Include="Enemies and packs\Enemy.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Items\MagicScroll.cs" />
     <Compile Include="Items\Potion.cs" />
     <Compile Include="Items\TimeCrystal.cs" />
+    <Compile Include="ITile.cs" />
     <Compile Include="MonsterCreator.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Player.cs" />

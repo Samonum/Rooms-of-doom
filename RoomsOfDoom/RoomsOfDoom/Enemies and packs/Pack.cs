@@ -14,15 +14,16 @@ namespace RoomsOfDoom
 
         public Pack(int packSize)
         {
-            if (this.packSize <= 0)
-                packSize = 1;
-            this.packSize = packSize;
-            enemies = new List<Enemy>(packSize);
+            if (packSize <= 0)
+                this.packSize = 1;
+            else
+                this.packSize = packSize;
+            enemies = new List<Enemy>(this.packSize);
         }
 
         public void Add(Enemy enemy)
         {
-            if (enemies.Capacity == enemies.Count)
+            if (this.packSize == enemies.Count)
                 return;
             this.enemies.Add(enemy);
             enemy.myPack = this;
@@ -31,6 +32,11 @@ namespace RoomsOfDoom
         public List<Enemy> Enemies
         {
             get{return this.enemies;}
+        }
+
+        Enemy this[int index]
+        {
+            get { return enemies[index]; }
         }
 
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
+<<<<<<< HEAD
     public class Node
     {
         protected List<Node> adjacencyList;
@@ -33,6 +34,19 @@ namespace RoomsOfDoom
             s += ")";
 
             return s;
+=======
+
+    class Node
+    {
+        List<Pack> pack;
+
+        Node[] Neighbours;
+        bool bridge;
+
+        Node(Node[] Neighbours, bool bridge)
+        {
+
+>>>>>>> 6a154a6e5c2589262f635ccaf26587fff736bc4e
         }
     }
 }
