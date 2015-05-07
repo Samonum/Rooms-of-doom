@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    public class Pack
+    public class Pack : IEnumerable<Enemy>
     {
         int packSize;
         List<Enemy> enemies;
@@ -39,5 +39,14 @@ namespace RoomsOfDoom
             get { return enemies[index]; }
         }
 
+        public IEnumerator<Enemy> GetEnumerator()
+        {
+            return enemies.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return enemies.GetEnumerator();
+        }
     }
 }

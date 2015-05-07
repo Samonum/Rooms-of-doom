@@ -15,7 +15,10 @@ namespace RoomsOfDoom
             Stopwatch stop = new Stopwatch();
             Random rand = new Random();
             GameManager manager = new GameManager();
-            Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, new Pack(1), manager.GetPlayer, Exit.Bot);
+            MonsterCreator M = new MonsterCreator(rand, 10);
+            Dictionary<int, int> dict;
+            Pack P = M.GeneratePack(1);
+            Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, P, manager.GetPlayer, Exit.Bot);
             DungeonCreator D = new DungeonCreator(rand);
             Dungeon dungeon = D.GenerateDungeon(97, 4);
             while (true)
@@ -32,8 +35,7 @@ namespace RoomsOfDoom
 
                 
                 //code to show pack creation works
-                MonsterCreator M = new MonsterCreator(rand, 10);
-                Pack P = M.GeneratePack(1);
+                P = M.GeneratePack(1);
                 foreach (Enemy e in P.Enemies)
                 {
                     Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");

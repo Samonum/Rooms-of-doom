@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +23,8 @@ namespace RoomsOfDoom
         int topExit, leftExit, rightExit, botExit;
         int width = 37, height = 25;
         Exit exits;
+        Pack enemies;
+
         public Arena(Exit openExits, Pack enemies, Player player, Exit entrance)
         {
             exits = openExits;
@@ -31,10 +33,21 @@ namespace RoomsOfDoom
             leftExit = 10 + r.Next(height - 20);
             rightExit = 10 + r.Next(height - 20);
             botExit = 10 + r.Next(width - 20);
+            this.enemies = enemies;
+            foreach (Enemy e in enemies)
+                e.Location = new Point(r.Next(width - 2) + 1, r.Next(height - 2) + 1);
         }
 
         public void UpdateMap()
         {
+            CreateBackground();
+            foreach (Enemy e in enemies)
+                map[e.Location.Y][e.Location.X] = e.Glyph;
+        }
+
+        public void CreateBackground()
+        {
+
             map = new char[height][];
             map[0] = new char[width];
             for (int j = 0; j < map[0].Length; j++)
