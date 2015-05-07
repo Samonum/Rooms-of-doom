@@ -8,6 +8,7 @@ namespace RoomsOfDoom
 {
     public class Player : IHittable, ITile
     {
+        private int strength;
 
         public Player(int curHp = -1)
         {
@@ -103,9 +104,11 @@ namespace RoomsOfDoom
             return true;
         }
 
+
         public void Combat(Enemy enemy)
         {
 
+            enemy.Hit(10);
         }
 
     }

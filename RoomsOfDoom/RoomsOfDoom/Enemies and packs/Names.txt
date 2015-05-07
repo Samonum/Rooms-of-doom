@@ -1,4 +1,4 @@
-Goblin|G
+﻿Goblin|G
 Wolf|w
 Orc|o
 Dwarf|d
@@ -40,3 +40,7 @@ Construct|~
 Gnome|g
 Kobold|K
 Beholder|☺
+Koblin|k
+Chrit|©
+Sam|¶
+Maguell|§

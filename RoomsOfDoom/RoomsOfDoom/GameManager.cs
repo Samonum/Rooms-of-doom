@@ -10,7 +10,10 @@ namespace RoomsOfDoom
     public class GameManager
     {
         private Dungeon dungeon;
+        private Arena arena;
         private Random random;
+        private Pack[] allEnemies;
+        private MonsterCreator creator;
         private Player player;
         private int score = 0;
         //Healing Potions, Time Crystals, Magic Scrolls
@@ -18,35 +21,29 @@ namespace RoomsOfDoom
 
         public GameManager(int seed = -1)
         {
+
             if (seed == -1)
                 random = new Random();
             else
                 random = new Random(seed);
-
+            
+            creator = new MonsterCreator(random, 6);
+            allEnemies = new Pack[1] { creator.GeneratePack(1)};
             player = new Player();
+            arena = new Arena(Exit.Left | Exit.Bot, allEnemies[0], player, Exit.Left, random);
         }
 
-        public void HandleInput(Arena a)
+        public void Update()
         {
-            char k = Console.ReadKey().KeyChar;
-            switch(k)
-            {
-                case 'w': player.Move(Direction.Up, a.enemies);
-                    break;
-                case 'a': player.Move(Direction.Left, a.enemies);
-                    break;
-                case 's': player.Move(Direction.Down, a.enemies);
-                    break;
-                case 'd': player.Move(Direction.Right, a.enemies);
-                    break;
-                case '1'://usepotion()
-                    break;
-                case '2'://useScroll
-                    break;
-                case '3'://useCrystal
-                    break;
-            }
+            Draw();
+            HandleInput();
 
+        }
+
+        public void HandleInput()
+        {
+            char input = Console.ReadKey().KeyChar;
+            arena.HandleCombatRound(input);
         }
 
         public void CreateDungeon(int size, int packs, int difficulty, int maxCapacity)
@@ -54,9 +51,17 @@ namespace RoomsOfDoom
 
         }
 
+
         public void IncreaseScore(int i)
         {
+            if (i < 0)
+                throw new Exception("Parameter may not be < 0");
+
             score += i;
+
+            //Score wrapped to int.MinValue
+            if (score < i)
+                score = int.MaxValue;
         }
 
         public void AddPotion()
@@ -99,6 +104,24 @@ namespace RoomsOfDoom
             get { return inventory[2]; }
         }
 
+        public string[] CreateEnemyOverview()
+        {
+            char[][] map = arena.GetUpdatedMap();
+            string[] drawMap = new string[map.Length];
+            int i;
+            drawMap[0] = new string(map[0]);
+            for (i = 0; i < arena.enemies.Size; i++ )
+            {
+                Enemy e = arena.enemies[i];
+                drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
+                drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
+            }
+            for (i = i * 2 + 1; i < map.Length; i++)
+                drawMap[i] = new string(map[i]);
+            return drawMap;
+        }
+
+
         public string FormatHud()
         {
             return String.Format(
@@ -112,8 +135,12 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
     inventory[0].ToString().PadLeft(3), inventory[1].ToString().PadLeft(3), inventory[2].ToString().PadLeft(3) });
         }
 
-        public void DrawHud()
+        public void Draw()
         {
+            Console.Clear();
+            string[] drawmap = CreateEnemyOverview();
+            foreach (string s in drawmap)
+                Console.WriteLine(s);
             Console.WriteLine(FormatHud());
         }
 
