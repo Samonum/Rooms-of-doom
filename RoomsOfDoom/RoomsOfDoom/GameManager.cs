@@ -121,7 +121,13 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
         {
             using (StreamWriter writer = new StreamWriter("save.txt"))
             {
-                writer.Write(GetPlayer.CurrentHP + ";" + GetScore + ";" + GetPotCount + ";" + GetCrystalCount + ";" + GetScrollCount);
+                writer.Write(
+                    GetPlayer.CurrentHP + ";" +
+                    GetScore + ";" +
+                    GetPotCount + ";" +
+                    GetCrystalCount + ";" +
+                    GetScrollCount
+                );
             }
         }
 
