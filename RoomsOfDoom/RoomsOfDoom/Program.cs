@@ -34,7 +34,7 @@ namespace RoomsOfDoom
                 foreach (Enemy e in P.Enemies)
                 {
                     Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");
-                Thread.Sleep(1000 - (int)stop.ElapsedMilliseconds);
+                Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
                 Console.Clear();
                 }
             }
