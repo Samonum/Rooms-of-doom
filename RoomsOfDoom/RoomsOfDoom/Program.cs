@@ -9,7 +9,6 @@ namespace RoomsOfDoom
 {
     class Program
     {
-
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
@@ -28,6 +27,7 @@ namespace RoomsOfDoom
                 manager.DrawHud();
                 StringBuilder s = new StringBuilder(60 * 25);
 
+                
                 //code to show pack creation works
                 MonsterCreator M = new MonsterCreator(rand, 10);
                 Pack P = M.GeneratePack(1);
@@ -36,7 +36,10 @@ namespace RoomsOfDoom
                     Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");
                 }
                 Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
-                Console.Clear();
+
+                DungeonCreator D = new DungeonCreator(rand);
+                Dungeon dungeon = D.GenerateDungeon(20, 2);
+                Console.WriteLine(dungeon.ToString());
             }
         }
     }
