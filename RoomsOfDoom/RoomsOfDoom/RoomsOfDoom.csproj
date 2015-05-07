@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bridge.cs" />
     <Compile Include="Arena.cs" />
     <Compile Include="Dungeon.cs" />
+    <Compile Include="DungeonCreator.cs" />
     <Compile Include="Enemies and packs\Enemy.cs" />
     <Compile Include="Enemies and packs\Pack.cs" />
     <Compile Include="GameManager.cs" />
