@@ -15,14 +15,14 @@ namespace RoomsOfDoom
         protected bool alive;
         protected char glyph;
 
-        public Enemy(string name,int hp)
+        public Enemy(string name,char glyph, int hp)
         {
             this.name = name;
             myPack = null;
             maxHP = hp;
             currentHP = hp;
             alive = true;
-            glyph = name[0];
+            this.glyph = glyph;
         }
 
         public int Hit(int damage)
