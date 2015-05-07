@@ -30,7 +30,7 @@ namespace RoomsOfDoom
                 manager.IncreaseScore(rand.Next(100000));
                 manager.DrawHud();
                 //Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
-                manager.HandleInput();
+                manager.HandleInput(a);
                 Console.Clear();
             }
         }

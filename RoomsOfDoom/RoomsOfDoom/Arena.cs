@@ -15,6 +15,7 @@ namespace RoomsOfDoom
         Right = 8
     }
 
+
     public class Arena
     {
         Random random;
@@ -24,7 +25,7 @@ namespace RoomsOfDoom
         private Exit exits;
         private int topExit, leftExit, rightExit, botExit;
 
-        private Pack enemies;
+        public Pack enemies;
         private Player player;
 
         public Arena(Exit openExits, Pack enemies, Player player, Exit entrance, Random random)
