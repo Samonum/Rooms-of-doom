@@ -16,9 +16,9 @@ namespace RoomsOfDoom
             Stopwatch stop = new Stopwatch();
             Random rand = new Random();
             GameManager manager = new GameManager();
+            Arena a = new Arena(Exit.Bot | Exit.Right | Exit.Left | Exit.Top, new Pack(1), manager.GetPlayer, Exit.Bot);
             while (true)
             {
-                Arena a = new Arena(Exit.Bot, new Pack(1), manager.GetPlayer, Exit.Bot);
                 a.UpdateMap();
                 a.Draw();
 
@@ -34,9 +34,9 @@ namespace RoomsOfDoom
                 foreach (Enemy e in P.Enemies)
                 {
                     Console.WriteLine("Generated: " + e.name + " with " + e.CurrentHP + " HP!");
+                }
                 Thread.Sleep(Math.Max(0, 1000 - (int)stop.ElapsedMilliseconds));
                 Console.Clear();
-                }
             }
         }
     }
