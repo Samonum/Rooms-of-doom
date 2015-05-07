@@ -94,13 +94,27 @@ namespace RoomsOfDoom
         {
             switch (input)
             {
-                case 'w': player.Move(Direction.Up, enemies);
+                case 'w':
+                    if (!player.Move(Direction.Up, enemies))
+                        if ((exits & Exit.Top) == Exit.Top)
+                            if (enemies.Size == 0)
+                                ;
+                    ;
                     break;
-                case 'a': player.Move(Direction.Left, enemies);
+                case 'a': 
+                    if (!player.Move(Direction.Left, enemies))
+                        if ((exits & Exit.Left) == Exit.Left)
+                            if (enemies.Size == 0);
                     break;
-                case 's': player.Move(Direction.Down, enemies);
+                case 's': 
+                    if (!player.Move(Direction.Down, enemies))
+                        if ((exits & Exit.Bot) == Exit.Bot)
+                            if (enemies.Size == 0) ;
                     break;
-                case 'd': player.Move(Direction.Right, enemies);
+                case 'd': 
+                    if (!player.Move(Direction.Right, enemies))
+                        if ((exits & Exit.Right) == Exit.Right)
+                            if (enemies.Size == 0) ;
                     break;
                 case '1'://usepotion()
                     break;

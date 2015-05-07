@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    public enum Direction
+    public enum Direction : byte
     {
-        Up,
-        Down,
-        Left,
-        Right
+        Up = 1,
+        Down = 2,
+        Left = 4,
+        Right = 8
     }
 }
