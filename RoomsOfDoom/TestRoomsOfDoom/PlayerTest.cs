@@ -154,6 +154,7 @@ namespace TestRoomsOfDoom
             for (int i = 0; i < 4; i++)
                 enemies.Add(new Enemy("Test", 't', initHp));
             p.Combat(enemies[0]);
+            p.inventory = new byte[] { 2, 2, 2 };
 
             Assert.AreEqual(initHp - Player.strength, enemies[0].CurrentHP, "base");
             for (int i = 1; i < 3; i++)
@@ -205,6 +206,26 @@ namespace TestRoomsOfDoom
             Assert.AreEqual(initHp - 9 * Player.strength, enemies[1].CurrentHP, "Back to Normal");
             for (int i = 2; i < 3; i++)
                 Assert.AreEqual(initHp - 5 * Player.strength, enemies[i].CurrentHP, "Back to Normal");
+        }
+
+        [TestMethod]
+        public void OutOfGoodStuffTest()
+        {
+            Enemy e = new Enemy("", 'l', 100);
+            new Pack(0).Add(e);
+
+            p.inventory = new byte[] { 0, 0, 0 };
+
+            MagicScroll s = new MagicScroll(r);
+            s.Duration = 0;
+            Assert.IsFalse(p.UseItem(s, null), "Not Using");
+
+            p.Combat(e);
+            Assert.AreEqual(e.CurrentHP, e.MaxHP - Player.strength, "No multiplier when not used");
+
+            p.UpdateItems();
+            p.Combat(e);
+            Assert.AreEqual(e.CurrentHP, e.MaxHP - 2 * Player.strength, "No neg multiplier when not used");
         }
 
     }

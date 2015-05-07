@@ -10,7 +10,7 @@ namespace RoomsOfDoom
     {
         public const int strength = 10;
         //Healing Potions, Time Crystals, Magic Scrolls
-        private byte[] inventory = new byte[3] { 2, 2, 2 };
+        public byte[] inventory = new byte[3] { 2, 2, 2 };
         List<IItem> activeItems;
 
         public Player()
@@ -182,6 +182,5 @@ namespace RoomsOfDoom
         {
             get { return inventory[2]; }
         }
-
     }
 }

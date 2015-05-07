@@ -47,9 +47,10 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void CompleteHudTest()
         {
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i <= 11; i++)
             {
                 PlayerTest playerTest = new PlayerTest();
+                playerTest.Init();
                 testSubject = new GameManager();
                 testSubject.GetPlayer.Hit(9 * i);
                 playerTest.ScrollTest();
