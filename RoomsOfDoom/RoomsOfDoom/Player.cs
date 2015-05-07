@@ -61,5 +61,27 @@ namespace RoomsOfDoom
             get;
             set;
         }
+
+        public void Move(Direction direction, Pack enemies)
+        {
+            Point loc;
+            switch (direction)
+            {
+                case Direction.Up:
+                    loc = new Point(Location.X, Location.Y - 1);
+                    break;
+                case Direction.Down:
+                    loc = new Point(Location.X, Location.Y + 1);
+                    break;
+                case Direction.Left:
+                    loc = new Point(Location.X - 1, Location.Y);
+                    break;
+                case Direction.Right:
+                    loc = new Point(Location.X + 1, Location.Y - 1);
+                    break;
+            }
+
+        }
+
     }
 }
