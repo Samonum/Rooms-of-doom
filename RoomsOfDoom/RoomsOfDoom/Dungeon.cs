@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    class Dungeon
+    public class Dungeon
     {
         private int difficulty;
-        public Dungeon(int difficulty)
+        public List<Node> nodes;
+
+        public Dungeon(int difficulty, List<Node> nodes)
         {
             this.difficulty = difficulty;
+            this.nodes = nodes;
         }
 
         public List<Node> ShortestPath(int from, int to)
@@ -24,6 +27,16 @@ namespace RoomsOfDoom
         public void Destroy(int node)
         {
 
+        }
+
+        public String ToString()
+        {
+            String s = "";
+
+            foreach (Node n in nodes)
+                s += n.ToString() + "\n";
+
+            return s;
         }
     }
 }
