@@ -45,57 +45,17 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
-        public void PotionTest()
-        {
-            int pots = 0;
-            int count = 100 + r.Next(50);
-            for (int i = 0; i < count; i++)
-            {
-                testSubject.AddPotion();
-                pots++;
-            }
-            Assert.AreEqual(pots, testSubject.GetPotCount, "Pots don't add up well.");
-            HudTest();
-        }
-
-        [TestMethod]
-        public void CrystalTest()
-        {
-            int crystals = 0;
-            int count = 100 + r.Next(50);
-            for (int i = 0; i < count; i++)
-            {
-                testSubject.AddCrystal();
-                crystals++;
-            }
-            Assert.AreEqual(crystals, testSubject.GetCrystalCount, "Crystals don't add up well.");
-            HudTest();
-        }
-
-        [TestMethod]
-        public void ScrollTest()
-        {
-            int scrolls = 0;
-            int count = 100 + r.Next(50);
-            for (int i = 0; i < count; i++)
-            {
-                testSubject.AddScroll();
-                scrolls++;
-            }
-            Assert.AreEqual(scrolls, testSubject.GetScrollCount, "Scrolls don't add up well.");
-            HudTest();
-        }
-
-        [TestMethod]
         public void CompleteHudTest()
         {
             for (int i = 0; i < 11; i++)
             {
+                PlayerTest playerTest = new PlayerTest();
                 testSubject = new GameManager();
                 testSubject.GetPlayer.Hit(9 * i);
-                ScrollTest();
-                PotionTest();
-                CrystalTest();
+                playerTest.ScrollTest();
+                playerTest.PotionTest();
+                playerTest.CrystalTest();
+                HudTest();
             }
         }
     }

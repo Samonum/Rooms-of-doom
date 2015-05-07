@@ -7,22 +7,29 @@ namespace TestRoomsOfDoom
     [TestClass]
     public class EnemyTest : HittableTest
     {
-
+        Enemy e;
+        Random r;
         public EnemyTest() : base()
         {
+        }
 
+        [TestInitialize]
+        public void Init()
+        {
+            r = new Random();
+            MonsterCreator M = new MonsterCreator(r, 1);
+            e = M.GeneratePack(2)[0];
         }
 
         public override IHittable getHittable()
         {
-            return new Enemy("test",'T', 100);
+            return e;
         }
 
         [TestMethod]
         public void EnemySetterTest()
         {
             //Arrange
-            Random r = new Random();
             MonsterCreator M = new MonsterCreator(r,20);
             Enemy e = M.CreateMonster(1);
             //act

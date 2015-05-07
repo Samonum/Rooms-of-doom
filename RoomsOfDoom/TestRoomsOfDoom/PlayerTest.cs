@@ -12,23 +12,29 @@ namespace TestRoomsOfDoom
     [TestClass]
     public class PlayerTest : HittableTest
     {
+        Player p;
+        Random r;
         public PlayerTest() : base()
         {
         }
 
+        [TestInitialize]
+        public void Init()
+        {
+            p = new Player();
+            r = new Random();
+        }
+
         public override IHittable getHittable()
         {
-            return new Player();
+            return p;
         }
 
         [TestMethod]
         public void TestMovement()
         {
             //arrange
-            Player p = new Player();
-            Random r = new Random();
-            MonsterCreator M = new MonsterCreator(r, 10);
-            Pack testPack = M.GeneratePack(1);
+            Pack testPack = new Pack(0);
             p.Location = new Point(5, 5);
             //act and assert
             p.Move(Direction.Up, testPack);
@@ -45,10 +51,7 @@ namespace TestRoomsOfDoom
         public void TestMovementObstructed()
         {
             //arrange
-            Player p = new Player();
-            Random r = new Random();
-            MonsterCreator M = new MonsterCreator(r, 10);
-            Pack testPack = M.GeneratePack(1);
+            Pack testPack = new Pack(0);
             p.Location = new Point(5,1);
             //act and assert
             p.Move(Direction.Up, testPack);
@@ -68,8 +71,6 @@ namespace TestRoomsOfDoom
         public void TestMovementObstructedByEnemy()
         {
             //arrange
-            Player p = new Player();
-            Random r = new Random();
             MonsterCreator M = new MonsterCreator(r, 10);
             Pack testPack = M.GeneratePack(1);
             Arena a = new Arena(Exit.Right, testPack, p, Exit.Right, r);
@@ -94,6 +95,45 @@ namespace TestRoomsOfDoom
 
             Assert.IsTrue(p.MaxHP >= p.CurrentHP);
 
+        }
+
+        [TestMethod]
+        public void PotionTest()
+        {
+            int pots = p.GetPotCount;
+            int count = 100 + r.Next(50);
+            for (int i = 0; i < count; i++)
+            {
+                p.AddPotion();
+                pots++;
+            }
+            Assert.AreEqual(pots, p.GetPotCount, "Pots don't add up well.");
+        }
+
+        [TestMethod]
+        public void CrystalTest()
+        {
+            int crystals = p.GetCrystalCount;
+            int count = 100 + r.Next(50);
+            for (int i = 0; i < count; i++)
+            {
+                p.AddCrystal();
+                crystals++;
+            }
+            Assert.AreEqual(crystals, p.GetCrystalCount, "Crystals don't add up well.");
+        }
+
+        [TestMethod]
+        public void ScrollTest()
+        {
+            int scrolls = p.GetScrollCount;
+            int count = 100 + r.Next(50);
+            for (int i = 0; i < count; i++)
+            {
+                p.AddScroll();
+                scrolls++;
+            }
+            Assert.AreEqual(scrolls, p.GetScrollCount, "Scrolls don't add up well.");
         }
     }
 }
