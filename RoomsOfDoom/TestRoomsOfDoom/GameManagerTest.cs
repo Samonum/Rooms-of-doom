@@ -33,23 +33,24 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void scoreTest()
         {
+            Player player = new Player();
             int score = 0;
             for(int i = 0; i < 10000; i++)
             {
                 int increase = r.Next(1000);
-                testSubject.IncreaseScore(increase);
+                player.IncreaseScore(increase);
                 score += increase;
             }
-            Assert.AreEqual(score, testSubject.GetScore, "Scores don't add up well.");
+            Assert.AreEqual(score, player.GetScore, "Scores don't add up well.");
             HudTest();
-            testSubject.IncreaseScore(int.MaxValue);
-            Assert.AreEqual(testSubject.GetScore, int.MaxValue);
-            testSubject.IncreaseScore(1000);
-            Assert.AreEqual(testSubject.GetScore, int.MaxValue);
+            player.IncreaseScore(int.MaxValue);
+            Assert.AreEqual(player.GetScore, int.MaxValue);
+            player.IncreaseScore(1000);
+            Assert.AreEqual(player.GetScore, int.MaxValue);
             HudTest();
             try
             {
-                testSubject.IncreaseScore(-1);
+                player.IncreaseScore(-1);
                 Assert.Fail("Didn't crash");
             }
             catch (ArgumentOutOfRangeException e)
