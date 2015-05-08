@@ -27,11 +27,8 @@ namespace RoomsOfDoom
 
             dungeonCreator = new DungeonCreator(random);
             CreateDungeon(difficulty, 10, 10);
-            MonsterCreator monsterCreator = new MonsterCreator(random, 6);
-
-            Node n = dungeon.nodes[0];
             player = new Player();
-            arena = new Arena(n, player, random);
+            arena = new Arena(dungeon.nodes[0], player, random);
             
         }
 
