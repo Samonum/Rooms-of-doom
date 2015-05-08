@@ -160,15 +160,5 @@ namespace RoomsOfDoom
         {
             get { return nodes.Count; }
         }
-
-        public String ToString()
-        {
-            String s = "";
-
-            foreach (Node n in nodes)
-                s += n.ToString() + "\n";
-
-            return s;
-        }
     }
 }
