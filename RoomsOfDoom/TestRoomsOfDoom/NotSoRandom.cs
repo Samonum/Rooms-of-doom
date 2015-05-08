@@ -8,15 +8,28 @@ namespace TestRoomsOfDoom
 {
     class NotSoRandom : Random
     {
-        int randomValue;
-        public NotSoRandom(int value)
+        int randomInt = -1;
+        double randomDouble = -1;
+        Random r;
+        public NotSoRandom(int rInt)
         {
-
+            r = new Random();
+            randomInt = rInt;
+        }
+        public NotSoRandom(double rDouble)
+        {
+            r = new Random();
+            randomDouble = rDouble;
         }
 
         public override int Next(int maxValue)
         {
-            return Math.Max(maxValue, randomValue);
+            return randomInt == -1 ? r.Next(maxValue) : Math.Min(maxValue, randomInt);
+        }
+
+        public override double NextDouble()
+        {
+            return randomDouble == -1 ? r.NextDouble() : randomDouble;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,7 +9,10 @@ namespace RoomsOfDoom
 {
     public class Player : IHittable, ITile
     {
-        private int strength;
+        public const int strength = 10;
+        //Healing Potions, Time Crystals, Magic Scrolls
+        public byte[] inventory = new byte[3] { 2, 2, 2 };
+        List<IItem> activeItems;
 
         public Player(int curHp = -1)
         {
@@ -20,6 +24,8 @@ namespace RoomsOfDoom
             else
                 currentHP = curHp;
             Alive = true;
+            Multiplier = 1;
+            activeItems = new List<IItem>();
         }
 
         public int Hit(int damage)
@@ -104,12 +110,90 @@ namespace RoomsOfDoom
             return true;
         }
 
+        public int Multiplier
+        {
+            get;
+            set;
+        }
+
+        public bool OP
+        {
+            get;
+            set;
+        }
 
         public void Combat(Enemy enemy)
         {
-
-            enemy.Hit(10);
+            if(OP)
+            {
+                Enemy[] enemies = (Enemy[])enemy.myPack.Enemies.ToArray().Clone();
+                foreach (Enemy e in enemies)
+                    e.Hit(strength * Multiplier);
+            }
+            else
+                enemy.Hit(strength * Multiplier);
         }
 
+        public void UpdateItems()
+        {
+            IItem[] itemList = (IItem[])activeItems.ToArray().Clone();
+            foreach (IItem i in itemList)
+            {
+                if (i.Duration == 0)
+                {
+                    activeItems.Remove(i);
+                    i.Finish(this);
+                }
+                i.Duration--;
+            }
+        }
+
+
+        public bool UseItem(IItem item, Dungeon dungeon)
+        {
+            if (inventory[item.Id] <= 0)
+                return false;
+            inventory[item.Id]--;
+            item.Use(this, dungeon);
+            activeItems.Add(item);
+            return true;
+        }
+
+        public void SetItems(byte potion, byte crystal, byte scroll)
+        {
+            inventory[0] = potion;
+            inventory[1] = crystal;
+            inventory[2] = scroll;
+        }
+
+        public void AddPotion()
+        {
+            inventory[0]++;
+        }
+
+        public void AddCrystal()
+        {
+            inventory[1]++;
+        }
+
+        public void AddScroll()
+        {
+            inventory[2]++;
+        }
+
+        public int GetPotCount
+        {
+            get { return inventory[0]; }
+        }
+
+        public int GetCrystalCount
+        {
+            get { return inventory[1]; }
+        }
+
+        public int GetScrollCount
+        {
+            get { return inventory[2]; }
+        }
     }
 }

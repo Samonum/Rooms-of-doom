@@ -42,60 +42,44 @@ namespace TestRoomsOfDoom
             }
             Assert.AreEqual(score, testSubject.GetScore, "Scores don't add up well.");
             HudTest();
-        }
-
-        [TestMethod]
-        public void PotionTest()
-        {
-            int pots = 0;
-            int count = 100 + r.Next(50);
-            for (int i = 0; i < count; i++)
-            {
-                testSubject.AddPotion();
-                pots++;
-            }
-            Assert.AreEqual(pots, testSubject.GetPotCount, "Pots don't add up well.");
+            testSubject.IncreaseScore(int.MaxValue);
+            Assert.AreEqual(testSubject.GetScore, int.MaxValue);
+            testSubject.IncreaseScore(1000);
+            Assert.AreEqual(testSubject.GetScore, int.MaxValue);
             HudTest();
-        }
-
-        [TestMethod]
-        public void CrystalTest()
-        {
-            int crystals = 0;
-            int count = 100 + r.Next(50);
-            for (int i = 0; i < count; i++)
+            try
             {
-                testSubject.AddCrystal();
-                crystals++;
+                testSubject.IncreaseScore(-1);
+                Assert.Fail("Didn't crash");
             }
-            Assert.AreEqual(crystals, testSubject.GetCrystalCount, "Crystals don't add up well.");
-            HudTest();
-        }
-
-        [TestMethod]
-        public void ScrollTest()
-        {
-            int scrolls = 0;
-            int count = 100 + r.Next(50);
-            for (int i = 0; i < count; i++)
+            catch(ArgumentOutOfRangeException e)
+            {}
+            catch(Exception e)
             {
-                testSubject.AddScroll();
-                scrolls++;
+                Assert.Fail("Threw wrong error");
             }
-            Assert.AreEqual(scrolls, testSubject.GetScrollCount, "Scrolls don't add up well.");
-            HudTest();
+        }
+        [TestMethod]
+        public void ScreenWidthTest()
+        {
+            string[] screen = testSubject.CreateEnemyOverview();
+            foreach(string s in screen)
+                Assert.IsTrue(s.Length <= Console.WindowWidth);
         }
 
         [TestMethod]
         public void CompleteHudTest()
         {
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i <= 11; i++)
             {
+                PlayerTest playerTest = new PlayerTest();
+                playerTest.Init();
                 testSubject = new GameManager();
                 testSubject.GetPlayer.Hit(9 * i);
-                ScrollTest();
-                PotionTest();
-                CrystalTest();
+                playerTest.ScrollTest();
+                playerTest.PotionTest();
+                playerTest.CrystalTest();
+                HudTest();
             }
         }
     }

@@ -16,12 +16,9 @@ namespace RoomsOfDoom
         private MonsterCreator creator;
         private Player player;
         private int score = 0;
-        //Healing Potions, Time Crystals, Magic Scrolls
-        private byte[] inventory = new byte[3] { 0, 0, 0 };
 
         public GameManager(int seed = -1)
         {
-
             if (seed == -1)
                 random = new Random();
             else
@@ -37,46 +34,13 @@ namespace RoomsOfDoom
         {
             Draw();
             HandleInput();
-
+            player.UpdateItems();
         }
 
         public void HandleInput()
         {
             char input = Console.ReadKey().KeyChar;
             arena.HandleCombatRound(input);
-        }
-
-        public void CreateDungeon(int size, int packs, int difficulty, int maxCapacity)
-        {
-
-        }
-
-
-        public void IncreaseScore(int i)
-        {
-            if (i < 0)
-                throw new Exception("Parameter may not be < 0");
-
-            score += i;
-
-            //Score wrapped to int.MinValue
-            if (score < i)
-                score = int.MaxValue;
-        }
-
-        public void AddPotion()
-        {
-            inventory[0]++;
-        }
-
-        public void AddCrystal()
-        {
-            inventory[1]++;
-        }
-
-        public void AddScroll()
-        {
-            inventory[2]++;
         }
 
         public int GetScore
@@ -89,19 +53,22 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public int GetPotCount
+        public void CreateDungeon(int size, int packs, int difficulty, int maxCapacity)
         {
-            get { return inventory[0]; }
+
         }
 
-        public int GetCrystalCount
-        {
-            get { return inventory[1]; }
-        }
 
-        public int GetScrollCount
+        public void IncreaseScore(int i)
         {
-            get { return inventory[2]; }
+            if (i < 0)
+                throw new ArgumentOutOfRangeException();
+
+            score += i;
+
+            //Score wrapped to int.MinValue
+            if (score < i)
+                score = int.MaxValue;
         }
 
         public string[] CreateEnemyOverview()
@@ -132,7 +99,7 @@ namespace RoomsOfDoom
 \________________________________________________/ ",
 
 new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(14), 
-    inventory[0].ToString().PadLeft(3), inventory[1].ToString().PadLeft(3), inventory[2].ToString().PadLeft(3) });
+    player.GetPotCount.ToString().PadLeft(3), player.GetCrystalCount.ToString().PadLeft(3), player.GetScrollCount.ToString().PadLeft(3) });
         }
 
         public void Draw()
@@ -146,14 +113,15 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
 
         public void Save()
         {
+            Player p = GetPlayer;
             using (StreamWriter writer = new StreamWriter("save.txt"))
             {
                 writer.Write(
-                    GetPlayer.CurrentHP + ";" +
+                    p.CurrentHP + ";" +
                     GetScore + ";" +
-                    GetPotCount + ";" +
-                    GetCrystalCount + ";" +
-                    GetScrollCount
+                    p.GetPotCount + ";" +
+                    p.GetCrystalCount + ";" +
+                    p.GetScrollCount
                 );
             }
         }
@@ -168,12 +136,11 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
                     string[] data = line.Split(';');
                     score = int.Parse(data[0]);
                     player = new Player(int.Parse(data[1]));
-                    inventory = new byte[3]
-                    {
+                    player.SetItems(
                         byte.Parse(data[2]),
                         byte.Parse(data[3]),
                         byte.Parse(data[4])
-                    };
+                    );
                 }
             }
         }

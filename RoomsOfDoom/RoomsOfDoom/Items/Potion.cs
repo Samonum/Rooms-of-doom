@@ -6,16 +6,31 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
-    class Potion : IItem
+    public class Potion : IItem
     {
+        public const int healPower = 10;
         public Potion()
         {
 
         }
 
-        public void Use()
+        public void Use(Player player, Dungeon dungeon)
         {
+            player.CurrentHP += healPower;
+        }
+        public void Finish(Player player)
+        {
+        }
 
+        public int Duration
+        {
+            get { return 0; }
+            set { }
+        }
+
+        public int Id
+        {
+            get { return 0; }
         }
     }
 }

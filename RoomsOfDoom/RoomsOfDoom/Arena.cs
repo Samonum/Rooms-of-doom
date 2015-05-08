@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
+using RoomsOfDoom.Items;
 
 namespace RoomsOfDoom
 {
@@ -114,13 +115,16 @@ namespace RoomsOfDoom
                 case 'd': 
                     if (!player.Move(Direction.Right, enemies))
                         if ((exits & Exit.Right) == Exit.Right)
-                            if (enemies.Size == 0) ;
+                            if (enemies.Size == 0);
                     break;
-                case '1'://usepotion()
+                case '1': 
+                    player.UseItem(new Potion(), null);
                     break;
-                case '2'://useScroll
+                case '2': 
+                    player.UseItem(new TimeCrystal(), null);
                     break;
-                case '3'://useCrystal
+                case '3': 
+                    player.UseItem(new MagicScroll(random), null);
                     break;
             }
 

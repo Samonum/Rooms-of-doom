@@ -10,12 +10,9 @@ namespace TestRoomsOfDoom
 {
     public abstract class HittableTest
     {
-        Random r = new Random();
-        protected IHittable testSubject;
 
         public HittableTest()
         {
-            testSubject = getHittable();
         }
 
         public abstract IHittable getHittable();
@@ -23,6 +20,8 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void Hitting()
         {
+            Random r = new Random();
+            IHittable testSubject = getHittable();
             int hp = testSubject.CurrentHP;
             while (hp > 1)
             {
@@ -39,6 +38,7 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void DeathAtZero()
         {
+            IHittable testSubject = getHittable();
             testSubject.Hit(testSubject.CurrentHP);
             Assert.AreEqual(testSubject.CurrentHP, 0, "HP: " + testSubject.CurrentHP);
             Assert.IsFalse(testSubject.Alive, "Survived");
@@ -48,6 +48,7 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void OverKill()
         {
+            IHittable testSubject = getHittable();
             testSubject.Hit(int.MaxValue);
             Assert.IsTrue(testSubject.CurrentHP <= 0, "HP: " + testSubject.CurrentHP);
             Assert.IsFalse(testSubject.Alive, "Survived");
