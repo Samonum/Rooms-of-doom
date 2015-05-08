@@ -8,14 +8,22 @@ namespace RoomsOfDoom.Items
 {
     public class MagicScroll : IItem
     {
-        public MagicScroll(Random r)
+        public const double explosiveness = 0.15;
+        Random r;
+        Arena arena;
+        public MagicScroll(Random r, Arena arena)
         {
             Duration = 10;
+            this.r = r;
+            this.arena = arena;
         }
 
         public void Use(Player player, Dungeon dungeon)
         {
-            player.Multiplier *= 2;
+            if (r.NextDouble() > explosiveness) 
+                arena.InitRoom(dungeon.Destroy(arena.CurrentNode)[0]);
+            else
+                player.Multiplier *= 2;
         }
 
         public void Finish(Player player)

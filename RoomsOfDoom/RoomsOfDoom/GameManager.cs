@@ -103,6 +103,10 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
         public void Draw()
         {
             Console.Clear();
+            if (arena.CurrentNode.isBridge())
+                Console.ForegroundColor = ConsoleColor.Red;
+            else
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
             string[] drawmap = CreateEnemyOverview();
             foreach (string s in drawmap)
                 Console.WriteLine(s);

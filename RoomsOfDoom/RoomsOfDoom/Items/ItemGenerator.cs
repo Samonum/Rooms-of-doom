@@ -8,6 +8,11 @@ namespace RoomsOfDoom.Items
 {
     public class ItemGenerator
     {
+        public Arena Arena
+        {
+            get;
+            set;
+        }
         Random random;
         Dungeon dungeon;
         Player player;
@@ -25,7 +30,7 @@ namespace RoomsOfDoom.Items
             if (item < .05 * multiplier)
                 return new TimeCrystal();
             else if (item < .1 * multiplier)
-                return new MagicScroll(random);
+                return new MagicScroll(random, Arena);
             int enemyHp = 0;
 
             foreach (Node n in dungeon.nodes)

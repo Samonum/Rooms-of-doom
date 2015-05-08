@@ -41,6 +41,7 @@ namespace RoomsOfDoom
         {
             this.random = random;
             this.player = player;
+            generator.Arena = this;
             this.itemGenerator = generator;
             InitRoom(startNode);
         }
@@ -164,7 +165,7 @@ namespace RoomsOfDoom
                     player.UseItem(new TimeCrystal(), null);
                     break;
                 case '3': 
-                    player.UseItem(new MagicScroll(random), null);
+                    player.UseItem(new MagicScroll(random, this), null);
                     break;
             }
             TryPickUpLoot();
@@ -267,5 +268,11 @@ namespace RoomsOfDoom
                         map[map.Length - 1][j] = '▒';
             }
         }
+
+        public Node CurrentNode
+        {
+            get { return node; }
+        }
+
     }
 }
