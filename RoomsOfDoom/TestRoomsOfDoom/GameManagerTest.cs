@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoomsOfDoom;
+using RoomsOfDoom.Items;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
@@ -199,6 +200,24 @@ namespace TestRoomsOfDoom
                 Assert.AreEqual(0, p.Size);
             else
                 Assert.AreEqual(p[0].MaxHP - Player.strength, p[0].CurrentHP);
+        }
+
+        [TestMethod]
+        public void LootKeyCheck() 
+        {
+            int curdif = testSubject.difficulty;
+            foreach (Node n in testSubject.dungeon.nodes)
+                if (n.IsExit)
+                    testSubject.InitRoom(n);
+            Assert.IsInstanceOfType(testSubject.items[0], typeof(LevelKey));
+            testSubject.items[0].Location = new Point(testSubject.GetPlayer.Location.X - 1, testSubject.GetPlayer.Location.Y);
+            foreach (Enemy e in testSubject.enemies)
+                if(e.Location == testSubject.items[0].Location)
+                    e.Location = new Point();
+            testSubject.Update('a');
+            Assert.AreEqual(1, testSubject.GetPlayer.inventory[3]);
+            testSubject.Update('4');
+            Assert.AreEqual(curdif + 1, testSubject.difficulty);
         }
 
         [TestMethod]

@@ -24,11 +24,11 @@ namespace RoomsOfDoom
 
         bool inCombat;
 
-        List<IItem> items;
+        public List<IItem> items;
         ItemGenerator itemGenerator;
 
         private DungeonCreator dungeonCreator;
-        private Dungeon dungeon;
+        public Dungeon dungeon;
         public int difficulty;
         private bool acceptinput;
 
@@ -180,21 +180,24 @@ namespace RoomsOfDoom
             switch (input)
             {
                 case 'w':
-                    if (!player.Move(Direction.Up, enemies))
-                        if ((exits & Exit.Top) == Exit.Top)
-                            if (player.Location.X > topExit - doorsize && player.Location.X < topExit + doorsize)
+                    if (!player.Move(Direction.Up, enemies) &&
+                        (exits & Exit.Top) == Exit.Top && 
+                            player.Location.X > topExit - doorsize &&
+                            player.Location.X < topExit + doorsize)
                                 ChangeRooms(node.AdjacencyList[Exit.Top]);
                     break;
                 case 'a': 
-                    if (!player.Move(Direction.Left, enemies))
-                        if ((exits & Exit.Left) == Exit.Left)
-                            if (player.Location.Y > leftExit - doorsize && player.Location.Y < leftExit + doorsize)
+                    if (!player.Move(Direction.Left, enemies) &&
+                        (exits & Exit.Left) == Exit.Left &&
+                        player.Location.Y > leftExit - doorsize && 
+                            player.Location.Y < leftExit + doorsize)
                                 ChangeRooms(node.AdjacencyList[Exit.Left]);
                     break;
                 case 's': 
-                    if (!player.Move(Direction.Down, enemies))
-                        if ((exits & Exit.Bot) == Exit.Bot)
-                            if (player.Location.X > botExit - doorsize && player.Location.X < botExit + doorsize)
+                    if (!player.Move(Direction.Down, enemies) &&
+                        (exits & Exit.Bot) == Exit.Bot &&
+                        player.Location.X > botExit - doorsize && 
+                        player.Location.X < botExit + doorsize)
                                 ChangeRooms(node.AdjacencyList[Exit.Bot]);
                     break;
                 case 'd': 
