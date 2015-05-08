@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    public interface IItem
+    public interface IItem : ITile
     {
         void Use(Player player, Dungeon dungeon);
 

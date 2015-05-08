@@ -79,10 +79,10 @@ namespace RoomsOfDoom
         set;
         }
 
-        public virtual bool Move(Player p)
+        public virtual bool Move<T>(T target) where T : IHittable, ITile
         {
-            int x = p.Location.X - Location.X;
-            int y = p.Location.Y - Location.Y;
+            int x = target.Location.X - Location.X;
+            int y = target.Location.Y - Location.Y;
             Point loc = Math.Abs(x) > Math.Abs(y) ? 
                 new Point(Location.X + Math.Sign(x), Location.Y) : 
                 new Point(Location.X, Location.Y + Math.Sign(y));
@@ -103,16 +103,16 @@ namespace RoomsOfDoom
                 }
             }
 
-            if (loc == p.Location)
+            if (loc == target.Location)
             {
-                KillTheHeretic(p);
+                KillTheHeretic(target);
                 return true;
             }
             Location = loc;
             return true;
         }
 
-        public void KillTheHeretic(Player p)
+        public void KillTheHeretic(IHittable p)
         {
             p.Hit(1);
         }
