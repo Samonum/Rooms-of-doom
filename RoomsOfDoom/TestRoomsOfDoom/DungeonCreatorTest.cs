@@ -37,8 +37,7 @@ namespace TestRoomsOfDoom
             {
                 // TODO: use higher numbers
                 // TODO: with high pack count to difficulty ration, this could infinitely loop
-                //TODO FIX
-                //Dungeon d = D.CreateDungeon(random.Next(0, 10), random.Next(0, 10));
+                Dungeon d = D.CreateDungeon(random.Next(0, 10), random.Next(0, 10), 15);
             }
         }
 
@@ -62,7 +61,7 @@ namespace TestRoomsOfDoom
             {
                 // TODO: use higher numbers
                 // TODO FIX
-                /*Dungeon d = D.CreateDungeon(random.Next(0, 100), random.Next(0, 100));
+                Dungeon d = D.CreateDungeon(random.Next(0, 100), random.Next(0, 100), 15);
                 
                 Assert.IsNotNull(d);
                 Assert.IsTrue(d.Size > 2);
@@ -71,7 +70,7 @@ namespace TestRoomsOfDoom
                 {
                     Assert.IsTrue(n.AdjacencyList.Count > 0);
                     Assert.IsTrue(n.AdjacencyList.Count <= DungeonCreator.maxNeighbours);
-                }*/
+                }
                 
             }
         }
