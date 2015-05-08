@@ -21,13 +21,23 @@ namespace TestRoomsOfDoom
         [ClassInitialize]
         public static void ClassInit(TestContext t)
         {
-                testSubject = new GameManager(false);
+            testSubject = new GameManager(false);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
             testSubject.GameOver();
+        }
+
+        [TestMethod]
+        public void StartState()
+        {
+            Assert.AreEqual(0, testSubject.GetPlayer.GetScore);
+            Assert.AreEqual(1, testSubject.difficulty);
+            Assert.AreEqual(2, testSubject.GetPlayer.GetPotCount);
+            Assert.AreEqual(2, testSubject.GetPlayer.GetCrystalCount);
+            Assert.AreEqual(2, testSubject.GetPlayer.GetScrollCount);
         }
 
         [TestMethod]
@@ -110,29 +120,50 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
+        public void DeathTest()
+        {
+            MakeAbsurd();
+            testSubject.GameOver();
+            StartState();
+        }
+
+        [TestMethod]
         public void SaveTest()
         {
             Assert.IsFalse(testSubject.Save(""), "No empty string saves");
             Assert.IsFalse(testSubject.Save(new string(Path.GetInvalidFileNameChars())), "No bad names");
-            testSubject.GetPlayer.IncreaseScore(1000);
-            testSubject.GetPlayer.SetItems(12,13,14);
-            testSubject.difficulty = 9001;
             string filename = "testSave.donotmake.willberemoved";
 
+            MakeAbsurd();
             if (File.Exists(filename))
                 File.Delete(filename);
+
+            Assert.IsFalse(testSubject.Load(filename));
 
             Assert.IsTrue(testSubject.Save(filename));
             testSubject.GameOver();
 
             Assert.IsTrue(testSubject.Load(filename));
+            IsAbsurd();
+
+            File.Delete(filename);
+        }
+
+        public void MakeAbsurd()
+        {
+            testSubject.GetPlayer.IncreaseScore(1000);
+            testSubject.GetPlayer.SetItems(12, 13, 14);
+            testSubject.difficulty = 9001;
+        }
+
+        public void IsAbsurd()
+        {
             Assert.AreEqual(1000, testSubject.GetPlayer.GetScore);
             Assert.AreEqual(9001, testSubject.difficulty);
             Assert.AreEqual(12, testSubject.GetPlayer.GetPotCount);
             Assert.AreEqual(13, testSubject.GetPlayer.GetCrystalCount);
             Assert.AreEqual(14, testSubject.GetPlayer.GetScrollCount);
-
-            File.Delete(filename);
         }
+
     }
 }

@@ -8,7 +8,7 @@ namespace TestRoomsOfDoom
     [TestClass]
     public class DungeonTest
     {
-        Random random;
+        public Random random;
 
         public DungeonTest()
         {
