@@ -12,7 +12,7 @@ namespace TestRoomsOfDoom
         public GameManagerTest()
         {
             r = new Random();
-            testSubject = new GameManager(10);
+            //testSubject = new GameManager(10);
         }
 
         [TestMethod]

@@ -76,7 +76,6 @@ namespace TestRoomsOfDoom
             Pack testPack = M.GeneratePack(1);
             Node n = new Node(random, 1, 15);
             n.AddPack(testPack);
-            GameManager a = new GameManager();
             testPack[0].Location = new Point(5, 5);
             p.Location = new Point(5,4);
             //act and assert
