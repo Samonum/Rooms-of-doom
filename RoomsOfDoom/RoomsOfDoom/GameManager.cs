@@ -15,7 +15,7 @@ namespace RoomsOfDoom
         private char[][] map;
         public const int Width = 37, Height = 25;
         private Exit exits;
-        private int topExit, leftExit, rightExit, botExit;
+        public int topExit, leftExit, rightExit, botExit;
         private Node node;
 
         public Pack enemies;
@@ -32,12 +32,11 @@ namespace RoomsOfDoom
         public int difficulty;
         private bool acceptinput;
 
-        public GameManager(bool testMode = true, int seed = -1)
+        public GameManager(bool testMode = true, Random random = null)
         {
-            if (seed == -1)
-                random = new Random();
-            else
-                random = new Random(seed);
+            this.random = random;
+            if(random == null)
+                this.random = new Random();
 
             this.acceptinput = testMode;
 
@@ -81,11 +80,14 @@ namespace RoomsOfDoom
             CreateDungeon(10, 10);
         }
 
-
+        public void ChangeRooms(Node newNode)
+        {
+            dungeon.Update();
+            InitRoom(newNode);
+        }
 
         public void InitRoom(Node newNode)
         {
-            dungeon.Update();
 
             items = new List<IItem>(2);
             LevelKey key = new LevelKey(this);
@@ -172,7 +174,7 @@ namespace RoomsOfDoom
             }
         }
 
-        public void HandleCombatRound(char input)
+        public bool HandleCombatRound(char input)
         {
             bool act = true;
             switch (input)
@@ -181,25 +183,25 @@ namespace RoomsOfDoom
                     if (!player.Move(Direction.Up, enemies))
                         if ((exits & Exit.Top) == Exit.Top)
                             if (player.Location.X > topExit - doorsize && player.Location.X < topExit + doorsize)
-                                InitRoom(node.AdjacencyList[Exit.Top]);
+                                ChangeRooms(node.AdjacencyList[Exit.Top]);
                     break;
                 case 'a': 
                     if (!player.Move(Direction.Left, enemies))
                         if ((exits & Exit.Left) == Exit.Left)
                             if (player.Location.Y > leftExit - doorsize && player.Location.Y < leftExit + doorsize)
-                                InitRoom(node.AdjacencyList[Exit.Left]);
+                                ChangeRooms(node.AdjacencyList[Exit.Left]);
                     break;
                 case 's': 
                     if (!player.Move(Direction.Down, enemies))
                         if ((exits & Exit.Bot) == Exit.Bot)
                             if (player.Location.X > botExit - doorsize && player.Location.X < botExit + doorsize)
-                                InitRoom(node.AdjacencyList[Exit.Bot]);
+                                ChangeRooms(node.AdjacencyList[Exit.Bot]);
                     break;
                 case 'd': 
                     if (!player.Move(Direction.Right, enemies))
                         if ((exits & Exit.Right) == Exit.Right)
                             if (player.Location.Y > rightExit - doorsize && player.Location.Y < rightExit + doorsize)
-                                InitRoom(node.AdjacencyList[Exit.Right]);
+                                ChangeRooms(node.AdjacencyList[Exit.Right]);
                     break;
                 case '1': 
                     player.UseItem(new Potion(), dungeon);
@@ -219,14 +221,7 @@ namespace RoomsOfDoom
                     act = false;
                     break;
             }
-
-            if (act)
-            {
-                TryPickUpLoot();
-                UpdateEnemies();
-                if (!player.Alive)
-                    GameOver();
-            }
+            return act;
         }
 
         public void TryPickUpLoot()
@@ -351,16 +346,22 @@ namespace RoomsOfDoom
         public void Update()
         {
             Draw();
-            HandleInput();
-            player.UpdateItems();
+            if (HandleInput())
+            {
+                TryPickUpLoot();
+                UpdateEnemies();
+                if (!player.Alive)
+                    GameOver();
+                player.UpdateItems();
+            }
         }
 
-        public void HandleInput()
+        public bool HandleInput()
         {
             if (!acceptinput)
-                return;
+                return HandleCombatRound('e');
             char input = Console.ReadKey().KeyChar;
-            HandleCombatRound(input);
+            return HandleCombatRound(input);
         }
 
         public Player GetPlayer
@@ -460,7 +461,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 );
             }
 
-            Console.WriteLine("saved fil: {0}", fileName);
+            Console.WriteLine("saved file: {0}", fileName);
             if(acceptinput)
                 Console.ReadKey();
             return true;

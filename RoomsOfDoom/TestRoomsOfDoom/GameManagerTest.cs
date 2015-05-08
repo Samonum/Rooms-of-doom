@@ -120,6 +120,72 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
+        public void MoveRoomAndPlacePlayerTest()
+        {
+            Node oldNode = testSubject.CurrentNode;
+            Exit exit = (Exit)1;
+            while (!oldNode.AdjacencyList.ContainsKey(exit))
+                Assert.IsTrue((int)(exit = (Exit)((int)exit * 2)) <= 8);
+            Node newNode = oldNode.AdjacencyList[exit];
+            testSubject.PlacePlayer(exit);
+            switch(exit)
+            {
+                case Exit.Top:
+                    testSubject.HandleCombatRound('w');
+                    testSubject.HandleCombatRound('w');
+                    break;
+                case Exit.Bot:
+                    testSubject.HandleCombatRound('s');
+                    testSubject.HandleCombatRound('s');
+                    break;
+                case Exit.Left:
+                    testSubject.HandleCombatRound('a');
+                    testSubject.HandleCombatRound('a');
+                    break;
+                case Exit.Right:
+                    testSubject.HandleCombatRound('d');
+                    testSubject.HandleCombatRound('d');
+                    break;
+            }
+
+            Assert.AreEqual(newNode, testSubject.CurrentNode);
+
+            Player p = testSubject.GetPlayer; 
+            if(p.Location.X == 2)
+            {
+                Assert.AreEqual(testSubject.leftExit, p.Location.Y);
+                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Left], oldNode);
+                return;
+            }
+            if (p.Location.Y == 2)
+            {
+                Assert.AreEqual(testSubject.topExit, p.Location.X);
+                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Top], oldNode);
+                return;
+            }
+            if (p.Location.X == GameManager.Width - 3)
+            {
+                Assert.AreEqual(testSubject.rightExit, p.Location.Y);
+                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Right], oldNode);
+                return;
+            }
+            if (p.Location.Y == GameManager.Height - 3)
+            {
+                Assert.AreEqual(testSubject.botExit, p.Location.X);
+                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Bot], oldNode);
+                return;
+            }
+                Assert.Fail("Not at an exit");
+        }
+
+        [TestMethod]
+        public void BridgeTest()
+        {
+            Node n = new Bridge(new Random(), 9, 200, 9);
+
+        }
+
+        [TestMethod]
         public void DeathTest()
         {
             MakeAbsurd();
@@ -132,7 +198,7 @@ namespace TestRoomsOfDoom
         {
             Assert.IsFalse(testSubject.Save(""), "No empty string saves");
             Assert.IsFalse(testSubject.Save(new string(Path.GetInvalidFileNameChars())), "No bad names");
-            string filename = "testSave.donotmake.willberemoved";
+            string filename = ".testSave.donotmake.willberemoved";
 
             MakeAbsurd();
             if (File.Exists(filename))
