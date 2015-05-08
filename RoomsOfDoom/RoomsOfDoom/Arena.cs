@@ -145,7 +145,7 @@ namespace RoomsOfDoom
 
             if(enemies.Size == 0)
             {
-                if (node.Packs.Count >= 0)
+                if (node.Packs.Count > 1)
                 {
                     node.Packs.RemoveAt(0);
                     enemies = node.Packs[0];

@@ -14,7 +14,6 @@ namespace RoomsOfDoom
         private Arena arena;
         private Random random;
         private Player player;
-        private int score = 0;
 
         public GameManager(int seed = -1)
         {
@@ -27,16 +26,6 @@ namespace RoomsOfDoom
             CreateDungeon(1, 10, 10);
             MonsterCreator monsterCreator = new MonsterCreator(random, 6);
             Node n = new Node(1);
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
             n.AddPack(monsterCreator.GeneratePack(1));
             n.AddPack(monsterCreator.GeneratePack(1));
             player = new Player();
@@ -56,11 +45,6 @@ namespace RoomsOfDoom
             arena.HandleCombatRound(input);
         }
 
-        public int GetScore
-        {
-            get { return score; }
-        }
-
         public Player GetPlayer
         {
             get { return player; }
@@ -69,18 +53,6 @@ namespace RoomsOfDoom
         public void CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
             dungeon = dungeonCreator.CreateDungeon(difficulty, packCount);
-        }
-
-        public void IncreaseScore(int i)
-        {
-            if (i < 0)
-                throw new ArgumentOutOfRangeException();
-
-            score += i;
-
-            //Score wrapped to int.MinValue
-            if (score < i)
-                score = int.MaxValue;
         }
 
         public string[] CreateEnemyOverview()
@@ -110,7 +82,7 @@ namespace RoomsOfDoom
 | POT: {2}        TC: {3}        MS: {4}         |
 \________________________________________________/ ",
 
-new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(14), 
+new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString().PadLeft(14), 
     player.GetPotCount.ToString().PadLeft(3), player.GetCrystalCount.ToString().PadLeft(3), player.GetScrollCount.ToString().PadLeft(3) });
         }
 
@@ -130,7 +102,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
             {
                 writer.Write(
                     p.CurrentHP + ";" +
-                    GetScore + ";" +
+                    p.GetScore + ";" +
                     p.GetPotCount + ";" +
                     p.GetCrystalCount + ";" +
                     p.GetScrollCount
@@ -146,7 +118,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
                 if (line != null)
                 {
                     string[] data = line.Split(';');
-                    score = int.Parse(data[0]);
+                    player.IncreaseScore(int.Parse(data[0]));
                     player = new Player(int.Parse(data[1]));
                     player.SetItems(
                         byte.Parse(data[2]),

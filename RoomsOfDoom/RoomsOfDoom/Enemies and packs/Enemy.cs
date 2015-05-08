@@ -25,10 +25,10 @@ namespace RoomsOfDoom
             this.glyph = glyph;
         }
 
-        public int Hit(int damage)
+        public bool Hit(int damage)
         {
             CurrentHP -= damage;
-            return CurrentHP;
+            return !Alive;
         }
 
         public Pack myPack
