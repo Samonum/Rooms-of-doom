@@ -9,14 +9,22 @@ namespace RoomsOfDoom
     public class Dungeon
     {
         private int difficulty;
-        private List<Node> nodes;
+        //TODO for testing purposes it is public
+        public List<Node> nodes;
         private Node endNode;
+        private List<Pack> packs;
 
         public Dungeon(int difficulty, List<Node> nodes)
         {
             this.difficulty = difficulty;
             this.nodes = nodes;
-            endNode = nodes[nodes.Count - 1];
+
+            if (nodes == null || nodes.Count == 0)
+                endNode = null;
+            else
+                endNode = nodes[nodes.Count - 1];
+
+            packs = new List<Pack>();
         }
 
         public List<Node> ShortestPath(int from, int to)
@@ -31,8 +39,11 @@ namespace RoomsOfDoom
             List<Node> pre = new List<Node>();
             Queue<Node> queue = new Queue<Node>();
 
+            // TODO: Pretty sure bridges can be destroyed
+            /*
             if (rNode.isBridge())
                 return false;
+            */
 
             if (rNode == endNode)
                 return false;

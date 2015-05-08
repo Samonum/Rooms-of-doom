@@ -29,8 +29,9 @@ namespace TestRoomsOfDoom
 
             for (int i = 0; i < 100; i++)
             {
-                Dungeon d = D.GenerateDungeon(r.Next(int.MinValue, int.MaxValue));
-
+                // TODO: use higher numbers
+                // TODO: with high pack count to difficulty ration, this could infinitely loop
+                Dungeon d = D.CreateDungeon(r.Next(0, 10), r.Next(0, 10));
             }
         }
 
@@ -41,10 +42,11 @@ namespace TestRoomsOfDoom
 
             for (int i = 0; i < 100; i++)
             {
-                Dungeon d = D.GenerateDungeon(r.Next(int.MinValue, int.MaxValue));
+                // TODO: use higher numbers
+                Dungeon d = D.CreateDungeon(r.Next(0, 100), r.Next(0, 100));
                 
                 Assert.IsNotNull(d);
-                Assert.IsTrue(d.nodes.Count > 2);
+                Assert.IsTrue(d.Size > 2);
 
                 foreach (Node n in d.nodes)
                 {
