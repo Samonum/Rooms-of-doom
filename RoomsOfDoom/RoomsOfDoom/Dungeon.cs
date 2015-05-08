@@ -55,7 +55,7 @@ namespace RoomsOfDoom
             {
                 Node curNode = queue.Dequeue();
 
-                foreach (KeyValuePair<Direction, Node> kvp in curNode.AdjacencyList)
+                foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
                 {
                     Node nextNode = kvp.Value;
                     if (!pre.Contains(nextNode))
@@ -79,9 +79,9 @@ namespace RoomsOfDoom
 
                     if (n == rNode)
                     {
-                        foreach (KeyValuePair<Direction, Node> neighbour in n.AdjacencyList)
+                        foreach (KeyValuePair<Exit, Node> neighbour in n.AdjacencyList)
                         {
-                            Direction direction = neighbour.Value.AdjacencyList.First(kvp => kvp.Value == rNode).Key;
+                            Exit direction = neighbour.Value.AdjacencyList.First(kvp => kvp.Value == rNode).Key;
                             neighbour.Value.AdjacencyList.Remove(direction);
                         }
 

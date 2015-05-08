@@ -52,13 +52,14 @@ namespace TestRoomsOfDoom
                 testSubject.IncreaseScore(-1);
                 Assert.Fail("Didn't crash");
             }
-            catch(ArgumentOutOfRangeException e)
-            {}
+            catch (ArgumentOutOfRangeException e)
+            { }
             catch(Exception e)
             {
                 Assert.Fail("Threw wrong error");
             }
         }
+
         [TestMethod]
         public void ScreenWidthTest()
         {

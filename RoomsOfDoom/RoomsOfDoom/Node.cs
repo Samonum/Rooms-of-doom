@@ -8,7 +8,7 @@ namespace RoomsOfDoom
 {
     public class Node
     {
-        protected Dictionary<Direction, Node> adjacencyList;
+        protected Dictionary<Exit, Node> adjacencyList;
         protected List<Pack> packs;
         public int id;
         protected string stringName;
@@ -16,12 +16,12 @@ namespace RoomsOfDoom
         public Node(int id)
         {
             this.id = id;
-            adjacencyList = new Dictionary<Direction, Node>();
+            adjacencyList = new Dictionary<Exit, Node>();
             packs = new List<Pack>();
             stringName = "N";
         }
 
-        public Dictionary<Direction, Node> AdjacencyList
+        public Dictionary<Exit, Node> AdjacencyList
         {
             get { return adjacencyList; }
             set { adjacencyList = value; }
@@ -56,7 +56,7 @@ namespace RoomsOfDoom
         {
             String s = stringName + id + "(";
 
-            foreach (KeyValuePair<Direction, Node> n in adjacencyList)
+            foreach (KeyValuePair<Exit, Node> n in adjacencyList)
                 s += n.Value.id + ",";
 
             s += ")-[Packs: ";
@@ -66,6 +66,11 @@ namespace RoomsOfDoom
             s += MonsterCount + "]";
 
             return s;
+        }
+
+        public List<Pack> Packs
+        {
+            get { return packs; }
         }
     }
 }
