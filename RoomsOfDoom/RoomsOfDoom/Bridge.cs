@@ -13,23 +13,12 @@ namespace RoomsOfDoom
             :base(id)
         {
             this.bridgeNr = bridgeNr;
+            stringName = "B";
         }
 
         public override bool isBridge()
         {
             return true;
-        }
-
-        public override String ToString()
-        {
-            String s = "B" + id + "(";
-
-            foreach (KeyValuePair<Direction, Node> n in adjacencyList)
-                s += n.Value.id + ",";
-
-            s += ")";
-
-            return s;
         }
     }
 }

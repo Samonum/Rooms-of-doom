@@ -26,6 +26,7 @@ namespace RoomsOfDoom
                 random = new Random(seed);
 
             dungeonCreator = new DungeonCreator(random);
+            CreateDungeon(1, 10, 10);
             monsterCreator = new MonsterCreator(random, 6);
             allEnemies = new Pack[1] { monsterCreator.GeneratePack(1)};
             player = new Player();
@@ -55,12 +56,10 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public void CreateDungeon(int difficulty, int packs, int maxCapacity)
+        public void CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
-            dungeon = dungeonCreator.GenerateDungeon(difficulty);
-
+            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount);
         }
-
 
         public void IncreaseScore(int i)
         {
@@ -112,6 +111,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
+            Console.WriteLine(dungeon.ToString());
         }
 
         public void Save()

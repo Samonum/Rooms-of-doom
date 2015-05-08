@@ -9,13 +9,16 @@ namespace RoomsOfDoom
     public class Node
     {
         protected Dictionary<Direction, Node> adjacencyList;
+        protected List<Pack> packs;
         public int id;
-        List<Pack> pack;
+        protected string stringName;
 
         public Node(int id)
         {
             this.id = id;
             adjacencyList = new Dictionary<Direction, Node>();
+            packs = new List<Pack>();
+            stringName = "N";
         }
 
         public Dictionary<Direction, Node> AdjacencyList
@@ -29,14 +32,38 @@ namespace RoomsOfDoom
             return false;
         }
 
-        public virtual String ToString()
+        public virtual bool AddPack(Pack pack)
         {
-            String s = "N" + id + "(";
+            packs.Add(pack);
+
+            // TODO: Return false when node is full
+            // TODO: Override in bridge to allow higher capacity
+            return true;
+        }
+
+        public int MonsterCount
+        {
+            get 
+            {
+                int total = 0;
+                foreach (Pack p in packs)
+                    total += p.Size;
+                return total;
+            }
+        }
+
+        public String ToString()
+        {
+            String s = stringName + id + "(";
 
             foreach (KeyValuePair<Direction, Node> n in adjacencyList)
                 s += n.Value.id + ",";
 
-            s += ")";
+            s += ")-[Packs: ";
+
+            s += packs.Count + ", Monsters: ";
+
+            s += MonsterCount + "]";
 
             return s;
         }

@@ -9,7 +9,7 @@ namespace RoomsOfDoom
     public class DungeonCreator
     {
         Random random;
-
+        MonsterCreator monsterCreator;
         public const int maxNeighbours = 4;
 
         List<Node> availibleNodes;
@@ -17,9 +17,17 @@ namespace RoomsOfDoom
         public DungeonCreator(Random random)
         {
             this.random = random;
+            monsterCreator = new MonsterCreator(random, 6);
         }
 
-        public Dungeon GenerateDungeon(int difficulty)
+        public Dungeon CreateDungeon(int difficulty, int packCount)
+        {
+            Dungeon dungeon = GenerateDungeon(difficulty);
+            dungeon = SpreadPacks(dungeon, difficulty, packCount);
+            return dungeon;
+        }
+
+        private Dungeon GenerateDungeon(int difficulty)
         {
             int size = (int)(difficulty * (3f + random.NextDouble()) + 4);
 
@@ -93,6 +101,21 @@ namespace RoomsOfDoom
             // 100 7 =  14 (+ 2) {0 14 28 42 56 70 84 98}
 
             Dungeon dungeon = new Dungeon(difficulty, nodes);
+            return dungeon;
+        }
+        
+        private Dungeon SpreadPacks(Dungeon dungeon, int difficulty, int packCount)
+        {
+            for (int i = 0; i < packCount; i++)
+            {
+                Pack pack = monsterCreator.GeneratePack(difficulty);
+                int randomNumber = random.Next(dungeon.Size);
+                
+                // TODO: This might be an infinite loop if dungeon is full
+                while (!dungeon.AddPack(randomNumber, pack))
+                    randomNumber = random.Next(dungeon.Size);
+            }
+
             return dungeon;
         }
     }

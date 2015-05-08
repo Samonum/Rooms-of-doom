@@ -9,8 +9,8 @@ namespace RoomsOfDoom
     public class Dungeon
     {
         private int difficulty;
-        public List<Node> nodes;
-        public Node endNode;
+        private List<Node> nodes;
+        private Node endNode;
 
         public Dungeon(int difficulty, List<Node> nodes)
         {
@@ -22,7 +22,7 @@ namespace RoomsOfDoom
         public List<Node> ShortestPath(int from, int to)
         {
             List<Node> path = new List<Node>();
-
+            // TODO: implement BFS
             return path;
         }
 
@@ -84,7 +84,20 @@ namespace RoomsOfDoom
 
             return true;
         }
+
+        public bool AddPack(int nodeIndex, Pack pack)
+        {
+            if (nodeIndex >= nodes.Count)
+                return false;
+
+            return nodes[nodeIndex].AddPack(pack);
+        }
                     
+        public int Size
+        {
+            get { return nodes.Count; }
+        }
+
         public String ToString()
         {
             String s = "";
