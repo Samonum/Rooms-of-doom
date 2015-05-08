@@ -7,9 +7,10 @@ namespace TestRoomsOfDoom
     [TestClass]
     public class ArenaTest
     {
+        Random random;
         public ArenaTest()
         {
-
+            random = new Random();
         }
 
         [TestMethod]
@@ -17,7 +18,7 @@ namespace TestRoomsOfDoom
         {
             MonsterCreator creator = new MonsterCreator(new NotSoRandom(25), 25);
             Pack p = creator.GeneratePack(9001);
-            Node node = new Node(1);
+            Node node = new Node(random, 1, 15);
             node.AddPack(p);
             for(int n = 0; n < 100; n++)
             {
