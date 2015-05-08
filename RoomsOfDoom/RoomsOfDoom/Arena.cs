@@ -145,10 +145,12 @@ namespace RoomsOfDoom
 
             if(enemies.Size == 0)
             {
-                if (node.Packs.Count > 1)
+                Pack newPack = node.GetNextPack;
+                node.RemovePack(enemies);
+
+                if (newPack != null)
                 {
-                    node.Packs.RemoveAt(0);
-                    enemies = node.Packs[0];
+                    enemies = newPack;
                     PlaceEnemies(enemies);
                 }
             }

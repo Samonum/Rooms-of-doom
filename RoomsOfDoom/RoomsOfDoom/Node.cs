@@ -62,6 +62,16 @@ namespace RoomsOfDoom
             get { return packs; }
         }
 
+        public Pack GetNextPack
+        {
+            get 
+            {
+                if (packs.Count == 0)
+                    return null;
+                return packs[0]; 
+            }
+        }
+
         public int CapMultiplier
         {
             get { return capMultiplier; }

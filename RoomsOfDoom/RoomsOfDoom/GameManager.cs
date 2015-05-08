@@ -25,9 +25,8 @@ namespace RoomsOfDoom
             dungeonCreator = new DungeonCreator(random);
             CreateDungeon(1, 10, 10);
             MonsterCreator monsterCreator = new MonsterCreator(random, 6);
-            Node n = new Node(1);
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
+
+            Node n = dungeon.nodes[0];
             player = new Player();
             arena = new Arena(n, player, Exit.Left, random);
         }
@@ -42,6 +41,7 @@ namespace RoomsOfDoom
         public void HandleInput()
         {
             char input = Console.ReadKey().KeyChar;
+            dungeon.Update();
             arena.HandleCombatRound(input);
         }
 

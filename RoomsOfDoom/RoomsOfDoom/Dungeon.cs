@@ -33,8 +33,15 @@ namespace RoomsOfDoom
 
         public void Update()
         {
+            List<Pack> removeList = new List<Pack>();
             foreach(Pack p in packs)
             {
+                if (p.Size == 0)
+                {
+                    removeList.Add(p);
+                    continue;
+                }
+
                 if (random.NextDouble() > 0.5)
                     continue;
                 Node n = p.Location;
@@ -48,6 +55,14 @@ namespace RoomsOfDoom
 
                 MovePack(p, choices[random.Next(choices.Count)]);
             }
+            foreach (Pack p in removeList)
+            {
+                packs.Remove(p);
+                List<Pack> packList = p.Location.PackList;
+                if (packList.Contains(p))
+                    packList.Remove(p);
+            }
+        
         }
 
         public bool MovePack(Pack p, Node to)
