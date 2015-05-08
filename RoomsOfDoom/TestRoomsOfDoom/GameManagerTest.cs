@@ -70,7 +70,7 @@ namespace TestRoomsOfDoom
             {
                 PlayerTest playerTest = new PlayerTest();
                 playerTest.Init();
-                testSubject = new GameManager();
+                //testSubject = new GameManager();
                 testSubject.GetPlayer.Hit(9 * i);
                 playerTest.ScrollTest();
                 playerTest.PotionTest();
