@@ -11,7 +11,7 @@ namespace RoomsOfDoom
         Random random;
         MonsterCreator monsterCreator;
         public const int maxNeighbours = 4;
-
+        int maxCapacity;
         List<Node> availibleNodes;
 
         public DungeonCreator(Random random)
@@ -21,10 +21,12 @@ namespace RoomsOfDoom
             monsterCreator = new MonsterCreator(random, 6);
         }
 
-        public Dungeon CreateDungeon(int difficulty, int packCount)
+        public Dungeon CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
             if (difficulty * 15 < packCount)
                 packCount = difficulty * 15;
+
+            this.maxCapacity = maxCapacity;
 
             Dungeon dungeon = GenerateDungeon(difficulty);
             dungeon = SpreadPacks(dungeon, difficulty, packCount);
@@ -58,9 +60,9 @@ namespace RoomsOfDoom
             {
                 Node n;
                 if (i == bridgeTarget)
-                    n = new Bridge(i, counter);
+                    n = new Bridge(random, i, maxCapacity, counter);
                 else
-                    n = new Node(i);
+                    n = new Node(random, i, maxCapacity);
 
                 nodes.Add(n);
                 int neighbourAmount = 1 + random.Next(maxNeighbours - 1);
@@ -104,7 +106,7 @@ namespace RoomsOfDoom
 
             // 100 7 =  14 (+ 2) {0 14 28 42 56 70 84 98}
 
-            Dungeon dungeon = new Dungeon(difficulty, nodes, random, 15);
+            Dungeon dungeon = new Dungeon(random, nodes, difficulty, maxCapacity);
             return dungeon;
         }
         

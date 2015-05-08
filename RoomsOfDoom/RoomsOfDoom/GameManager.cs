@@ -69,7 +69,7 @@ namespace RoomsOfDoom
 
         public void CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
-            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount);
+            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
         }
 
         public string[] CreateEnemyOverview()
@@ -110,6 +110,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
+            Console.WriteLine(dungeon.ToString());
         }
 
         public void Save(string fileName)

@@ -10,12 +10,13 @@ namespace RoomsOfDoom
     {
         // TODO bridgeNr may be redundant
         int bridgeNr;
-        public Bridge(int id, int bridgeNr)
-            :base(id)
+        public Bridge(Random random, int id, int maxCapacity, int bridgeNr)
+            :base(random, id, maxCapacity)
         {
             this.bridgeNr = bridgeNr;
             stringName = "B";
-            capMultiplier = bridgeNr;
+            multiplier = bridgeNr;
+            maxCapacity = multiplier * maxCapacity;
         }
 
         public override bool isBridge()

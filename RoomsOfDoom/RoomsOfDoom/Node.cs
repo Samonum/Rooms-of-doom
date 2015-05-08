@@ -9,18 +9,58 @@ namespace RoomsOfDoom
     public class Node
     {
         protected Dictionary<Exit, Node> adjacencyList;
+        protected Random random;
         protected List<Pack> packs;
         public int id;
         protected string stringName;
-        protected int capMultiplier;
+        protected int multiplier;
+        protected int maxCapacity;
 
-        public Node(int id)
+        public Node(Random random, int id, int maxCapacity)
         {
             this.id = id;
+            this.random = random;
             adjacencyList = new Dictionary<Exit, Node>();
             packs = new List<Pack>();
             stringName = "N";
-            capMultiplier = 1;
+            multiplier = 1;
+            this.maxCapacity = maxCapacity * multiplier;
+        }
+
+        public void Update()
+        {
+            List<Pack> removeList = new List<Pack>();
+
+            foreach (Pack p in PackList)
+            {
+                if (p.Size == 0)
+                {
+                    removeList.Add(p);
+                    continue;
+                }
+
+                if (random.NextDouble() > 0.5)
+                    continue;
+
+                List<Node> choices = new List<Node>();
+
+                foreach (KeyValuePair<Exit, Node> kvp in AdjacencyList)
+                    choices.Add(kvp.Value);
+
+                if (choices.Count == 0)
+                    continue;
+
+                Node to = choices[random.Next(choices.Count)];
+
+                if (to.MonsterCount + p.Size > maxCapacity * to.Multiplier)
+                    continue;
+
+                to.AddPack(p);
+                removeList.Add(p);
+            }
+
+            foreach (Pack p in removeList)
+                PackList.Remove(p);
         }
 
         public Dictionary<Exit, Node> AdjacencyList
@@ -72,9 +112,9 @@ namespace RoomsOfDoom
             }
         }
 
-        public int CapMultiplier
+        public int Multiplier
         {
-            get { return capMultiplier; }
+            get { return multiplier; }
         }
 
         public int MonsterCount

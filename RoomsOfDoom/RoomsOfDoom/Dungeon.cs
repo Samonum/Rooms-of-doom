@@ -16,7 +16,7 @@ namespace RoomsOfDoom
         private Random random;
         private int maxCapacity;
 
-        public Dungeon(int difficulty, List<Node> nodes, Random random, int maxCapacity)
+        public Dungeon(Random random, List<Node> nodes, int difficulty, int maxCapacity)
         {
             this.difficulty = difficulty;
             this.nodes = nodes;
@@ -33,41 +33,9 @@ namespace RoomsOfDoom
 
         public void Update()
         {
-            foreach (Node curNode in nodes)
+            foreach (Node n in nodes)
             {
-                List<Pack> curPackList = curNode.PackList;
-                List<Pack> removeList = new List<Pack>();
-
-                foreach (Pack p in curPackList)
-                {
-                    if (p.Size == 0)
-                    {
-                        removeList.Add(p);
-                        continue;
-                    }
-
-                    if (random.NextDouble() > 0.5)
-                        continue;
-
-                    List<Node> choices = new List<Node>();
-
-                    foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
-                        choices.Add(kvp.Value);
-
-                    if (choices.Count == 0)
-                        continue;
-
-                    Node to = choices[random.Next(choices.Count)];
-
-                    if (to.MonsterCount + p.Size > maxCapacity * to.CapMultiplier)
-                        continue;
-
-                    to.AddPack(p);
-                    removeList.Add(p);
-                }
-
-                foreach (Pack p in removeList)
-                    curPackList.Remove(p);
+                n.Update();
             }
         }
 
