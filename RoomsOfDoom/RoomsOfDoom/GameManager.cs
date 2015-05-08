@@ -9,11 +9,12 @@ namespace RoomsOfDoom
 {
     public class GameManager
     {
+        private DungeonCreator dungeonCreator;
         private Dungeon dungeon;
         private Arena arena;
         private Random random;
         private Pack[] allEnemies;
-        private MonsterCreator creator;
+        private MonsterCreator monsterCreator;
         private Player player;
         private int score = 0;
 
@@ -23,9 +24,10 @@ namespace RoomsOfDoom
                 random = new Random();
             else
                 random = new Random(seed);
-            
-            creator = new MonsterCreator(random, 6);
-            allEnemies = new Pack[1] { creator.GeneratePack(1)};
+
+            dungeonCreator = new DungeonCreator(random);
+            monsterCreator = new MonsterCreator(random, 6);
+            allEnemies = new Pack[1] { monsterCreator.GeneratePack(1)};
             player = new Player();
             arena = new Arena(Exit.Left | Exit.Bot, allEnemies[0], player, Exit.Left, random);
         }
@@ -53,8 +55,9 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public void CreateDungeon(int size, int packs, int difficulty, int maxCapacity)
+        public void CreateDungeon(int difficulty, int packs, int maxCapacity)
         {
+            dungeon = dungeonCreator.GenerateDungeon(difficulty);
 
         }
 
