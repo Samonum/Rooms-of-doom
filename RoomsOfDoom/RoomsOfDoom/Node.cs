@@ -12,6 +12,7 @@ namespace RoomsOfDoom
         protected List<Pack> packs;
         public int id;
         protected string stringName;
+        protected int capMultiplier;
 
         public Node(int id)
         {
@@ -19,6 +20,7 @@ namespace RoomsOfDoom
             adjacencyList = new Dictionary<Exit, Node>();
             packs = new List<Pack>();
             stringName = "N";
+            capMultiplier = 1;
         }
 
         public Dictionary<Exit, Node> AdjacencyList
@@ -31,6 +33,7 @@ namespace RoomsOfDoom
         {
             return false;
         }
+
 
         public virtual bool AddPack(Pack pack)
         {
@@ -57,6 +60,11 @@ namespace RoomsOfDoom
         public List<Pack> PackList
         {
             get { return packs; }
+        }
+
+        public int CapMultiplier
+        {
+            get { return capMultiplier; }
         }
 
         public int MonsterCount

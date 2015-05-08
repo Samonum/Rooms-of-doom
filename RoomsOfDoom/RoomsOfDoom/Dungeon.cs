@@ -14,12 +14,14 @@ namespace RoomsOfDoom
         private Node endNode;
         private List<Pack> packs;
         private Random random;
+        private int maxCapacity;
 
-        public Dungeon(int difficulty, List<Node> nodes, Random random)
+        public Dungeon(int difficulty, List<Node> nodes, Random random, int maxCapacity)
         {
             this.difficulty = difficulty;
             this.nodes = nodes;
             this.random = random;
+            this.maxCapacity = maxCapacity;
 
             if (nodes == null || nodes.Count == 0)
                 endNode = null;
@@ -38,7 +40,7 @@ namespace RoomsOfDoom
                 Node n = p.Location;
                 List<Node> choices = new List<Node>();
 
-                foreach (KeyValuePair<Direction, Node> kvp in n.AdjacencyList)
+                foreach (KeyValuePair<Exit, Node> kvp in n.AdjacencyList)
                     choices.Add(kvp.Value);
 
                 if (choices.Count == 0)
@@ -52,6 +54,9 @@ namespace RoomsOfDoom
         {
             Node from = p.Location;
             if (!from.AdjacencyList.ContainsValue(to))
+                return false;
+
+            if (to.MonsterCount + p.Size > maxCapacity * to.CapMultiplier)
                 return false;
 
             // TODO: This will probably go wrong somewhere if logic is flawed

@@ -17,11 +17,15 @@ namespace RoomsOfDoom
         public DungeonCreator(Random random)
         {
             this.random = random;
+            // TODO: Theoretically we have room for 11 of them
             monsterCreator = new MonsterCreator(random, 6);
         }
 
         public Dungeon CreateDungeon(int difficulty, int packCount)
         {
+            if (difficulty * 15 < packCount)
+                packCount = difficulty * 15;
+
             Dungeon dungeon = GenerateDungeon(difficulty);
             dungeon = SpreadPacks(dungeon, difficulty, packCount);
             return dungeon;
@@ -48,7 +52,7 @@ namespace RoomsOfDoom
             availibleNodes = new List<Node>();
             
             int bridgeTarget = split;
-            int counter = 0;
+            int counter = 1;
 
             for (int i = 0; i < size; i++)
             {
@@ -88,7 +92,7 @@ namespace RoomsOfDoom
                 if (bridgeTarget == i)
                 {
                     availibleNodes.Clear();
-                    if (counter < difficulty - 1)
+                    if (counter < difficulty)
                     {
                         bridgeTarget += split;
                         counter++;
@@ -100,7 +104,7 @@ namespace RoomsOfDoom
 
             // 100 7 =  14 (+ 2) {0 14 28 42 56 70 84 98}
 
-            Dungeon dungeon = new Dungeon(difficulty, nodes, random);
+            Dungeon dungeon = new Dungeon(difficulty, nodes, random, 15);
             return dungeon;
         }
         
