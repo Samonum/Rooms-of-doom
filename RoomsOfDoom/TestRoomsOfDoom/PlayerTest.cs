@@ -76,7 +76,7 @@ namespace TestRoomsOfDoom
             Pack testPack = M.GeneratePack(1);
             Node n = new Node(random, 1, 15);
             n.AddPack(testPack);
-            GameManager a = new GameManager(n, p, random);
+            GameManager a = new GameManager();
             testPack[0].Location = new Point(5, 5);
             p.Location = new Point(5,4);
             //act and assert
@@ -107,7 +107,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddPotion();
+                p.AddItem(new Potion());
                 pots++;
             }
             Assert.AreEqual(pots, p.GetPotCount, "Pots don't add up well.");
@@ -129,7 +129,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddCrystal();
+                p.AddItem(new TimeCrystal());
                 crystals++;
             }
             Assert.AreEqual(crystals, p.GetCrystalCount, "Crystals don't add up well.");
@@ -142,7 +142,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddScroll();
+                p.AddItem(new MagicScroll(random, null));
                 scrolls++;
             }
             Assert.AreEqual(scrolls, p.GetScrollCount, "Scrolls don't add up well.");
@@ -171,7 +171,7 @@ namespace TestRoomsOfDoom
             for (int i = 1; i < 3; i++)
                 Assert.AreEqual(initHp - Player.strength, enemies[i].CurrentHP, "Crystal");
             
-            MagicScroll scroll = new MagicScroll(new NotSoRandom(0.0));
+            MagicScroll scroll = new MagicScroll(new NotSoRandom(0.0), null);
             scroll.Duration = 2;
             p.UseItem(scroll, null);
 
@@ -192,7 +192,7 @@ namespace TestRoomsOfDoom
             for (int i = 1; i < 3; i++)
                 Assert.AreEqual(initHp - 5 * Player.strength, enemies[i].CurrentHP, "Scroll and no more Crystal");
             
-            MagicScroll scroll2 = new MagicScroll(new NotSoRandom(0.0));
+            MagicScroll scroll2 = new MagicScroll(new NotSoRandom(0.0), null);
             scroll2.Duration = 0;
             p.UseItem(scroll2, null);
 
@@ -218,7 +218,7 @@ namespace TestRoomsOfDoom
 
             p.inventory = new byte[] { 0, 0, 0 };
 
-            MagicScroll s = new MagicScroll(random);
+            MagicScroll s = new MagicScroll(random, null);
             s.Duration = 0;
             Assert.IsFalse(p.UseItem(s, null), "Not Using");
 
