@@ -43,7 +43,7 @@ namespace RoomsOfDoom
             return path;
         }
 
-        public bool Destroy(Node rNode)
+        public List<Node> Destroy(Node rNode)
         {
             List<Node> pre = new List<Node>();
             Queue<Node> queue = new Queue<Node>();
@@ -55,7 +55,7 @@ namespace RoomsOfDoom
             */
 
             if (rNode == endNode)
-                return false;
+                return null;
 
             pre.Add(endNode);
             queue.Enqueue(endNode);
@@ -102,7 +102,16 @@ namespace RoomsOfDoom
             foreach (Node n in toBeRemoved)
                 nodes.Remove(n);
 
-            return true;
+            List<Node> validNeighbours = new List<Node>();
+
+            foreach (KeyValuePair<Exit, Node> kvp in rNode.AdjacencyList)
+            {
+                Node n = kvp.Value;
+                if (nodes.Contains(n))
+                    validNeighbours.Add(n);
+            }
+
+            return validNeighbours;
         }
                     
         public int Size
