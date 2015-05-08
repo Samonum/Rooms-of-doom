@@ -4,6 +4,7 @@ using RoomsOfDoom;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
+using System.Drawing;
 
 namespace TestRoomsOfDoom
 {
@@ -179,10 +180,25 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
-        public void BridgeTest()
+        public void EnemyUpdateTest()
         {
             Node n = new Bridge(new Random(), 9, 200, 9);
-
+            MonsterCreator creator = new MonsterCreator(random, 1);
+            Pack p = creator.GeneratePack(1);
+            n.AddPack(p);
+            testSubject.InitRoom(n);
+            testSubject.GetPlayer.Location = new Point(2, 2);
+            p[0].Location = new Point(2, 4);
+            testSubject.Update('e');
+            Assert.AreEqual(p[0].Location, new Point(2, 3));
+            testSubject.Update('e');
+            Assert.AreEqual(testSubject.GetPlayer.MaxHP - 1, testSubject.GetPlayer.CurrentHP);
+            int max = p[0].MaxHP;
+            testSubject.Update('s');
+            if (max <= Player.strength)
+                Assert.AreEqual(0, p.Size);
+            else
+                Assert.AreEqual(p[0].MaxHP - Player.strength, p[0].CurrentHP);
         }
 
         [TestMethod]

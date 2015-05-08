@@ -343,10 +343,10 @@ namespace RoomsOfDoom
             get { return node; }
         }
 
-        public void Update()
+        public void Update(char testinput = '')
         {
             Draw();
-            if (HandleInput())
+            if (HandleInput(testinput))
             {
                 TryPickUpLoot();
                 UpdateEnemies();
@@ -356,10 +356,14 @@ namespace RoomsOfDoom
             }
         }
 
-        public bool HandleInput()
+        public bool HandleInput(char testinput = '')
         {
+            if (testinput != '')
+                return HandleCombatRound(testinput);
+
             if (!acceptinput)
                 return HandleCombatRound('e');
+
             char input = Console.ReadKey().KeyChar;
             return HandleCombatRound(input);
         }
