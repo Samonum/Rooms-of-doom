@@ -66,7 +66,7 @@ namespace RoomsOfDoom
 
         public void CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
-            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount);
+            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
         }
 
         public string[] CreateEnemyOverview()
