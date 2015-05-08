@@ -29,16 +29,6 @@ namespace RoomsOfDoom
             Node n = new Node(1);
             n.AddPack(monsterCreator.GeneratePack(1));
             n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
-            n.AddPack(monsterCreator.GeneratePack(1));
             player = new Player();
             arena = new Arena(n, player, Exit.Left, random);
         }

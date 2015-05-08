@@ -38,7 +38,7 @@ namespace RoomsOfDoom
                 Node n = p.Location;
                 List<Node> choices = new List<Node>();
 
-                foreach (KeyValuePair<Direction, Node> kvp in n.AdjacencyList)
+                foreach (KeyValuePair<Exit, Node> kvp in n.AdjacencyList)
                     choices.Add(kvp.Value);
 
                 if (choices.Count == 0)
