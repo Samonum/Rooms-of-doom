@@ -16,7 +16,7 @@ namespace RoomsOfDoom
         protected int multiplier;
         protected int maxCapacity;
 
-        public Node(Random random, int id, int maxCapacity)
+        public Node(Random random, int id, int maxCapacity, bool isExit = false)
         {
             this.id = id;
             this.random = random;
@@ -25,6 +25,7 @@ namespace RoomsOfDoom
             stringName = "N";
             multiplier = 1;
             this.maxCapacity = maxCapacity * multiplier;
+            IsExit = isExit;
         }
 
         public void Update()
@@ -72,6 +73,12 @@ namespace RoomsOfDoom
         public virtual bool isBridge()
         {
             return false;
+        }
+
+        public bool IsExit
+        {
+            get;
+            private set;
         }
 
 

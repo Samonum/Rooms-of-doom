@@ -349,6 +349,8 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             Console.Clear();
             if (CurrentNode.isBridge())
                 Console.ForegroundColor = ConsoleColor.Red;
+            else if (CurrentNode.IsExit)
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
             else
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
             string[] drawmap = CreateEnemyOverview();
