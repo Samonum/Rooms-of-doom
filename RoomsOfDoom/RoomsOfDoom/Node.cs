@@ -64,7 +64,6 @@ namespace RoomsOfDoom
         public Dictionary<Exit, Node> AdjacencyList
         {
             get { return adjacencyList; }
-            set { adjacencyList = value; }
         }
 
         public virtual bool isBridge()
@@ -90,7 +89,7 @@ namespace RoomsOfDoom
             return true;
         }
 
-        public virtual bool RemovePack(Pack pack)
+        public bool RemovePack(Pack pack)
         {
             if (!packs.Contains(pack))
                 return false;
