@@ -8,27 +8,35 @@ namespace RoomsOfDoom.Items
 {
     public class ItemGenerator
     {
-        Random r;
+        Random random;
         Dungeon dungeon;
-        public ItemGenerator(Dungeon dungeon, Player p, Random r)
+        Player player;
+        public ItemGenerator(Dungeon dungeon, Player player, Random random)
         {
-            r = new Random();
+            this.random = random;
             this.dungeon = dungeon;
+            this.player = player;
         }
 
-        public IItem GetItem(Point leftTop, Point rightBot, int multiplier)
+        public IItem GetItem(int multiplier)
         {
-            double item = r.NextDouble();
+            double item = random.NextDouble();
 
             if (item < .05 * multiplier)
                 return new TimeCrystal();
             else if (item < .1 * multiplier)
-                return new MagicScroll(r);
-            int MaxHp = 0;
+                return new MagicScroll(random);
+            int enemyHp = 0;
+
             foreach (Node n in dungeon.nodes)
                 foreach (Pack p in n.PackList)
                     foreach (IHittable enemy in p.Enemies)
-                        MaxHp += enemy.CurrentHP;
+                        enemyHp += enemy.CurrentHP;
+
+            if (enemyHp == 0)
+                return null;
+            if ((player.CurrentHP + player.GetPotCount * Potion.healPower) / enemyHp < item)
+                return new Potion();
             return null;
         }
     }

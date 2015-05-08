@@ -32,15 +32,23 @@ namespace RoomsOfDoom
         int curPack;
         private Player player;
 
-        public Arena(Node startNode, Player player, Random random)
+        bool inCombat;
+
+        List<IItem> items;
+        ItemGenerator itemGenerator;
+
+        public Arena(Node startNode, Player player, Random random, ItemGenerator generator)
         {
             this.random = random;
             this.player = player;
+            this.itemGenerator = generator;
             InitRoom(startNode);
         }
 
         public void InitRoom(Node newNode)
         {
+            items = new List<IItem>(2);
+
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
                 if (n.Value == node)
@@ -58,9 +66,15 @@ namespace RoomsOfDoom
             botExit = 10 + random.Next(Width - 20);
 
             if (node.PackList.Count == 0)
+            {
+                inCombat = false;
                 enemies = new Pack(0);
+            }
             else
+            {
+                inCombat = true;
                 enemies = node.PackList[0];
+            }
 
             PlaceEnemies(enemies);
             PlacePlayer(entrance);
@@ -84,13 +98,13 @@ namespace RoomsOfDoom
                     player.Location = new Point(2, leftExit);
                     break;
                 default:
-                    player.Location = new Point(random.Next(Width - 8) + 4, random.Next(Height - 8) + 4);
+                    player.Location = GetRandomLocation(4);
                     for (int i = 0; i < enemies.Size; i++)
                     {
                         if (enemies[i].Location == player.Location)
                         {
                             i = 0;
-                            player.Location = new Point(random.Next(Width - 5) + 1, random.Next(Height - 5) + 1);
+                            player.Location = GetRandomLocation(3);
                             break;
                         }
                     }
@@ -102,7 +116,7 @@ namespace RoomsOfDoom
         {
             for (int i = 0; i < enemies.Size; i++)
             {
-                enemies[i].Location = new Point(random.Next(Width - 8) + 4, random.Next(Height - 8) + 4);
+                enemies[i].Location = GetRandomLocation(4);
                 for (int j = 0; j < i; j++)
                     if (enemies[i].Location == enemies[j].Location)
                     {
@@ -153,18 +167,45 @@ namespace RoomsOfDoom
                     player.UseItem(new MagicScroll(random), null);
                     break;
             }
+            TryPickUpLoot();
+            UpdateEnemies();
+        }
 
+        public void TryPickUpLoot()
+        {
+            for(int i = 0; i < items.Count; i++)
+                if(player.Location == items[i].Location)
+                {
+                    player.AddItem(items[i]);
+                    items.RemoveAt(i);
+                }
+        }
+
+        public void UpdateEnemies()
+        {
             foreach (Enemy e in enemies)
             {
                 e.Move(player);
             }
 
-            if(enemies.Size == 0)
+            if (enemies.Size == 0)
             {
                 node.RemovePack(enemies);
+                if (inCombat)
+                {
+                    IItem loot = itemGenerator.GetItem(node.Multiplier);
+                    if (loot != null)
+                    {
+                        loot.Location = GetRandomLocation(4);
+                        items.Add(loot);
+                    }
+                }
+                inCombat = false;
+
                 if (node.PackList.Count > 0)
                 {
                     enemies = node.PackList[0];
+                    inCombat = true;
                     PlaceEnemies(enemies);
                 }
             }
@@ -173,11 +214,20 @@ namespace RoomsOfDoom
         public char[][] GetUpdatedMap()
         {
             CreateBackground();
+            foreach (ITile i in items)
+                map[i.Location.Y][i.Location.X] = i.Glyph;
+
             foreach (Enemy e in enemies)
                 if(e.Alive)
                     map[e.Location.Y][e.Location.X] = e.Glyph;
             map[player.Location.Y][player.Location.X] = player.Glyph;
             return map;
+        }
+
+        public Point GetRandomLocation(int distFromWall)
+        {
+            return new Point(random.Next(Width - distFromWall - 2) + 1 + distFromWall / 2,
+                random.Next(Height - distFromWall - 2) + 1 + distFromWall / 2);
         }
 
         private void CreateBackground()

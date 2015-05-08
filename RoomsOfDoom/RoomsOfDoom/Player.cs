@@ -195,22 +195,13 @@ namespace RoomsOfDoom
             inventory[2] = scroll;
         }
 
-        public void AddPotion()
+        public void AddItem(IItem item)
         {
-            if(inventory[0] != 255)
-                inventory[0]++;
-        }
-
-        public void AddCrystal()
-        {
-            if (inventory[1] != 255)
-                inventory[1]++;
-        }
-
-        public void AddScroll()
-        {
-            if (inventory[2] != 255)
-                inventory[2]++;
+            if (item.Id < 0 || item.Id > inventory.Length)
+                return;
+            if (inventory[item.Id] <= 0)
+                return;
+            inventory[item.Id]++;
         }
 
         public int GetPotCount

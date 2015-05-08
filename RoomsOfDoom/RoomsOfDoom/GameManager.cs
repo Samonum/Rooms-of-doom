@@ -28,7 +28,7 @@ namespace RoomsOfDoom
             dungeonCreator = new DungeonCreator(random);
             CreateDungeon(difficulty, 10, 10);
             player = new Player();
-            arena = new Arena(dungeon.nodes[0], player, random);
+            arena = new Arena(dungeon.nodes[0], player, random, new Items.ItemGenerator(dungeon, player, random));
             
         }
 
