@@ -73,15 +73,15 @@ namespace RoomsOfDoom
 
                     if (!n.AdjacencyList.ContainsValue(newNeighbour))
                     {
-                        int rn = random.Next(maxNeighbours);
+                        int rn = (int)Math.Pow(2, random.Next(maxNeighbours));
                         while (n.AdjacencyList.ContainsKey((Exit) rn))
-                            rn = random.Next(maxNeighbours);
+                            rn = (int)Math.Pow(2, random.Next(maxNeighbours));
 
                         n.AdjacencyList.Add((Exit)rn, newNeighbour);
 
-                        rn = random.Next(maxNeighbours);
+                        rn = (int)Math.Pow(2, random.Next(maxNeighbours));
                         while (newNeighbour.AdjacencyList.ContainsKey((Exit)rn))
-                            rn = random.Next(maxNeighbours);
+                            rn = (int)Math.Pow(2, random.Next(maxNeighbours));
 
                         newNeighbour.AdjacencyList.Add((Exit)rn, n);
 
