@@ -13,6 +13,7 @@ namespace RoomsOfDoom
         //Healing Potions, Time Crystals, Magic Scrolls
         public byte[] inventory = new byte[3] { 2, 2, 2 };
         List<IItem> activeItems;
+        private int score = 0;
 
         public Player(int curHp = -1)
         {
@@ -28,10 +29,10 @@ namespace RoomsOfDoom
             activeItems = new List<IItem>();
         }
 
-        public int Hit(int damage)
+        public bool Hit(int damage)
         {
             CurrentHP -= damage;
-            return CurrentHP;
+            return !Alive;
         }
 
         public bool Alive
@@ -128,10 +129,12 @@ namespace RoomsOfDoom
             {
                 Enemy[] enemies = (Enemy[])enemy.myPack.Enemies.ToArray().Clone();
                 foreach (Enemy e in enemies)
-                    e.Hit(strength * Multiplier);
+                    if (e.Hit(strength * Multiplier))
+                        score += e.name.Length;
             }
             else
-                enemy.Hit(strength * Multiplier);
+                if (enemy.Hit(strength * Multiplier))
+                    score += enemy.name.Length;
         }
 
         public void UpdateItems()
@@ -151,12 +154,31 @@ namespace RoomsOfDoom
 
         public bool UseItem(IItem item, Dungeon dungeon)
         {
+            if (item.Id < 0 || item.Id > inventory.Length)
+                return false;
             if (inventory[item.Id] <= 0)
                 return false;
             inventory[item.Id]--;
             item.Use(this, dungeon);
             activeItems.Add(item);
             return true;
+        }
+
+        public void IncreaseScore(int i)
+        {
+            if (i < 0)
+                throw new ArgumentOutOfRangeException();
+
+            score += i;
+
+            //Score wrapped to int.MinValue
+            if (score < i)
+                score = int.MaxValue;
+        }
+
+        public int GetScore
+        {
+            get { return score; }
         }
 
         public void SetItems(byte potion, byte crystal, byte scroll)
@@ -168,17 +190,20 @@ namespace RoomsOfDoom
 
         public void AddPotion()
         {
-            inventory[0]++;
+            if(inventory[0] != 255)
+                inventory[0]++;
         }
 
         public void AddCrystal()
         {
-            inventory[1]++;
+            if (inventory[1] != 255)
+                inventory[1]++;
         }
 
         public void AddScroll()
         {
-            inventory[2]++;
+            if (inventory[2] != 255)
+                inventory[2]++;
         }
 
         public int GetPotCount

@@ -24,6 +24,7 @@ namespace RoomsOfDoom
             get;
         }
 
-        int Hit(int damage);
+        //Returns true if lethal
+        bool Hit(int damage);
     }
 }
