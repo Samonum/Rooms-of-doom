@@ -84,6 +84,7 @@ namespace RoomsOfDoom
 
         public bool AddPack(Pack pack)
         {
+            // Fixed maxCapacity issue
             if (GetUsedCapacity() + pack.Size > maxCapacity)
                 return false;
 
@@ -120,12 +121,7 @@ namespace RoomsOfDoom
 
             return total;
         }
-        //
-        //
-        // TODO: You know what to do
-        // Add a get total encumbrance property
-        //
-
+        /*
         public Pack GetNextPack
         {
             get 
@@ -134,7 +130,7 @@ namespace RoomsOfDoom
                     return null;
                 return packs[0]; 
             }
-        }
+        }*/
 
         public int Multiplier
         {
@@ -150,22 +146,6 @@ namespace RoomsOfDoom
                     total += p.Size;
                 return total;
             }
-        }
-
-        public String ToString()
-        {
-            String s = stringName + id + "(";
-
-            foreach (KeyValuePair<Exit, Node> n in adjacencyList)
-                s += n.Value.id + ",";
-
-            s += ")-[Packs: ";
-
-            s += packs.Count + ", Monsters: ";
-
-            s += MonsterCount + "]";
-
-            return s;
         }
     }
 }
