@@ -14,7 +14,7 @@ namespace TestRoomsOfDoom
     public class PlayerTest : HittableTest
     {
         Player p;
-        Random r;
+        Random random;
         public PlayerTest() : base()
         {
         }
@@ -23,7 +23,7 @@ namespace TestRoomsOfDoom
         public void Init()
         {
             p = new Player();
-            r = new Random();
+            random = new Random();
         }
 
         public override IHittable getHittable()
@@ -72,11 +72,11 @@ namespace TestRoomsOfDoom
         public void TestMovementObstructedByEnemy()
         {
             //arrange
-            MonsterCreator M = new MonsterCreator(r, 10);
+            MonsterCreator M = new MonsterCreator(random, 10);
             Pack testPack = M.GeneratePack(1);
-            Node n = new Node(1);
+            Node n = new Node(random, 1, 15);
             n.AddPack(testPack);
-            Arena a = new Arena(n, p, r);
+            Arena a = new Arena(n, p, random);
             testPack[0].Location = new Point(5, 5);
             p.Location = new Point(5,4);
             //act and assert
@@ -104,7 +104,7 @@ namespace TestRoomsOfDoom
         public void PotionTest()
         {
             int pots = p.GetPotCount;
-            int count = 100 + r.Next(50);
+            int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
                 p.AddPotion();
@@ -126,7 +126,7 @@ namespace TestRoomsOfDoom
         public void CrystalTest()
         {
             int crystals = p.GetCrystalCount;
-            int count = 100 + r.Next(50);
+            int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
                 p.AddCrystal();
@@ -139,7 +139,7 @@ namespace TestRoomsOfDoom
         public void ScrollTest()
         {
             int scrolls = p.GetScrollCount;
-            int count = 100 + r.Next(50);
+            int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
                 p.AddScroll();
@@ -218,7 +218,7 @@ namespace TestRoomsOfDoom
 
             p.inventory = new byte[] { 0, 0, 0 };
 
-            MagicScroll s = new MagicScroll(r);
+            MagicScroll s = new MagicScroll(random);
             s.Duration = 0;
             Assert.IsFalse(p.UseItem(s, null), "Not Using");
 

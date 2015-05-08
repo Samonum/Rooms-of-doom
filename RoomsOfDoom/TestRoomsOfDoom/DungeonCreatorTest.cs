@@ -7,7 +7,12 @@ namespace TestRoomsOfDoom
     [TestClass]
     public class DungeonCreatorTest
     {
-        Random random = new Random();
+        Random random;
+
+        public DungeonCreatorTest()
+        {
+            random = new Random();
+        }
 
         [TestMethod]
         public void NodeConstructorTest()
@@ -35,6 +40,17 @@ namespace TestRoomsOfDoom
                 //TODO FIX
                 //Dungeon d = D.CreateDungeon(random.Next(0, 10), random.Next(0, 10));
             }
+        }
+
+        [TestMethod]
+        public void DungeonCreatorScaleTest()
+        {
+            DungeonCreator D = new DungeonCreator(random);
+            for (int i = 0; i < 100; i++)
+            {
+                Dungeon d = D.CreateDungeon(random.Next(500, 1000), random.Next(0, 30), 15);
+            }
+
         }
 
         [TestMethod]
