@@ -2,7 +2,7 @@
 
 namespace RoomsOfDoom
 {
-    interface ITile
+    public interface ITile
     {
         char Glyph
         {

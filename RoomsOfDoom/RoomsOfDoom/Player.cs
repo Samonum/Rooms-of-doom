@@ -27,6 +27,7 @@ namespace RoomsOfDoom
             Alive = true;
             Multiplier = 1;
             activeItems = new List<IItem>();
+            ScoreMultiplier = 1;
         }
 
         public bool Hit(int damage)
@@ -70,6 +71,12 @@ namespace RoomsOfDoom
         }
 
         public Point Location
+        {
+            get;
+            set;
+        }
+
+        public int ScoreMultiplier
         {
             get;
             set;
@@ -127,14 +134,14 @@ namespace RoomsOfDoom
         {
             if(OP)
             {
-                Enemy[] enemies = (Enemy[])enemy.myPack.Enemies.ToArray().Clone();
-                foreach (Enemy e in enemies)
-                    if (e.Hit(strength * Multiplier))
-                        score += e.name.Length;
+                Enemy[] pack = (Enemy[])enemy.myPack.Enemies.ToArray().Clone();
+                foreach (Enemy packman in pack)
+                    if (packman.Hit(strength * Multiplier))
+                        IncreaseScore(packman.name.Length);
             }
             else
                 if (enemy.Hit(strength * Multiplier))
-                    score += enemy.name.Length;
+                    IncreaseScore(enemy.name.Length);
         }
 
         public void UpdateItems()
@@ -167,9 +174,9 @@ namespace RoomsOfDoom
         public void IncreaseScore(int i)
         {
             if (i < 0)
-                throw new ArgumentOutOfRangeException();
+                i = 0;
 
-            score += i;
+            score += i * ScoreMultiplier;
 
             //Score wrapped to int.MinValue
             if (score < i)

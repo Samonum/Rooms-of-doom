@@ -19,6 +19,7 @@ namespace RoomsOfDoom
 
     public class Arena
     {
+        private const int doorsize = 3;
         Random random;
 
         private char[][] map;
@@ -31,27 +32,39 @@ namespace RoomsOfDoom
         int curPack;
         private Player player;
 
-        public Arena(Node node, Player player, Exit entrance, Random random)
+        public Arena(Node startNode, Player player, Random random)
         {
             this.random = random;
+            this.player = player;
+            InitRoom(startNode);
+        }
 
-            this.node = node;
+        public void InitRoom(Node newNode)
+        {
+            Exit entrance = 0;
+            foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
+                if (n.Value == node)
+                    entrance = n.Key;
 
-            foreach(KeyValuePair<Exit, Node> exit in node.AdjacencyList)
+            this.node = newNode;
+            player.ScoreMultiplier = node.Multiplier;
+
+            exits = 0;
+            foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)
                 exits |= exit.Key;
             topExit = 10 + random.Next(Width - 20);
             leftExit = 10 + random.Next(Height - 20);
             rightExit = 10 + random.Next(Height - 20);
             botExit = 10 + random.Next(Width - 20);
 
-            if (node.Packs.Count == 0)
+            if (node.PackList.Count == 0)
                 enemies = new Pack(0);
             else
-                enemies = node.Packs[0];
-            this.player = player;
+                enemies = node.PackList[0];
 
             PlaceEnemies(enemies);
             PlacePlayer(entrance);
+
         }
 
         public void PlacePlayer(Exit entrance)
@@ -108,24 +121,27 @@ namespace RoomsOfDoom
                 case 'w':
                     if (!player.Move(Direction.Up, enemies))
                         if ((exits & Exit.Top) == Exit.Top)
-                            if (enemies.Size == 0)
-                                ;
+                            if (player.Location.X > topExit - doorsize && player.Location.X < topExit + doorsize)
+                                InitRoom(node.AdjacencyList[Exit.Top]);
                     ;
                     break;
                 case 'a': 
                     if (!player.Move(Direction.Left, enemies))
                         if ((exits & Exit.Left) == Exit.Left)
-                            if (enemies.Size == 0);
+                            if (player.Location.Y > leftExit - doorsize && player.Location.Y < leftExit + doorsize)
+                                InitRoom(node.AdjacencyList[Exit.Left]);
                     break;
                 case 's': 
                     if (!player.Move(Direction.Down, enemies))
                         if ((exits & Exit.Bot) == Exit.Bot)
-                            if (enemies.Size == 0) ;
+                            if (player.Location.X > botExit - doorsize && player.Location.X < botExit + doorsize)
+                                InitRoom(node.AdjacencyList[Exit.Bot]);
                     break;
                 case 'd': 
                     if (!player.Move(Direction.Right, enemies))
                         if ((exits & Exit.Right) == Exit.Right)
-                            if (enemies.Size == 0);
+                            if (player.Location.Y > rightExit - doorsize && player.Location.Y < rightExit + doorsize)
+                                InitRoom(node.AdjacencyList[Exit.Right]);
                     break;
                 case '1': 
                     player.UseItem(new Potion(), null);
@@ -145,10 +161,10 @@ namespace RoomsOfDoom
 
             if(enemies.Size == 0)
             {
-                if (node.Packs.Count > 1)
+                node.RemovePack(enemies);
+                if (node.PackList.Count > 0)
                 {
-                    node.Packs.RemoveAt(0);
-                    enemies = node.Packs[0];
+                    enemies = node.PackList[0];
                     PlaceEnemies(enemies);
                 }
             }
@@ -169,7 +185,7 @@ namespace RoomsOfDoom
             map = new char[Height][];
             map[0] = new char[Width];
             for (int j = 0; j < map[0].Length; j++)
-                if ((exits & Exit.Top) != Exit.Top || j < topExit - 2 || j > topExit + 2)
+                if ((exits & Exit.Top) != Exit.Top || j <= topExit - doorsize || j >= topExit + doorsize)
                     map[0][j] = '█';
                 else
                     map[0][j] = '▒';
@@ -179,14 +195,14 @@ namespace RoomsOfDoom
                 for (int j = 0; j < map[i].Length; j++)
                     if (j == 0)
                     {
-                        if ((exits & Exit.Left) != Exit.Left || i < leftExit - 2 || i > leftExit + 2)
+                        if ((exits & Exit.Left) != Exit.Left || i <= leftExit - doorsize || i >= leftExit + doorsize)
                             map[i][j] = '█';
                         else
                             map[i][j] = '▒';
                     }
                     else if (j == map[i].Length - 1)
                     {
-                        if ((exits & Exit.Right) != Exit.Right || i < rightExit - 2 || i > rightExit + 2)
+                        if ((exits & Exit.Right) != Exit.Right || i <= rightExit - doorsize || i >= rightExit + doorsize)
                             map[i][j] = '█';
                         else
                             map[i][j] = '▒';
@@ -195,7 +211,7 @@ namespace RoomsOfDoom
                         map[i][j] = '.';
                 map[map.Length - 1] = new char[Width];
                 for (int j = 0; j < map[0].Length; j++)
-                    if ((exits & Exit.Bot) != Exit.Bot || j < botExit - 2 || j > botExit + 2)
+                    if ((exits & Exit.Bot) != Exit.Bot || j <= botExit - doorsize || j >= botExit + doorsize)
                         map[map.Length - 1][j] = '█';
                     else
                         map[map.Length - 1][j] = '▒';

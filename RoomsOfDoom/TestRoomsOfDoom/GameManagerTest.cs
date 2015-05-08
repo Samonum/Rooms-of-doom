@@ -34,6 +34,7 @@ namespace TestRoomsOfDoom
         public void scoreTest()
         {
             Player player = new Player();
+            player.ScoreMultiplier = 1;
             int score = 0;
             for(int i = 0; i < 10000; i++)
             {
@@ -42,23 +43,16 @@ namespace TestRoomsOfDoom
                 score += increase;
             }
             Assert.AreEqual(score, player.GetScore, "Scores don't add up well.");
+            player.IncreaseScore(-1);
+            Assert.AreEqual(score, player.GetScore, "No more points for you.");
             HudTest();
             player.IncreaseScore(int.MaxValue);
             Assert.AreEqual(player.GetScore, int.MaxValue);
             player.IncreaseScore(1000);
             Assert.AreEqual(player.GetScore, int.MaxValue);
             HudTest();
-            try
-            {
-                player.IncreaseScore(-1);
-                Assert.Fail("Didn't crash");
-            }
-            catch (ArgumentOutOfRangeException e)
-            { }
-            catch(Exception e)
-            {
-                Assert.Fail("Threw wrong error");
-            }
+            player.IncreaseScore(-1);
+            Assert.AreEqual(player.GetScore, int.MaxValue);
         }
 
         [TestMethod]
