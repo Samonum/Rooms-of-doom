@@ -60,12 +60,12 @@ namespace TestRoomsOfDoom
             p.Location = new Point(1, 5);
             p.Move(Direction.Left, testPack);
             Assert.IsTrue(p.Location.X == 1 && p.Location.Y == 5);
-            p.Location = new Point(6, Arena.Height -2);
+            p.Location = new Point(6, GameManager.Height -2);
             p.Move(Direction.Down, testPack);
-            Assert.IsTrue(p.Location.X == 6 && p.Location.Y == Arena.Height -2);
-            p.Location = new Point(Arena.Width - 2, 5);
+            Assert.IsTrue(p.Location.X == 6 && p.Location.Y == GameManager.Height -2);
+            p.Location = new Point(GameManager.Width - 2, 5);
             p.Move(Direction.Right, testPack);
-            Assert.IsTrue(p.Location.X == Arena.Width -2 && p.Location.Y == 5);
+            Assert.IsTrue(p.Location.X == GameManager.Width -2 && p.Location.Y == 5);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace TestRoomsOfDoom
             Pack testPack = M.GeneratePack(1);
             Node n = new Node(random, 1, 15);
             n.AddPack(testPack);
-            Arena a = new Arena(n, p, random);
+            GameManager a = new GameManager(n, p, random);
             testPack[0].Location = new Point(5, 5);
             p.Location = new Point(5,4);
             //act and assert

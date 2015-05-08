@@ -43,13 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bridge.cs" />
-    <Compile Include="Arena.cs" />
+    <Compile Include="GameManager.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="DungeonCreator.cs" />
     <Compile Include="Enemies and packs\Enemy.cs" />
     <Compile Include="Enemies and packs\Pack.cs" />
-    <Compile Include="GameManager.cs" />
     <Compile Include="IHittable.cs" />
     <Compile Include="Items\IItem.cs" />
     <Compile Include="Items\ItemGenerator.cs" />

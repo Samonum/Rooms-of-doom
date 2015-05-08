@@ -94,7 +94,7 @@ namespace RoomsOfDoom
                     break;
                 case Direction.Down:
                     loc = new Point(Location.X, Location.Y + 1);
-                    if (loc.Y == Arena.Height - 1)
+                    if (loc.Y == GameManager.Height - 1)
                         return false;
                     break;
                 case Direction.Left:
@@ -104,7 +104,7 @@ namespace RoomsOfDoom
                     break;
                 case Direction.Right:
                     loc = new Point(Location.X + 1, Location.Y);
-                    if (loc.X == Arena.Width - 1)
+                    if (loc.X == GameManager.Width - 1)
                         return false;
                     break;
             }
