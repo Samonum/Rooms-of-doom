@@ -29,14 +29,17 @@ namespace RoomsOfDoom
 
         private DungeonCreator dungeonCreator;
         private Dungeon dungeon;
-        private int difficulty;
+        public int difficulty;
+        private bool acceptinput;
 
-        public GameManager(int seed = -1)
+        public GameManager(bool testMode = true, int seed = -1)
         {
             if (seed == -1)
                 random = new Random();
             else
                 random = new Random(seed);
+
+            this.acceptinput = testMode;
 
             difficulty = 0;
             player = new Player();
@@ -52,7 +55,11 @@ namespace RoomsOfDoom
                 Console.Clear();
                 Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
                 Console.WriteLine("If you wish to save press s, to load an old save press l or c to conitnue");
-                char input = Console.ReadKey().KeyChar;
+
+                char input = 'c';
+                if(acceptinput)
+                    input = Console.ReadKey().KeyChar;
+
                 switch (input)
                 {
                     case 's':
@@ -71,11 +78,10 @@ namespace RoomsOfDoom
                         break;
                 }
             }
-            dungeonCreator = new DungeonCreator(random);
-            CreateDungeon(difficulty, 10, 10);
-            this.itemGenerator = new ItemGenerator(dungeon, player, random);
-            InitRoom(dungeon.nodes[0]);
+            CreateDungeon(10, 10);
         }
+
+
 
         public void InitRoom(Node newNode)
         {
@@ -242,7 +248,8 @@ namespace RoomsOfDoom
             Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
             Console.WriteLine();
             Console.WriteLine("By the way, you managed to get a score of {0}.", player.GetScore);
-            Console.ReadKey();
+            if(acceptinput)
+                Console.ReadKey();
             difficulty = 0;
             player = new Player();
             StartNextLevel();
@@ -350,6 +357,8 @@ namespace RoomsOfDoom
 
         public void HandleInput()
         {
+            if (!acceptinput)
+                return;
             char input = Console.ReadKey().KeyChar;
             HandleCombatRound(input);
         }
@@ -359,8 +368,13 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public void CreateDungeon(int difficulty, int packCount, int maxCapacity)
+        public void CreateDungeon(int packCount, int maxCapacity)
         {
+
+            dungeonCreator = new DungeonCreator(random);
+            dungeon = dungeonCreator.CreateDungeon(difficulty, 10, 10);
+            this.itemGenerator = new ItemGenerator(dungeon, player, random);
+            InitRoom(dungeon.nodes[0]);
             dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
         }
 
@@ -411,23 +425,25 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             Console.WriteLine(FormatHud());
         }
 
-        public void Save(string fileName)
+        public bool Save(string fileName)
         {
-            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || fileName == "")
             {
                 Console.WriteLine("Your filename contains illegal characters. Press any Key to return.");
-                Console.ReadKey();
-                return;
+                if(acceptinput)
+                    Console.ReadKey();
+                return false;
             }
 
             if(File.Exists(fileName))
             {
                 Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
+                if(acceptinput)
                 if (Console.ReadKey().KeyChar != 'y')
                 {
                     Console.WriteLine("Did not save file.");
                     Console.ReadKey();
-                    return;
+                    return false;
                 }
             }
 
@@ -445,17 +461,19 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             }
 
             Console.WriteLine("saved fil: {0}", fileName);
-            Console.ReadKey();
-            return;
+            if(acceptinput)
+                Console.ReadKey();
+            return true;
         }
 
-        public void Load(string fileName)
+        public bool Load(string fileName)
         {
             if (!File.Exists(fileName))
             {
                 Console.WriteLine("File Does Not Exist. Press any Key to return.");
-                Console.ReadKey();
-                return;
+                if(acceptinput)
+                    Console.ReadKey();
+                return false;
             }
 
             using (StreamReader reader = new StreamReader(fileName))
@@ -474,6 +492,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     difficulty = int.Parse(data[5]);
                 }
             }
+            return true;
         }
 
     }

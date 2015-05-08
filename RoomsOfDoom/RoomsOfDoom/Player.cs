@@ -108,12 +108,14 @@ namespace RoomsOfDoom
                         return false;
                     break;
             }
+
             foreach(Enemy enemy in enemies)
                 if(enemy.Location == loc)
                 {
                     Combat(enemy);
                     return true;
                 }
+
             Location = loc;
             return true;
         }
