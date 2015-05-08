@@ -12,7 +12,7 @@ namespace RoomsOfDoom
         //TODO for testing purposes it is public
         public List<Node> nodes;
         private Node endNode;
-        private List<Pack> packs;
+        //private List<Pack> packs;
         private Random random;
         private int maxCapacity;
 
@@ -28,58 +28,47 @@ namespace RoomsOfDoom
             else
                 endNode = nodes[nodes.Count - 1];
 
-            packs = new List<Pack>();
+            //packs = new List<Pack>();
         }
 
         public void Update()
         {
-            List<Pack> removeList = new List<Pack>();
-            foreach(Pack p in packs)
+            foreach (Node curNode in nodes)
             {
-                if (p.Size == 0)
+                List<Pack> curPackList = curNode.PackList;
+                List<Pack> removeList = new List<Pack>();
+
+                foreach (Pack p in curPackList)
                 {
+                    if (p.Size == 0)
+                    {
+                        removeList.Add(p);
+                        continue;
+                    }
+
+                    if (random.NextDouble() > 0.5)
+                        continue;
+
+                    List<Node> choices = new List<Node>();
+
+                    foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
+                        choices.Add(kvp.Value);
+
+                    if (choices.Count == 0)
+                        continue;
+
+                    Node to = choices[random.Next(choices.Count)];
+
+                    if (to.MonsterCount + p.Size > maxCapacity * to.CapMultiplier)
+                        continue;
+
+                    to.AddPack(p);
                     removeList.Add(p);
-                    continue;
                 }
 
-                if (random.NextDouble() > 0.5)
-                    continue;
-                Node n = p.Location;
-                List<Node> choices = new List<Node>();
-
-                foreach (KeyValuePair<Exit, Node> kvp in n.AdjacencyList)
-                    choices.Add(kvp.Value);
-
-                if (choices.Count == 0)
-                    continue;
-
-                MovePack(p, choices[random.Next(choices.Count)]);
+                foreach (Pack p in removeList)
+                    curPackList.Remove(p);
             }
-            foreach (Pack p in removeList)
-            {
-                packs.Remove(p);
-                List<Pack> packList = p.Location.PackList;
-                if (packList.Contains(p))
-                    packList.Remove(p);
-            }
-        
-        }
-
-        public bool MovePack(Pack p, Node to)
-        {
-            Node from = p.Location;
-            if (!from.AdjacencyList.ContainsValue(to))
-                return false;
-
-            if (to.MonsterCount + p.Size > maxCapacity * to.CapMultiplier)
-                return false;
-
-            // TODO: This will probably go wrong somewhere if logic is flawed
-            from.RemovePack(p);
-            to.AddPack(p);
-            p.Location = to;
-
-            return true;
         }
 
         public List<Node> ShortestPath(int from, int to)
@@ -146,11 +135,7 @@ namespace RoomsOfDoom
             }
 
             foreach (Node n in toBeRemoved)
-            {
-                foreach (Pack p in n.PackList)
-                    packs.Remove(p);
                 nodes.Remove(n);
-            }
 
             return true;
         }
@@ -164,9 +149,7 @@ namespace RoomsOfDoom
                 return false;
 
             Node addNode = nodes[nodeIndex];
-            pack.Location = addNode;
 
-            packs.Add(pack);
             return addNode.AddPack(pack);
         }
                     
