@@ -15,7 +15,7 @@ namespace RoomsOfDoom
         protected bool alive;
         protected char glyph;
 
-        public Enemy(string name,char glyph, int hp)
+        public Enemy(string name, char glyph, int hp)
         {
             this.name = name;
             myPack = null;

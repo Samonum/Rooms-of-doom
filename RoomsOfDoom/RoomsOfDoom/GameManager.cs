@@ -29,7 +29,7 @@ namespace RoomsOfDoom
             n.AddPack(monsterCreator.GeneratePack(1));
             n.AddPack(monsterCreator.GeneratePack(1));
             player = new Player();
-            arena = new Arena(n, player, Exit.Left, random);
+            arena = new Arena(n, player, random);
         }
 
         public void Update()
@@ -42,7 +42,20 @@ namespace RoomsOfDoom
         public void HandleInput()
         {
             char input = Console.ReadKey().KeyChar;
-            arena.HandleCombatRound(input);
+            switch (input)
+            {
+                case 'o':
+                    Console.WriteLine("How would you like to Call your Save?");
+                    Save(Console.ReadLine());
+                    break;
+                case 'l':
+                    Console.WriteLine("What savefile would you like to load?");
+                    Load(Console.ReadLine());
+                    break;
+                default:
+                    arena.HandleCombatRound(input);
+                    break;
+            }
         }
 
         public Player GetPlayer
@@ -97,6 +110,12 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
 
         public void Save(string fileName)
         {
+            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                Console.WriteLine("Your filename contains illegal characters. Press any Key to return.");
+                Console.ReadKey();
+                return;
+            }
             Player p = GetPlayer;
             using (StreamWriter writer = new StreamWriter(fileName))
             {
@@ -112,6 +131,12 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
 
         public void Load(string fileName)
         {
+            if (!File.Exists(fileName))
+            {
+                Console.WriteLine("File Does Not Exist. Press any Key to return.");
+                Console.ReadKey();
+                return;
+            }
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line = reader.ReadLine();

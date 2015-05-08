@@ -31,13 +31,23 @@ namespace RoomsOfDoom
         int curPack;
         private Player player;
 
-        public Arena(Node node, Player player, Exit entrance, Random random)
+        public Arena(Node startNode, Player player, Random random)
         {
             this.random = random;
+            this.player = player;
+            InitRoom(startNode);
+        }
 
-            this.node = node;
+        public void InitRoom(Node newNode)
+        {
+            Exit entrance = 0;
+            foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
+                if (n.Value == node)
+                    entrance = n.Key;
 
-            foreach(KeyValuePair<Exit, Node> exit in node.AdjacencyList)
+            this.node = newNode;
+
+            foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)
                 exits |= exit.Key;
             topExit = 10 + random.Next(Width - 20);
             leftExit = 10 + random.Next(Height - 20);
@@ -48,10 +58,10 @@ namespace RoomsOfDoom
                 enemies = new Pack(0);
             else
                 enemies = node.Packs[0];
-            this.player = player;
 
             PlaceEnemies(enemies);
             PlacePlayer(entrance);
+
         }
 
         public void PlacePlayer(Exit entrance)
@@ -108,24 +118,27 @@ namespace RoomsOfDoom
                 case 'w':
                     if (!player.Move(Direction.Up, enemies))
                         if ((exits & Exit.Top) == Exit.Top)
-                            if (enemies.Size == 0)
-                                ;
+                            if (player.Location.X > topExit - 2 && player.Location.X < topExit + 2)
+                                InitRoom(node.AdjacencyList[Exit.Top]);
                     ;
                     break;
                 case 'a': 
                     if (!player.Move(Direction.Left, enemies))
                         if ((exits & Exit.Left) == Exit.Left)
-                            if (enemies.Size == 0);
+                            if (player.Location.Y > leftExit - 2 && player.Location.Y < leftExit + 2)
+                                InitRoom(node.AdjacencyList[Exit.Left]);
                     break;
                 case 's': 
                     if (!player.Move(Direction.Down, enemies))
                         if ((exits & Exit.Bot) == Exit.Bot)
-                            if (enemies.Size == 0) ;
+                            if (player.Location.X > botExit - 2 && player.Location.X < botExit + 2)
+                                InitRoom(node.AdjacencyList[Exit.Bot]);
                     break;
                 case 'd': 
                     if (!player.Move(Direction.Right, enemies))
                         if ((exits & Exit.Right) == Exit.Right)
-                            if (enemies.Size == 0);
+                            if (player.Location.Y > rightExit - 2 && player.Location.Y < rightExit + 2)
+                                InitRoom(node.AdjacencyList[Exit.Right]);
                     break;
                 case '1': 
                     player.UseItem(new Potion(), null);

@@ -21,7 +21,7 @@ namespace TestRoomsOfDoom
             node.AddPack(p);
             for(int n = 0; n < 100; n++)
             {
-                Arena a = new Arena(node, new Player(), Exit.Top, new Random());
+                Arena a = new Arena(node, new Player(), new Random());
                 for (int i = 0; i < p.Size; i++)
                     for (int j = 0; j < i; j++)
                         Assert.AreNotEqual(p[i].Location, p[j].Location, "Two enemies at the same place. The horror!");
