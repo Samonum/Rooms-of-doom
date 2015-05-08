@@ -36,11 +36,53 @@ namespace RoomsOfDoom
             }
         }
 
-        public List<Node> ShortestPath(int from, int to)
+        public List<Node> ShortestPath(Node from, Node to)
         {
+            if (!nodes.Contains(from))
+                return null;
+
+            if (!nodes.Contains(to))
+                return null;
+
             List<Node> path = new List<Node>();
-            // TODO: implement BFS
-            return path;
+
+            if (from == to)
+                return path;
+
+            Dictionary<Node, Node> pre = new Dictionary<Node, Node>();
+            Queue<Node> queue = new Queue<Node>();
+
+            pre.Add(from, from);
+            queue.Enqueue(endNode);
+
+            while (queue.Count > 0)
+            {
+                Node curNode = queue.Dequeue();
+
+                foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
+                {
+                    Node nextNode = kvp.Value;
+                    if (!pre.ContainsKey(nextNode))
+                    {
+                        queue.Enqueue(nextNode);
+                        pre.Add(nextNode, curNode);
+                        if (nextNode == to)
+                        {
+                            Node n = nextNode;
+
+                            while (n != null)
+                            {
+                                path.Add(n);
+                                n = pre[n];
+                            }
+
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         public List<Node> Destroy(Node rNode)
@@ -117,16 +159,6 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return nodes.Count; }
-        }
-
-        public String ToString()
-        {
-            String s = "";
-
-            foreach (Node n in nodes)
-                s += n.ToString() + "\n";
-
-            return s;
         }
     }
 }

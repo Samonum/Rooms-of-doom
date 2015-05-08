@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DungeonTest.cs" />
     <Compile Include="NotSoRandom.cs" />
     <Compile Include="PackTest.cs" />
     <Compile Include="EnemyTest.cs" />
