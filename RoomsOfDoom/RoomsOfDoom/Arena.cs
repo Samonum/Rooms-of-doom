@@ -47,7 +47,7 @@ namespace RoomsOfDoom
                     entrance = n.Key;
 
             this.node = newNode;
-            player.ScoreMultiplier = node.CapMultiplier;
+            player.ScoreMultiplier = node.Multiplier;
 
             exits = 0;
             foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)
