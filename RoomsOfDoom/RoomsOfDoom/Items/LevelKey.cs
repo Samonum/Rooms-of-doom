@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
-    class LevelKey : IItem
+    public class LevelKey : IItem
     {
         GameManager manager;
         public LevelKey(GameManager manager)
