@@ -63,7 +63,7 @@ namespace RoomsOfDoom
                 if (i == bridgeTarget)
                     n = new Bridge(random, i, maxCapacity, counter);
                 else
-                    n = new Node(random, i, maxCapacity);
+                    n = new Node(random, i, maxCapacity, i == size - 1);
 
                 nodes.Add(n);
                 int neighbourAmount = 1 + random.Next(maxNeighbours - 1);

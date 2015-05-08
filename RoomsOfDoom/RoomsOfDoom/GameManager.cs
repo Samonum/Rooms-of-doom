@@ -38,11 +38,41 @@ namespace RoomsOfDoom
             else
                 random = new Random(seed);
 
-            difficulty = 1;
+            difficulty = 0;
+            player = new Player();
+            StartNextLevel();
+        }
 
+        public void StartNextLevel()
+        {
+            difficulty++;
+            bool inMenu = true;
+            while (inMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
+                Console.WriteLine("If you wish to save press s, to load an old save press l or c to conitnue");
+                char input = Console.ReadKey().KeyChar;
+                switch (input)
+                {
+                    case 's':
+                    case 'S':
+                        Console.WriteLine("How would you like to Call your Save?");
+                        Save(Console.ReadLine());
+                        break;
+                    case 'l':
+                    case 'L':
+                        Console.WriteLine("What savefile would you like to load?");
+                        Load(Console.ReadLine());
+                        break;
+                    case 'c':
+                    case 'C':
+                        inMenu = false;
+                        break;
+                }
+            }
             dungeonCreator = new DungeonCreator(random);
             CreateDungeon(difficulty, 10, 10);
-            player = new Player();
             this.itemGenerator = new ItemGenerator(dungeon, player, random);
             InitRoom(dungeon.nodes[0]);
         }
@@ -52,6 +82,10 @@ namespace RoomsOfDoom
             dungeon.Update();
 
             items = new List<IItem>(2);
+            LevelKey key = new LevelKey(this);
+            key.Location = GetRandomLocation(8);
+            if (newNode.IsExit)
+                items.Add(key);
 
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
@@ -134,6 +168,7 @@ namespace RoomsOfDoom
 
         public void HandleCombatRound(char input)
         {
+            bool act = true;
             switch (input)
             {
                 case 'w':
@@ -141,7 +176,6 @@ namespace RoomsOfDoom
                         if ((exits & Exit.Top) == Exit.Top)
                             if (player.Location.X > topExit - doorsize && player.Location.X < topExit + doorsize)
                                 InitRoom(node.AdjacencyList[Exit.Top]);
-                    ;
                     break;
                 case 'a': 
                     if (!player.Move(Direction.Left, enemies))
@@ -170,9 +204,23 @@ namespace RoomsOfDoom
                 case '3':
                     player.UseItem(new MagicScroll(random, this), dungeon);
                     break;
+                case '4':
+                    player.UseItem(new LevelKey(this), dungeon);
+                    break;
+                case 'e':
+                    break;
+                default:
+                    act = false;
+                    break;
             }
-            TryPickUpLoot();
-            UpdateEnemies();
+
+            if (act)
+            {
+                TryPickUpLoot();
+                UpdateEnemies();
+                if (!player.Alive)
+                    GameOver();
+            }
         }
 
         public void TryPickUpLoot()
@@ -183,6 +231,21 @@ namespace RoomsOfDoom
                     player.AddItem(items[i]);
                     items.RemoveAt(i);
                 }
+        }
+
+        public void GameOver()
+        {
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine(" YOU LOSE!");
+            Console.WriteLine(" We're very sorry and hope you all the best in your next adventure.");
+            Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
+            Console.WriteLine();
+            Console.WriteLine("By the way, you managed to get a score of {0}.", player.GetScore);
+            Console.ReadKey();
+            difficulty = 0;
+            player = new Player();
+            StartNextLevel();
         }
 
         public void UpdateEnemies()
@@ -263,6 +326,7 @@ namespace RoomsOfDoom
                     }
                     else
                         map[i][j] = '.';
+
                 map[map.Length - 1] = new char[Width];
                 for (int j = 0; j < map[0].Length; j++)
                     if ((exits & Exit.Bot) != Exit.Bot || j <= botExit - doorsize || j >= botExit + doorsize)
@@ -287,20 +351,7 @@ namespace RoomsOfDoom
         public void HandleInput()
         {
             char input = Console.ReadKey().KeyChar;
-            switch (input)
-            {
-                case 'o':
-                    Console.WriteLine("How would you like to Call your Save?");
-                    Save(Console.ReadLine());
-                    break;
-                case 'l':
-                    Console.WriteLine("What savefile would you like to load?");
-                    Load(Console.ReadLine());
-                    break;
-                default:
-                    HandleCombatRound(input);
-                    break;
-            }
+            HandleCombatRound(input);
         }
 
         public Player GetPlayer
@@ -336,12 +387,13 @@ namespace RoomsOfDoom
             return String.Format(
 @" ________________________________________________ 
 /                                                \
-| HP: {0}        POINTS: {1}         |
-| POT: {2}        TC: {3}        MS: {4}         |
+| HP: {0}       POINTS:{1}    KEY:   |
+| POT: {2}       TC: {3}       MS: {4}     {5}   |
 \________________________________________________/ ",
 
 new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString().PadLeft(14), 
-    player.GetPotCount.ToString().PadLeft(3), player.GetCrystalCount.ToString().PadLeft(3), player.GetScrollCount.ToString().PadLeft(3) });
+    player.GetPotCount.ToString().PadLeft(3), player.GetCrystalCount.ToString().PadLeft(3), player.GetScrollCount.ToString().PadLeft(3), 
+    player.inventory[3] >= 1 ? "GET" : "   "});
         }
 
         public void Draw()
@@ -349,6 +401,8 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             Console.Clear();
             if (CurrentNode.isBridge())
                 Console.ForegroundColor = ConsoleColor.Red;
+            else if (CurrentNode.IsExit)
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
             else
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
             string[] drawmap = CreateEnemyOverview();
@@ -365,6 +419,18 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Console.ReadKey();
                 return;
             }
+
+            if(File.Exists(fileName))
+            {
+                Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
+                if (Console.ReadKey().KeyChar != 'y')
+                {
+                    Console.WriteLine("Did not save file.");
+                    Console.ReadKey();
+                    return;
+                }
+            }
+
             Player p = GetPlayer;
             using (StreamWriter writer = new StreamWriter(fileName))
             {
@@ -373,9 +439,14 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     p.GetScore + ";" +
                     p.GetPotCount + ";" +
                     p.GetCrystalCount + ";" +
-                    p.GetScrollCount
+                    p.GetScrollCount + ";" +
+                    difficulty
                 );
             }
+
+            Console.WriteLine("saved fil: {0}", fileName);
+            Console.ReadKey();
+            return;
         }
 
         public void Load(string fileName)
@@ -386,19 +457,21 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Console.ReadKey();
                 return;
             }
+
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line = reader.ReadLine();
                 if (line != null)
                 {
                     string[] data = line.Split(';');
-                    player = new Player(int.Parse(data[1]));
-                    player.IncreaseScore(int.Parse(data[0]));
+                    player = new Player(int.Parse(data[0]));
+                    player.IncreaseScore(int.Parse(data[1]));
                     player.SetItems(
                         byte.Parse(data[2]),
                         byte.Parse(data[3]),
                         byte.Parse(data[4])
                     );
+                    difficulty = int.Parse(data[5]);
                 }
             }
         }

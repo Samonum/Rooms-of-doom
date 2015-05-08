@@ -11,7 +11,7 @@ namespace RoomsOfDoom
     {
         public const int strength = 10;
         //Healing Potions, Time Crystals, Magic Scrolls
-        public byte[] inventory = new byte[3] { 2, 2, 2 };
+        public byte[] inventory = new byte[4] { 2, 2, 2, 0 };
         List<IItem> activeItems;
         private int score = 0;
 
@@ -199,7 +199,7 @@ namespace RoomsOfDoom
         {
             if (item.Id < 0 || item.Id > inventory.Length)
                 return;
-            if (inventory[item.Id] <= 0)
+            if (inventory[item.Id] == 255)
                 return;
             inventory[item.Id]++;
         }
