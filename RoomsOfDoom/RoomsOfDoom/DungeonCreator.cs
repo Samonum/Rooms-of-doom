@@ -30,6 +30,7 @@ namespace RoomsOfDoom
 
             Dungeon dungeon = GenerateDungeon(difficulty);
             dungeon = SpreadPacks(dungeon, difficulty, packCount);
+            dungeon.ShortestPath(dungeon.nodes[0], dungeon.nodes[dungeon.nodes.Count - 1]);
             return dungeon;
         }
 

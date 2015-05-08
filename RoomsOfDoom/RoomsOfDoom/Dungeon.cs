@@ -52,8 +52,8 @@ namespace RoomsOfDoom
             Dictionary<Node, Node> pre = new Dictionary<Node, Node>();
             Queue<Node> queue = new Queue<Node>();
 
-            pre.Add(from, from);
-            queue.Enqueue(endNode);
+            pre.Add(to, to);
+            queue.Enqueue(to);
 
             while (queue.Count > 0)
             {
@@ -66,7 +66,7 @@ namespace RoomsOfDoom
                     {
                         queue.Enqueue(nextNode);
                         pre.Add(nextNode, curNode);
-                        if (nextNode == to)
+                        if (nextNode == from)
                         {
                             Node n = nextNode;
 
