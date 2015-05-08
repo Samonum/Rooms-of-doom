@@ -12,7 +12,7 @@ namespace TestRoomsOfDoom
         public GameManagerTest()
         {
             r = new Random();
-            testSubject = new GameManager(10);
+            //testSubject = new GameManager(10);
         }
 
         [TestMethod]
@@ -70,7 +70,7 @@ namespace TestRoomsOfDoom
             {
                 PlayerTest playerTest = new PlayerTest();
                 playerTest.Init();
-                testSubject = new GameManager();
+                //testSubject = new GameManager();
                 testSubject.GetPlayer.Hit(9 * i);
                 playerTest.ScrollTest();
                 playerTest.PotionTest();

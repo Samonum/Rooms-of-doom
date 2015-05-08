@@ -22,8 +22,8 @@ namespace TestRoomsOfDoom
             node.AddPack(p);
             for(int n = 0; n < 100; n++)
             {
-                GameManager a = new GameManager();
-                a.InitRoom(node);
+                //GameManager a = new GameManager();
+                //a.InitRoom(node);
                 for (int i = 0; i < p.Size; i++)
                     for (int j = 0; j < i; j++)
                         Assert.AreNotEqual(p[i].Location, p[j].Location, "Two enemies at the same place. The horror!");
