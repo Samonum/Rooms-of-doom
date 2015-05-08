@@ -11,7 +11,7 @@ namespace RoomsOfDoom
         private int difficulty;
         //TODO for testing purposes it is public
         public List<Node> nodes;
-        private Node endNode;
+        public  Node endNode;
         private Random random;
         private int maxCapacity;
 
