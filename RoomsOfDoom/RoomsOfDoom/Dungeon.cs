@@ -70,12 +70,13 @@ namespace RoomsOfDoom
                         {
                             Node n = nextNode;
 
-                            while (n != null)
+                            while (n != pre[n])
                             {
                                 path.Add(n);
                                 n = pre[n];
                             }
 
+                            path.Add(n);
                             return path;
                         }
                     }
