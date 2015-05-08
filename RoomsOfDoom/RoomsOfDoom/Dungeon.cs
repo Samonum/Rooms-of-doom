@@ -101,6 +101,7 @@ namespace RoomsOfDoom
             if (nodeIndex >= nodes.Count)
                 return false;
 
+            packs.Add(pack);
             return nodes[nodeIndex].AddPack(pack);
         }
                     
