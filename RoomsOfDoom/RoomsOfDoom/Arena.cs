@@ -25,24 +25,32 @@ namespace RoomsOfDoom
         public const int Width = 37, Height = 25;
         private Exit exits;
         private int topExit, leftExit, rightExit, botExit;
+        private Node node;
 
         public Pack enemies;
+        int curPack;
         private Player player;
 
-        public Arena(Exit openExits, Pack enemies, Player player, Exit entrance, Random random)
+        public Arena(Node node, Player player, Exit entrance, Random random)
         {
             this.random = random;
 
-            exits = openExits;
+            this.node = node;
+
+            foreach(KeyValuePair<Exit, Node> exit in node.AdjacencyList)
+                exits |= exit.Key;
             topExit = 10 + random.Next(Width - 20);
             leftExit = 10 + random.Next(Height - 20);
             rightExit = 10 + random.Next(Height - 20);
             botExit = 10 + random.Next(Width - 20);
 
-            this.enemies = enemies;
-            PlaceEnemies(enemies);
-
+            if (node.Packs.Count == 0)
+                enemies = new Pack(0);
+            else
+                enemies = node.Packs[0];
             this.player = player;
+
+            PlaceEnemies(enemies);
             PlacePlayer(entrance);
         }
 
@@ -88,6 +96,8 @@ namespace RoomsOfDoom
                         i--;
                         break;
                     }
+                    else if (enemies[i].Location == player.Location)
+                        i--;
             }
         }
 
@@ -131,6 +141,16 @@ namespace RoomsOfDoom
             foreach (Enemy e in enemies)
             {
                 e.Move(player);
+            }
+
+            if(enemies.Size == 0)
+            {
+                if (node.Packs.Count >= 0)
+                {
+                    node.Packs.RemoveAt(0);
+                    enemies = node.Packs[0];
+                    PlaceEnemies(enemies);
+                }
             }
         }
 

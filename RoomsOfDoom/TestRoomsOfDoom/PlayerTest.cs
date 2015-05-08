@@ -74,7 +74,9 @@ namespace TestRoomsOfDoom
             //arrange
             MonsterCreator M = new MonsterCreator(r, 10);
             Pack testPack = M.GeneratePack(1);
-            Arena a = new Arena(Exit.Right, testPack, p, Exit.Right, r);
+            Node n = new Node(1);
+            n.AddPack(testPack);
+            Arena a = new Arena(n, p, Exit.Right, r);
             testPack[0].Location = new Point(5, 5);
             p.Location = new Point(5,4);
             //act and assert
