@@ -7,16 +7,6 @@ using RoomsOfDoom.Items;
 
 namespace RoomsOfDoom
 {
-    [Flags]
-    public enum Exit : byte
-    {
-        Top = 1,
-        Bot = 2,
-        Left = 4,
-        Right = 8
-    }
-
-
     public class GameManager
     {
         private const int doorsize = 3;
