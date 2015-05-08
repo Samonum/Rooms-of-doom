@@ -110,7 +110,6 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
-            Console.WriteLine(dungeon.ToString());
         }
 
         public void Save(string fileName)

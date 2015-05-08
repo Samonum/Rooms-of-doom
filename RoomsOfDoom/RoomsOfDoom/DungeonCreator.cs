@@ -115,11 +115,11 @@ namespace RoomsOfDoom
             for (int i = 0; i < packCount; i++)
             {
                 Pack pack = monsterCreator.GeneratePack(difficulty);
-                int randomNumber = 1 + random.Next(dungeon.Size - 1);
-                
+                Node node = dungeon.nodes[1 + random.Next(dungeon.Size - 1)];
+
                 // TODO: This might be an infinite loop if dungeon is full
-                while (!dungeon.AddPack(randomNumber, pack))
-                    randomNumber = 1 + random.Next(dungeon.Size - 1);
+                while (!node.AddPack(pack))
+                    node = dungeon.nodes[1 + random.Next(dungeon.Size - 1)];
             }
 
             return dungeon;

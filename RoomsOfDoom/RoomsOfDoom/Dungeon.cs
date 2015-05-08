@@ -12,7 +12,6 @@ namespace RoomsOfDoom
         //TODO for testing purposes it is public
         public List<Node> nodes;
         private Node endNode;
-        //private List<Pack> packs;
         private Random random;
         private int maxCapacity;
 
@@ -27,8 +26,6 @@ namespace RoomsOfDoom
                 endNode = null;
             else
                 endNode = nodes[nodes.Count - 1];
-
-            //packs = new List<Pack>();
         }
 
         public void Update()
@@ -106,19 +103,6 @@ namespace RoomsOfDoom
                 nodes.Remove(n);
 
             return true;
-        }
-
-        public bool AddPack(int nodeIndex, Pack pack)
-        {
-            if (nodeIndex >= nodes.Count)
-                return false;
-
-            if (nodeIndex == 0)
-                return false;
-
-            Node addNode = nodes[nodeIndex];
-
-            return addNode.AddPack(pack);
         }
                     
         public int Size
