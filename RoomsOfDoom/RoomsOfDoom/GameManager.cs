@@ -14,6 +14,7 @@ namespace RoomsOfDoom
         private Arena arena;
         private Random random;
         private Player player;
+        private int difficulty;
 
         public GameManager(int seed = -1)
         {
@@ -22,13 +23,16 @@ namespace RoomsOfDoom
             else
                 random = new Random(seed);
 
+            difficulty = 1;
+
             dungeonCreator = new DungeonCreator(random);
-            CreateDungeon(1, 10, 10);
+            CreateDungeon(difficulty, 10, 10);
             MonsterCreator monsterCreator = new MonsterCreator(random, 6);
 
             Node n = dungeon.nodes[0];
             player = new Player();
             arena = new Arena(n, player, random);
+            
         }
 
         public void Update()
