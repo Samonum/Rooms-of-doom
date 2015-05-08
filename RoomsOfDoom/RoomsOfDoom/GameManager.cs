@@ -109,10 +109,10 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
             Console.WriteLine(FormatHud());
         }
 
-        public void Save()
+        public void Save(string fileName)
         {
             Player p = GetPlayer;
-            using (StreamWriter writer = new StreamWriter("save.txt"))
+            using (StreamWriter writer = new StreamWriter(fileName))
             {
                 writer.Write(
                     p.CurrentHP + ";" +
@@ -124,9 +124,9 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
             }
         }
 
-        public void Load()
+        public void Load(string fileName)
         {
-            using (StreamReader reader = new StreamReader("save.txt"))
+            using (StreamReader reader = new StreamReader(fileName))
             {
                 string line = reader.ReadLine();
                 if (line != null)
