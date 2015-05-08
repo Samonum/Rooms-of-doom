@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="DungeonTest.cs" />
     <Compile Include="ItemTest.cs" />
+    <Compile Include="NodeTest.cs" />
     <Compile Include="NotSoRandom.cs" />
     <Compile Include="PackTest.cs" />
     <Compile Include="EnemyTest.cs" />

@@ -90,7 +90,7 @@ namespace RoomsOfDoom
             return true;
         }
 
-        public virtual bool RemovePack(Pack pack)
+        public bool RemovePack(Pack pack)
         {
             if (!packs.Contains(pack))
                 return false;
