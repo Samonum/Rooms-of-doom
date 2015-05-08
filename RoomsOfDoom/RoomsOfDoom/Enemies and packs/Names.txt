@@ -42,5 +42,5 @@ Kobold|K
 Beholder|☺
 Koblin|k
 Chrit|©
-Sam|¶
-Maguell|§
+Sam|s
+Maguell|m
