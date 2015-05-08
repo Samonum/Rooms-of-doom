@@ -67,7 +67,7 @@ namespace TestRoomsOfDoom
             {
                 DungeonCreator D = new DungeonCreator(random);
                 int maxCapacity = 15;
-                Dungeon dungeon = D.CreateDungeon(1, 10, maxCapacity);
+                Dungeon dungeon = D.CreateDungeon(1, 100, maxCapacity);
                 foreach (Node n in dungeon.nodes)
                     Assert.IsTrue(n.MonsterCount <= maxCapacity, "Node" + n.id + " has " + n.MonsterCount);
             }

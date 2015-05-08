@@ -82,12 +82,13 @@ namespace RoomsOfDoom
         }
 
 
-        public virtual bool AddPack(Pack pack)
+        public bool AddPack(Pack pack)
         {
+            if (GetUsedCapacity() + pack.Size > maxCapacity)
+                return false;
+
             packs.Add(pack);
 
-            // TODO: Return false when node is full
-            // TODO: Override in bridge to allow higher capacity
             return true;
         }
 
@@ -109,6 +110,16 @@ namespace RoomsOfDoom
             get { return packs; }
         }
 
+
+        public int GetUsedCapacity()
+        {
+            int total = 0;
+
+            foreach (Pack p in packs)
+                total += p.Size;
+
+            return total;
+        }
         //
         //
         // TODO: You know what to do
