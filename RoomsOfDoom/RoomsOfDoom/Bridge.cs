@@ -18,5 +18,10 @@ namespace RoomsOfDoom
             multiplier = bridgeNr;
             maxCapacity = multiplier * maxCapacity;
         }
+
+        public override bool isBridge()
+        {
+            return true;
+        }
     }
 }

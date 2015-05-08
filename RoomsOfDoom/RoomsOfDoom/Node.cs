@@ -53,11 +53,8 @@ namespace RoomsOfDoom
 
                 Node to = choices[random.Next(choices.Count)];
 
-                if (to.MonsterCount + p.Size > maxCapacity * to.Multiplier)
-                    continue;
-
-                to.AddPack(p);
-                removeList.Add(p);
+                if (to.AddPack(p))
+                    removeList.Add(p);
             }
 
             foreach (Pack p in removeList)
@@ -99,9 +96,6 @@ namespace RoomsOfDoom
                 return false;
 
             packs.Remove(pack);
-
-            // TODO: Return false when pack is not present
-            // TODO: Change to byte/int in bridge to allow item dop logic
             
             return true;
         }
@@ -121,16 +115,6 @@ namespace RoomsOfDoom
 
             return total;
         }
-        /*
-        public Pack GetNextPack
-        {
-            get 
-            {
-                if (packs.Count == 0)
-                    return null;
-                return packs[0]; 
-            }
-        }*/
 
         public int Multiplier
         {
