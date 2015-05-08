@@ -51,6 +51,7 @@
     <Compile Include="Enemies and packs\Pack.cs" />
     <Compile Include="Exit.cs" />
     <Compile Include="IHittable.cs" />
+    <Compile Include="Items\LevelKey.cs" />
     <Compile Include="Items\IItem.cs" />
     <Compile Include="Items\ItemGenerator.cs" />
     <Compile Include="Items\MagicScroll.cs" />
