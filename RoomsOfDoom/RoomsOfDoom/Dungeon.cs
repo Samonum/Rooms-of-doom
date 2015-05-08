@@ -13,11 +13,13 @@ namespace RoomsOfDoom
         public List<Node> nodes;
         private Node endNode;
         private List<Pack> packs;
+        private Random random;
 
-        public Dungeon(int difficulty, List<Node> nodes)
+        public Dungeon(int difficulty, List<Node> nodes, Random random)
         {
             this.difficulty = difficulty;
             this.nodes = nodes;
+            this.random = random;
 
             if (nodes == null || nodes.Count == 0)
                 endNode = null;
@@ -25,6 +27,39 @@ namespace RoomsOfDoom
                 endNode = nodes[nodes.Count - 1];
 
             packs = new List<Pack>();
+        }
+
+        public void Update()
+        {
+            foreach(Pack p in packs)
+            {
+                if (random.NextDouble() > 0.5)
+                    continue;
+                Node n = p.Location;
+                List<Node> choices = new List<Node>();
+
+                foreach (KeyValuePair<Direction, Node> kvp in n.AdjacencyList)
+                    choices.Add(kvp.Value);
+
+                if (choices.Count == 0)
+                    continue;
+
+                MovePack(p, choices[random.Next(choices.Count)]);
+            }
+        }
+
+        public bool MovePack(Pack p, Node to)
+        {
+            Node from = p.Location;
+            if (!from.AdjacencyList.ContainsValue(to))
+                return false;
+
+            // TODO: This will probably go wrong somewhere if logic is flawed
+            from.RemovePack(p);
+            to.AddPack(p);
+            p.Location = to;
+
+            return true;
         }
 
         public List<Node> ShortestPath(int from, int to)
@@ -91,7 +126,11 @@ namespace RoomsOfDoom
             }
 
             foreach (Node n in toBeRemoved)
+            {
+                foreach (Pack p in n.PackList)
+                    packs.Remove(p);
                 nodes.Remove(n);
+            }
 
             return true;
         }
@@ -101,8 +140,14 @@ namespace RoomsOfDoom
             if (nodeIndex >= nodes.Count)
                 return false;
 
+            if (nodeIndex == 0)
+                return false;
+
+            Node addNode = nodes[nodeIndex];
+            pack.Location = addNode;
+
             packs.Add(pack);
-            return nodes[nodeIndex].AddPack(pack);
+            return addNode.AddPack(pack);
         }
                     
         public int Size

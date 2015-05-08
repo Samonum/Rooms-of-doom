@@ -41,6 +41,24 @@ namespace RoomsOfDoom
             return true;
         }
 
+        public virtual bool RemovePack(Pack pack)
+        {
+            if (!packs.Contains(pack))
+                return false;
+
+            packs.Remove(pack);
+
+            // TODO: Return false when pack is not present
+            // TODO: Change to byte/int in bridge to allow item dop logic
+            
+            return true;
+        }
+
+        public List<Pack> PackList
+        {
+            get { return packs; }
+        }
+
         public int MonsterCount
         {
             get 

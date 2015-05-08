@@ -13,8 +13,6 @@ namespace RoomsOfDoom
         private Dungeon dungeon;
         private Arena arena;
         private Random random;
-        private Pack[] allEnemies;
-        private MonsterCreator monsterCreator;
         private Player player;
         private int score = 0;
 
@@ -27,10 +25,8 @@ namespace RoomsOfDoom
 
             dungeonCreator = new DungeonCreator(random);
             CreateDungeon(1, 10, 10);
-            monsterCreator = new MonsterCreator(random, 6);
-            allEnemies = new Pack[1] { monsterCreator.GeneratePack(1)};
             player = new Player();
-            arena = new Arena(Exit.Left | Exit.Bot, allEnemies[0], player, Exit.Left, random);
+            arena = new Arena(Exit.Left | Exit.Bot, new Pack(0), player, Exit.Left, random);
         }
 
         public void Update()
@@ -111,7 +107,6 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), score.ToString().PadLeft(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
-            //Console.WriteLine(dungeon.ToString());
         }
 
         public void Save()

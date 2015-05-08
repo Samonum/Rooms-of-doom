@@ -10,7 +10,7 @@ namespace RoomsOfDoom
     {
         int packSize;
         List<Enemy> enemies;
-
+        Node node;
 
         public Pack(int packSize)
         {
@@ -19,6 +19,7 @@ namespace RoomsOfDoom
             else
                 this.packSize = packSize;
             enemies = new List<Enemy>(this.packSize);
+            node = null;
         }
 
         public void Add(Enemy enemy)
@@ -46,6 +47,12 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return enemies.Count; }
+        }
+
+        public Node Location
+        {
+            get { return node; }
+            set { node = value; }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
