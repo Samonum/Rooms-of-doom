@@ -27,7 +27,7 @@ namespace TestRoomsOfDoom
                 //Assert.IsTrue()
             }
         }
-
+        /*
         [TestMethod]
         public void BFSTest()
         {
@@ -50,6 +50,27 @@ namespace TestRoomsOfDoom
                 Dungeon d = D.CreateDungeon(random.Next(500, 1000), random.Next(0, 30), 15);
             }
 
+        }
+        */
+        [TestMethod]
+        public void VeryDifficultDungeonTest()
+        {
+            DungeonCreator D = new DungeonCreator(random);
+            Dungeon dungeon = D.CreateDungeon(9001, 10, 15);
+            Assert.IsTrue(dungeon.difficulty == dungeon.nodes.Count);
+        }
+
+        [TestMethod]
+        public void GenerateCrampedDungeon()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                DungeonCreator D = new DungeonCreator(random);
+                int maxCapacity = 15;
+                Dungeon dungeon = D.CreateDungeon(1, 10, maxCapacity);
+                foreach (Node n in dungeon.nodes)
+                    Assert.IsTrue(n.MonsterCount <= maxCapacity, "Node" + n.id + " has " + n.MonsterCount);
+            }
         }
 
         [TestMethod]

@@ -8,7 +8,7 @@ namespace RoomsOfDoom
 {
     public class Dungeon
     {
-        private int difficulty;
+        public int difficulty;
         //TODO for testing purposes it is public
         public List<Node> nodes;
         public  Node endNode;
@@ -70,6 +70,7 @@ namespace RoomsOfDoom
                         {
                             Node n = nextNode;
 
+                            // Noticed infinite loop due to 
                             while (n != pre[n])
                             {
                                 path.Add(n);

@@ -109,6 +109,12 @@ namespace RoomsOfDoom
             get { return packs; }
         }
 
+        //
+        //
+        // TODO: You know what to do
+        // Add a get total encumbrance property
+        //
+
         public Pack GetNextPack
         {
             get 
