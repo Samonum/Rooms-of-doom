@@ -38,6 +38,17 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
+        public void DungeonCreatorScaleTest()
+        {
+            DungeonCreator D = new DungeonCreator(r);
+            for (int i = 0; i < 100; i++)
+            {
+                Dungeon d = D.CreateDungeon(r.Next(500, 1000), r.Next(0, 30));
+            }
+
+        }
+
+        [TestMethod]
         public void NoPathTest()
         {
             DungeonCreator D = new DungeonCreator(random);
