@@ -49,6 +49,8 @@ namespace RoomsOfDoom
 
         public void InitRoom(Node newNode)
         {
+            dungeon.Update();
+
             items = new List<IItem>(2);
 
             Exit entrance = 0;
@@ -160,13 +162,13 @@ namespace RoomsOfDoom
                                 InitRoom(node.AdjacencyList[Exit.Right]);
                     break;
                 case '1': 
-                    player.UseItem(new Potion(), null);
+                    player.UseItem(new Potion(), dungeon);
                     break;
                 case '2': 
-                    player.UseItem(new TimeCrystal(), null);
+                    player.UseItem(new TimeCrystal(), dungeon);
                     break;
-                case '3': 
-                    player.UseItem(new MagicScroll(random, this), null);
+                case '3':
+                    player.UseItem(new MagicScroll(random, this), dungeon);
                     break;
             }
             TryPickUpLoot();
@@ -299,7 +301,6 @@ namespace RoomsOfDoom
                     HandleCombatRound(input);
                     break;
             }
-            dungeon.Update();
         }
 
         public Player GetPlayer

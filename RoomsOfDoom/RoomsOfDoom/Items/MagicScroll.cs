@@ -8,9 +8,10 @@ namespace RoomsOfDoom.Items
 {
     public class MagicScroll : IItem
     {
-        public const double explosiveness = 0.15;
+        public const double stability = .85;
         Random r;
         GameManager arena;
+        bool undoable;
         public MagicScroll(Random r, GameManager arena)
         {
             Duration = 10;
@@ -20,19 +21,23 @@ namespace RoomsOfDoom.Items
 
         public void Use(Player player, Dungeon dungeon)
         {
-            if (r.NextDouble() > explosiveness)
+            if (r.NextDouble() > stability)
             {
                 List<Node> n = dungeon.Destroy(arena.CurrentNode);
                 if (n != null)
                     arena.InitRoom(n[0]);
             }
             else
+            {
                 player.Multiplier *= 2;
+                undoable = true;
+            }
         }
 
         public void Finish(Player player)
         {
-            player.Multiplier /= 2; ;
+            if(undoable)
+                player.Multiplier /= 2; ;
         }
 
         public int Duration
@@ -54,7 +59,7 @@ namespace RoomsOfDoom.Items
 
         public char Glyph
         {
-            get { return '2'; }
+            get { return '3'; }
         }
     }
 }

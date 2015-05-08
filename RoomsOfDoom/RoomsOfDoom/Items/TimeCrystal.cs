@@ -42,7 +42,7 @@ namespace RoomsOfDoom.Items
 
         public char Glyph
         {
-            get { return '3'; }
+            get { return '2'; }
         }
     }
 }
