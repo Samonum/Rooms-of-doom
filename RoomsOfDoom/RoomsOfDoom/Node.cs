@@ -64,7 +64,6 @@ namespace RoomsOfDoom
         public Dictionary<Exit, Node> AdjacencyList
         {
             get { return adjacencyList; }
-            set { adjacencyList = value; }
         }
 
         public virtual bool isBridge()

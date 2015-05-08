@@ -20,38 +20,14 @@ namespace TestRoomsOfDoom
             for (int i = 0; i < 100; i++)
             {
                 int id = random.Next(int.MinValue, int.MaxValue);
-                //TODO maxCapacity
+
                 Node n = new Node(random, id, 15);
 
                 Assert.IsNotNull(n);
-                //Assert.IsTrue()
-            }
-        }
-        /*
-        [TestMethod]
-        public void BFSTest()
-        {
-            DungeonCreator D = new DungeonCreator(random);
 
-            for (int i = 0; i < 100; i++)
-            {
-                // TODO: use higher numbers
-                // TODO: with high pack count to difficulty ration, this could infinitely loop
-                Dungeon d = D.CreateDungeon(random.Next(0, 10), random.Next(0, 10), 15);
             }
         }
 
-        [TestMethod]
-        public void DungeonCreatorScaleTest()
-        {
-            DungeonCreator D = new DungeonCreator(random);
-            for (int i = 0; i < 100; i++)
-            {
-                Dungeon d = D.CreateDungeon(random.Next(500, 1000), random.Next(0, 30), 15);
-            }
-
-        }
-        */
         [TestMethod]
         public void VeryDifficultDungeonTest()
         {
@@ -80,8 +56,6 @@ namespace TestRoomsOfDoom
 
             for (int i = 0; i < 100; i++)
             {
-                // TODO: use higher numbers
-                // TODO FIX
                 Dungeon d = D.CreateDungeon(random.Next(0, 100), random.Next(0, 100), 15);
                 
                 Assert.IsNotNull(d);
@@ -94,6 +68,15 @@ namespace TestRoomsOfDoom
                 }
                 
             }
+        }
+
+        [TestMethod]
+        public void BridgeChecker()
+        {
+            DungeonCreator D = new DungeonCreator(random);
+            Dungeon d = D.CreateDungeon(1, 10, 15);
+            Assert.IsFalse(d.nodes[0].isBridge());
+            Assert.IsTrue(d.nodes[3].isBridge());
         }
     }
 }
