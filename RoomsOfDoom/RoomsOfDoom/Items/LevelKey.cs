@@ -16,7 +16,13 @@ namespace RoomsOfDoom.Items
 
         public void Use(Player player, Dungeon dungeon)
         {
-            manager.StartNextLevel();
+            if (manager.CurrentNode.IsExit)
+            {
+                player.IncreaseScore(manager.difficulty * 100);
+                manager.StartNextLevel();
+            }
+            else 
+                player.AddItem(this);
         }
 
         public void Finish(Player player)

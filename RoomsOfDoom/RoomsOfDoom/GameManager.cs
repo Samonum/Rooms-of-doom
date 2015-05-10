@@ -92,7 +92,7 @@ namespace RoomsOfDoom
             items = new List<IItem>(2);
             LevelKey key = new LevelKey(this);
             key.Location = GetRandomLocation(8);
-            if (newNode.IsExit)
+            if (newNode.IsExit && player.inventory[3] < 1)
                 items.Add(key);
 
             Exit entrance = 0;
