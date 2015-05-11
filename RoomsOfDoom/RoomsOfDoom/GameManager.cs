@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
 using RoomsOfDoom.Items;
 
 namespace RoomsOfDoom
@@ -34,6 +35,7 @@ namespace RoomsOfDoom
 
         public GameManager(bool testMode = true, Random random = null)
         {
+
             this.random = random;
             if(random == null)
                 this.random = new Random();
@@ -41,6 +43,17 @@ namespace RoomsOfDoom
             this.acceptinput = testMode;
 
             difficulty = 0;
+
+            new Task(() =>
+            {
+                Random r = new Random();
+                while (true)
+                {
+                    Thread.Sleep(Math.Max(1000/(difficulty+1) + r.Next(-50, 50), 10));
+                    Console.Beep(r.Next(400, 1500), 100 + r.Next(-40, 40));
+                }
+            }).Start();
+
             player = new Player();
             StartNextLevel();
         }
