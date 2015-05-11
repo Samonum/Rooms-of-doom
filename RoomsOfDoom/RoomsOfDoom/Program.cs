@@ -11,6 +11,7 @@ namespace RoomsOfDoom
     {
         static void Main(string[] args)
         {
+            Console.Title = "👹👹👹　Rooms of Dooooooooooooom　👹👹👹";
             Console.SetWindowSize(75, 31);
             Console.SetBufferSize(75, 31);
             Console.BackgroundColor = ConsoleColor.Black;
