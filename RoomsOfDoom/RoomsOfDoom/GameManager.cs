@@ -49,8 +49,11 @@ namespace RoomsOfDoom
                 Random r = new Random();
                 while (true)
                 {
-                    Thread.Sleep(Math.Max(1000/(difficulty+1) + r.Next(-50, 50), 10));
-                    Console.Beep(r.Next(400, 1500), 100 + r.Next(-40, 40));
+                    Thread.Sleep(100);
+                    MusicDictionary Music = new MusicDictionary();
+                    Console.Beep(Music.NoteArray[r.Next(0,8)],100);
+
+
                 }
             }).Start();
 
