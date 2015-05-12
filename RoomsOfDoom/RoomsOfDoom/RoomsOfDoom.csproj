@@ -66,6 +66,7 @@
     <Compile Include="Enemies and packs\Enemy.cs" />
     <Compile Include="Enemies and packs\Pack.cs" />
     <Compile Include="Exit.cs" />
+    <Compile Include="HighScores.cs" />
     <Compile Include="IHittable.cs" />
     <Compile Include="Items\LevelKey.cs" />
     <Compile Include="Items\IItem.cs" />
@@ -87,6 +88,9 @@
   <ItemGroup>
     <Content Include="Enemies and packs\Names.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HighScores.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

@@ -259,9 +259,13 @@ namespace RoomsOfDoom
             Console.WriteLine();
             Console.WriteLine(" YOU LOSE!");
             Console.WriteLine(" We're very sorry and hope you all the best in your next adventure.");
+
+            HighScores highscores = new HighScores();
+            highscores.EnterHighScore(player.GetScore);
+            highscores.displayHighScores();
+
+
             Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
-            Console.WriteLine();
-            Console.WriteLine("By the way, you managed to get a score of {0}.", player.GetScore);
             if(acceptinput)
                 Console.ReadKey();
             difficulty = 0;
