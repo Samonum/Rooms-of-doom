@@ -10,6 +10,7 @@ namespace RoomsOfDoom
     {
         int packSize;
         List<Enemy> enemies;
+        private Order order;
 
         public Pack(int packSize)
         {
@@ -18,6 +19,7 @@ namespace RoomsOfDoom
             else
                 this.packSize = packSize;
             enemies = new List<Enemy>(this.packSize);
+            order = null;
         }
 
         public void Add(Enemy enemy)
@@ -26,6 +28,22 @@ namespace RoomsOfDoom
                 return;
             this.enemies.Add(enemy);
             enemy.myPack = this;
+        }
+
+        public void GiveOrder(Order o)
+        {
+            order = o;
+        }
+
+        public Node Target
+        {
+            get 
+            {
+                if (order == null)
+                    return null;
+
+                return order.Target; 
+            }
         }
 
         public List<Enemy> Enemies

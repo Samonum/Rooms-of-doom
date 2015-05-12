@@ -40,18 +40,40 @@ namespace RoomsOfDoom
                     continue;
                 }
 
-                if (random.NextDouble() > 0.5)
-                    continue;
+                Node to;
 
-                List<Node> choices = new List<Node>();
+                if (p.Target != null)
+                {
+                    List<Node> path = ShortestPath(p.Target);
 
-                foreach (KeyValuePair<Exit, Node> kvp in AdjacencyList)
-                    choices.Add(kvp.Value);
+                    // Target node does not exist (anymore)
+                    if (path == null)
+                    {
+                        p.GiveOrder(null);
+                        continue;
+                    }
 
-                if (choices.Count == 0)
-                    continue;
+                    if (path.Count == 0)
+                        continue;
 
-                Node to = choices[random.Next(choices.Count)];
+                    to = path[0];
+                }
+
+                else
+                {
+                    if (random.NextDouble() > 0.5)
+                        continue;
+
+                    List<Node> choices = new List<Node>();
+
+                    foreach (KeyValuePair<Exit, Node> kvp in AdjacencyList)
+                        choices.Add(kvp.Value);
+
+                    if (choices.Count == 0)
+                        continue;
+
+                    to = choices[random.Next(choices.Count)];
+                }
 
                 if (to.AddPack(p))
                     removeList.Add(p);
@@ -59,6 +81,51 @@ namespace RoomsOfDoom
 
             foreach (Pack p in removeList)
                 PackList.Remove(p);
+        }
+
+        public List<Node> ShortestPath(Node to)
+        {
+            List<Node> path = new List<Node>();
+
+            if (to == this)
+                return path;
+
+            Dictionary<Node, Node> pre = new Dictionary<Node, Node>();
+            Queue<Node> queue = new Queue<Node>();
+
+            pre.Add(to, to);
+            queue.Enqueue(to);
+
+            while (queue.Count > 0)
+            {
+                Node curNode = queue.Dequeue();
+
+                foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
+                {
+                    Node nextNode = kvp.Value;
+                    if (!pre.ContainsKey(nextNode))
+                    {
+                        queue.Enqueue(nextNode);
+                        pre.Add(nextNode, curNode);
+                        if (nextNode == this)
+                        {
+                            Node n = nextNode;
+
+                            // Noticed infinite loop due to 
+                            while (n != pre[n])
+                            {
+                                n = pre[n];
+                                path.Add(n);
+                            }
+
+                            //path.Add(n);
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         public Dictionary<Exit, Node> AdjacencyList
@@ -76,7 +143,6 @@ namespace RoomsOfDoom
             get;
             private set;
         }
-
 
         public bool AddPack(Pack pack)
         {

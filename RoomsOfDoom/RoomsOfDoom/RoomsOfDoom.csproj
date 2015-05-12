@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bridge.cs" />
+    <Compile Include="DungeonMaster.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Dungeon.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="MonsterCreator.cs" />
     <Compile Include="MusicDictionary.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="Order.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

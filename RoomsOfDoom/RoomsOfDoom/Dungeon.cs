@@ -44,47 +44,7 @@ namespace RoomsOfDoom
             if (!nodes.Contains(to))
                 return null;
 
-            List<Node> path = new List<Node>();
-
-            if (from == to)
-                return path;
-
-            Dictionary<Node, Node> pre = new Dictionary<Node, Node>();
-            Queue<Node> queue = new Queue<Node>();
-
-            pre.Add(to, to);
-            queue.Enqueue(to);
-
-            while (queue.Count > 0)
-            {
-                Node curNode = queue.Dequeue();
-
-                foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
-                {
-                    Node nextNode = kvp.Value;
-                    if (!pre.ContainsKey(nextNode))
-                    {
-                        queue.Enqueue(nextNode);
-                        pre.Add(nextNode, curNode);
-                        if (nextNode == from)
-                        {
-                            Node n = nextNode;
-
-                            // Noticed infinite loop due to 
-                            while (n != pre[n])
-                            {
-                                path.Add(n);
-                                n = pre[n];
-                            }
-
-                            path.Add(n);
-                            return path;
-                        }
-                    }
-                }
-            }
-
-            return null;
+            return from.ShortestPath(to);
         }
 
         public List<Node> Destroy(Node rNode)
