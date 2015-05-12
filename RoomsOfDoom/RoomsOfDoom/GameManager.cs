@@ -44,15 +44,7 @@ namespace RoomsOfDoom
 
             difficulty = 0;
 
-            new Task(() =>
-            {
-                Random r = new Random();
-                while (true)
-                {
-                    Thread.Sleep(Math.Max(1000/(difficulty+1) + r.Next(-50, 50), 10));
-                    Console.Beep(r.Next(400, 1500), 100 + r.Next(-40, 40));
-                }
-            }).Start();
+            LetsBoogy();
 
             player = new Player();
             StartNextLevel();
@@ -255,7 +247,7 @@ namespace RoomsOfDoom
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine(" YOU LOSE!");
-            Console.WriteLine(" We're very sorry and hope you all the best in your next adventure.");
+            Console.WriteLine(" We're very sorry and wish you all the best in your next adventure.");
             Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
             Console.WriteLine();
             Console.WriteLine("By the way, you managed to get a score of {0}.", player.GetScore);
@@ -514,5 +506,17 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             return true;
         }
 
+        public void LetsBoogy()
+        {
+            new Task(() =>
+            {
+                Random r = new Random();
+                while (true)
+                {
+                    Thread.Sleep(Math.Max(1000 / (difficulty + 1) + r.Next(-50, 50), 10));
+                    Console.Beep(r.Next(400, 1500), 100 + r.Next(-40, 40));
+                }
+            }).Start();
+        }
     }
 }

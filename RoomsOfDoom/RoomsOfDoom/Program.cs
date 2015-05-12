@@ -23,7 +23,6 @@ namespace RoomsOfDoom
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.OutputEncoding = Encoding.UTF8;
-            Random rand = new Random();
             GameManager manager = new GameManager();
             while (true)
             {
