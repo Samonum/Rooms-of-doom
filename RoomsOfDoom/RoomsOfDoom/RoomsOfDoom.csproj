@@ -74,7 +74,9 @@
     <Compile Include="Items\Potion.cs" />
     <Compile Include="Items\TimeCrystal.cs" />
     <Compile Include="ITile.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="MonsterCreator.cs" />
+    <Compile Include="MusicDictionary.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

@@ -8,7 +8,7 @@ using RoomsOfDoom.Items;
 
 namespace RoomsOfDoom
 {
-    public class GameManager
+    public class GameManager : IDisposable
     {
         private const int doorsize = 3;
         Random random;
@@ -32,22 +32,88 @@ namespace RoomsOfDoom
         public Dungeon dungeon;
         public int difficulty;
         private bool acceptinput;
+        private StreamWriter logger;
+
 
         public GameManager(bool testMode = true, Random random = null)
         {
-
-            this.random = random;
-            if(random == null)
-                this.random = new Random();
-
             this.acceptinput = testMode;
 
-            difficulty = 0;
-
             LetsBoogy();
+            StartFirstLevel(random);
+        }
+
+        public void StartFirstLevel(Random random)
+        {
+            bool inMenu = true;
+            while (inMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
+                Console.WriteLine("to load an old save press 'l', to load a replay press 'r' or press 'c' to conitnue");
+
+                char input = 'c';
+                if (acceptinput)
+                    input = Console.ReadKey().KeyChar;
+
+                switch (input)
+                {
+                    case 'r':
+                    case 'R':
+                        LoadReplay();
+                        break;
+                    case 'l':
+                    case 'L':
+                        Console.WriteLine("What savefile would you like to load?");
+                        LoadGame(Console.ReadLine());
+                        break;
+                    case 'c':
+                    case 'C':
+                        inMenu = false;
+                        break;
+                }
+            }
+            initialize(random);
+        }
+
+        public void initialize(Random random, bool log = true)
+        {
+            if (log)
+            {
+                logger = new StreamWriter("current.play", false);
+                logger.AutoFlush = true;
+            }
+
+            this.random = random;
+            if (random == null)
+            {
+                random = new Random();
+                int seed = random.Next();
+                this.random = new Random(seed);
+                logger.WriteLine(seed);
+            }
+
+            difficulty = 1;
 
             player = new Player();
-            StartNextLevel();
+            CreateDungeon(10, 10);
+        }
+
+        public void LoadReplay()
+        {
+            string s = Console.ReadLine();
+            string replay;
+            using(StreamReader reader = new StreamReader(s))
+            {
+                initialize(new Random(int.Parse(reader.ReadLine().Trim())), false);
+                replay = reader.ReadToEnd();
+            }
+     
+            for(int i = 0; i < replay.Length; i++)
+            {
+                Thread.Sleep(100);
+                Update(replay[i]);
+            }
         }
 
         public void StartNextLevel()
@@ -61,7 +127,7 @@ namespace RoomsOfDoom
                 Console.WriteLine("If you wish to save press s, to load an old save press l or c to conitnue");
 
                 char input = 'c';
-                if(acceptinput)
+                if (acceptinput)
                     input = Console.ReadKey().KeyChar;
 
                 switch (input)
@@ -69,12 +135,12 @@ namespace RoomsOfDoom
                     case 's':
                     case 'S':
                         Console.WriteLine("How would you like to Call your Save?");
-                        Save(Console.ReadLine());
+                        SaveGame(Console.ReadLine());
                         break;
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
-                        Load(Console.ReadLine());
+                        LoadGame(Console.ReadLine());
                         break;
                     case 'c':
                     case 'C':
@@ -373,6 +439,7 @@ namespace RoomsOfDoom
                 return HandleCombatRound('e');
 
             char input = Console.ReadKey().KeyChar;
+            logger.Write(input);
             return HandleCombatRound(input);
         }
 
@@ -436,7 +503,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             Console.WriteLine(FormatHud());
         }
 
-        public bool Save(string fileName)
+        public bool SaveGame(string fileName)
         {
             if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || fileName == "")
             {
@@ -477,7 +544,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             return true;
         }
 
-        public bool Load(string fileName)
+        public bool LoadGame(string fileName)
         {
             if (!File.Exists(fileName))
             {
@@ -513,10 +580,21 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Random r = new Random();
                 while (true)
                 {
-                    Thread.Sleep(Math.Max(1000 / (difficulty + 1) + r.Next(-50, 50), 10));
-                    Console.Beep(r.Next(400, 1500), 100 + r.Next(-40, 40));
+                    Thread.Sleep(100);
+                    MusicDictionary Music = new MusicDictionary();
+                    Console.Beep(Music.NoteArray[r.Next(0,8)],100);
                 }
             }).Start();
+        }
+
+        ~GameManager()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            logger.Dispose();
         }
     }
 }

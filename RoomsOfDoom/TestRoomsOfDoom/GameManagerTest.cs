@@ -240,20 +240,20 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void SaveTest()
         {
-            Assert.IsFalse(testSubject.Save(""), "No empty string saves");
-            Assert.IsFalse(testSubject.Save(new string(Path.GetInvalidFileNameChars())), "No bad names");
+            Assert.IsFalse(testSubject.SaveGame(""), "No empty string saves");
+            Assert.IsFalse(testSubject.SaveGame(new string(Path.GetInvalidFileNameChars())), "No bad names");
             string filename = ".testSave.donotmake.willberemoved";
 
             MakeAbsurd();
             if (File.Exists(filename))
                 File.Delete(filename);
 
-            Assert.IsFalse(testSubject.Load(filename));
+            Assert.IsFalse(testSubject.LoadGame(filename));
 
-            Assert.IsTrue(testSubject.Save(filename));
+            Assert.IsTrue(testSubject.SaveGame(filename));
             testSubject.GameOver();
 
-            Assert.IsTrue(testSubject.Load(filename));
+            Assert.IsTrue(testSubject.LoadGame(filename));
             IsAbsurd();
 
             File.Delete(filename);
