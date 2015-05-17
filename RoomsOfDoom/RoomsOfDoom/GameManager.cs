@@ -47,15 +47,17 @@ namespace RoomsOfDoom
             new Task(() =>
             {
                 Random r = new Random();
+                MusicDictionary Music = new MusicDictionary();
                 while (true)
                 {
-                    Thread.Sleep(100);
-                    MusicDictionary Music = new MusicDictionary();
-                    Console.Beep(Music.NoteArray[r.Next(0,8)],100);
+                    Thread.Sleep(150);
+                    Console.Beep(Music.NoteArrayBlues[r.Next(0,6)],110);
+                    //Console.Beep(r.Next(37, 2000), 100);
 
 
                 }
             }).Start();
+
 
             player = new Player();
             StartNextLevel();
