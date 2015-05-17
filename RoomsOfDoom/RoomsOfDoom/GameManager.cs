@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using RoomsOfDoom.Items;
+using System.Linq;
 
 namespace RoomsOfDoom
 {
@@ -20,7 +21,7 @@ namespace RoomsOfDoom
         private Node node;
 
         public Pack enemies;
-        int curPack;
+        int curPack;//what is this ??? remove?
         private Player player;
 
         bool inCombat;
@@ -50,9 +51,22 @@ namespace RoomsOfDoom
                 MusicDictionary Music = new MusicDictionary();
                 while (true)
                 {
-                    Thread.Sleep(150);
-                    Console.Beep(Music.NoteArrayBlues[r.Next(0,6)],110);
-                    //Console.Beep(r.Next(37, 2000), 100);
+                    if (this.node != null && this.node.isBridge())
+                    {
+                        Thread.Sleep(60);
+                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 100);
+                    }
+                    else if (this.node != null && this.node.IsExit)
+                    {
+                        Thread.Sleep(180);
+                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 150);
+                    }
+                    else 
+                    {
+                        Thread.Sleep(120);
+                        Console.Beep(Music.NoteArray[r.Next(0, 5)], 100);
+                    }
+
 
 
                 }
@@ -277,10 +291,27 @@ namespace RoomsOfDoom
 
         public void UpdateEnemies()
         {
-            foreach (Enemy e in enemies)
+
+            if(enemies.CurrentPackHP >= (0.3 * enemies.MaxPackHP))
             {
-                e.Move(player);
+                foreach (Enemy e in enemies)
+                {
+                    e.Move(player);
+                }
             }
+            else
+            {
+                //get random door to flee to
+                Point doorLocation = new Point(topExit, 2);
+                Enemy target = new Enemy("dummy", '?', 999);
+                target.Location = doorLocation;
+                foreach (Enemy e in enemies)
+                {
+                    //FLY YOU FOOLS!
+                    e.Move(target);
+                }
+            }
+
 
             if (enemies.Size == 0)
             {
