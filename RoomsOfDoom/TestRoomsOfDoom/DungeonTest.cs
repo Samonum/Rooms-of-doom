@@ -120,13 +120,12 @@ namespace TestRoomsOfDoom
             Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
             List<Node> shortPath = dungeon.ShortestPath(d, e);
             List<Node> path = new List<Node>();
-            path.Add(d);
             path.Add(c);
             path.Add(b);
             path.Add(e);
             Assert.IsNotNull(shortPath);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
                 Assert.IsTrue(shortPath[i] == path[i]);
 
             Node f = new Node(random, 5, 15);
