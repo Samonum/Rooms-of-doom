@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace RoomsOfDoom
 {
-    public class GameManager
+    public class GameManager : IDisposable
     {
         private const int doorsize = 3;
         Random random;
@@ -29,48 +29,79 @@ namespace RoomsOfDoom
         public Dungeon dungeon;
         public int difficulty;
         private bool acceptinput;
+        private StreamWriter logger;
 
-        public GameManager(bool testMode = true, Random random = null)
+
+        public GameManager(bool acceptinput = true, Random random = null)
         {
+            this.acceptinput = acceptinput;
+
+            LetsBoogy();
+            StartFirstLevel(random);
+        }
+
+        public void StartFirstLevel(Random random)
+        {
+            bool inMenu = true;
+            while (inMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
+                Console.WriteLine("to load an old save press 'l', to load a replay press 'r' or press 'c' to conitnue");
+
+                char input = 'c';
+                if (acceptinput)
+                    input = Console.ReadKey().KeyChar;
+
+                switch (input)
+                {
+                    case 'r':
+                    case 'R':
+                        Console.WriteLine("What replay do you wish to load?");
+                        LoadReplay(Console.ReadLine());
+                        break;
+                    case 'l':
+                    case 'L':
+                        Console.WriteLine("What savefile would you like to load?");
+                        LoadGame(Console.ReadLine());
+                        inMenu = false;
+                        break;
+                    case 'c':
+                    case 'C':
+                        inMenu = false;
+                        initialize(random);
+                        break;
+                }
+            }
+        }
+
+
+
+        public void initialize(Random random, bool log = true)
+        {
+            if (log)
+            {
+                if (logger != null)
+                    logger.Dispose();
+                logger = new StreamWriter("current.play", false);
+                logger.AutoFlush = true;
+            }
 
             this.random = random;
-            if(random == null)
-                this.random = new Random();
-
-            this.acceptinput = testMode;
-
-            difficulty = 0;
-
-            new Task(() =>
+            if (random == null)
             {
-                Random r = new Random();
-                MusicDictionary Music = new MusicDictionary();
-                while (true)
-                {
-                    if (this.node != null && this.node.isBridge())
-                    {
-                        Thread.Sleep(60);
-                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 100);
-                    }
-                    else if (this.node != null && this.node.IsExit)
-                    {
-                        Thread.Sleep(180);
-                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 150);
-                    }
-                    else 
-                    {
-                        Thread.Sleep(120);
-                        Console.Beep(Music.NoteArray[r.Next(0, 5)], 100);
-                    }
+                random = new Random();
+                int seed = random.Next();
+                this.random = new Random(seed);
+                logger.WriteLine(seed);
+            }
 
-
-
-                }
-            }).Start();
+            difficulty = 1;
 
 
             player = new Player();
-            StartNextLevel();
+            CreateDungeon(10, 10);
+            ItemGenerator.Init(random, dungeon, player);
         }
 
         public void StartNextLevel()
@@ -84,7 +115,7 @@ namespace RoomsOfDoom
                 Console.WriteLine("If you wish to save press s, to load an old save press l or c to conitnue");
 
                 char input = 'c';
-                if(acceptinput)
+                if (acceptinput)
                     input = Console.ReadKey().KeyChar;
 
                 switch (input)
@@ -92,12 +123,13 @@ namespace RoomsOfDoom
                     case 's':
                     case 'S':
                         Console.WriteLine("How would you like to Call your Save?");
-                        Save(Console.ReadLine());
+                        SaveGame(Console.ReadLine());
                         break;
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
-                        Load(Console.ReadLine());
+                        LoadGame(Console.ReadLine());
+                        inMenu = false;
                         break;
                     case 'c':
                     case 'C':
@@ -243,19 +275,22 @@ namespace RoomsOfDoom
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine(" YOU LOSE!");
-            Console.WriteLine(" We're very sorry and hope you all the best in your next adventure.");
+            Console.WriteLine(" We're very sorry and wish you all the best in your next adventure.");
 
             HighScores highscores = new HighScores();
-            highscores.EnterHighScore(player.GetScore);
-            highscores.displayHighScores();
-
-
-            Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
             if(acceptinput)
+                highscores.EnterHighScore(player.GetScore);
+            highscores.displayHighScores();
+            if (acceptinput)
+            {
+                Console.WriteLine("Type the name under which you wish to save the replay. Leave empty to not save the replay.");
+                while (!SaveReplay(Console.ReadLine())) ;
+                Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items. Yeah, you could chose not to, but then you would remain death.");
                 Console.ReadKey();
+            }
             difficulty = 0;
             player = new Player();
-            StartNextLevel();
+            StartFirstLevel(null);
         }
 
         public void UpdateEnemies()
@@ -296,6 +331,7 @@ namespace RoomsOfDoom
                 return HandleCombatRound('e');
 
             char input = Console.ReadKey().KeyChar;
+            logger.Write(input);
             return HandleCombatRound(input);
         }
 
@@ -360,7 +396,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
            // Console.WriteLine(dungeon.ToString());
         }
 
-        public bool Save(string fileName)
+        public bool SaveGame(string fileName)
         {
             if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || fileName == "")
             {
@@ -370,16 +406,18 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 return false;
             }
 
-            if(File.Exists(fileName))
+            File.Copy("current.play", fileName + ".inplay", true);
+
+            if (File.Exists(fileName))
             {
                 Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
-                if(acceptinput)
-                if (Console.ReadKey().KeyChar != 'y')
-                {
-                    Console.WriteLine("Did not save file.");
-                    Console.ReadKey();
-                    return false;
-                }
+                if (acceptinput)
+                    if (Console.ReadKey().KeyChar != 'y')
+                    {
+                        Console.WriteLine("Did not save file.");
+                        Console.ReadKey();
+                        return false;
+                    }
             }
 
             Player p = GetPlayer;
@@ -401,7 +439,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             return true;
         }
 
-        public bool Load(string fileName)
+        public bool LoadGame(string fileName)
         {
             if (!File.Exists(fileName))
             {
@@ -411,6 +449,10 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 return false;
             }
 
+            if (logger != null)
+                logger.Dispose();
+            
+            File.Copy(fileName + ".inplay", "current.play", true);
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line = reader.ReadLine();
@@ -427,8 +469,126 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     difficulty = int.Parse(data[5]);
                 }
             }
+            logger = new StreamWriter("current.play", true);
+            logger.AutoFlush = true;
+            if (random == null)
+                random = new Random();
+            int seed = random.Next();
+            logger.Write("\n" + seed + "\n");
+            random = new Random(seed);
+            difficulty--;
+            StartNextLevel();
             return true;
         }
 
+        public bool LoadReplay(string s, int speed = 100)
+        {
+            s += ".play";
+            if (!File.Exists(s))
+            {
+                Console.WriteLine("File Does Not Exist. Press any Key to return.");
+                if (acceptinput)
+                    Console.ReadKey();
+                return false;
+            }
+
+            acceptinput = false;
+            string[] replay;
+            using (StreamReader reader = new StreamReader(s))
+            {
+                replay = reader.ReadToEnd().Split('\n');
+            }
+
+            initialize(new Random(int.Parse(replay[0].Trim())), false);
+            for (int n = 1; n < replay.Length; n++)
+                if ((n & 1) == 1)
+                    for (int i = 0; i < replay[n].Length; i++)
+                    {
+                        Thread.Sleep(speed);
+                        if (replay[n][i] != 4 || i < replay[n].Length - 1)
+                            Update(replay[n][i]);
+                    }
+                else
+                {
+                    random = new Random(int.Parse(replay[n].Trim()));
+                    difficulty--;
+                    StartNextLevel();
+                }
+            acceptinput = true;
+            return true;
+        }
+
+        public bool SaveReplay(string fileName)
+        {
+            if (fileName == null)
+                return true;
+
+            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                Console.WriteLine("Your filename contains illegal characters. Press any Key to return.");
+                if (acceptinput)
+                    Console.ReadKey();
+                return false;
+            }
+
+            if (File.Exists(fileName + ".play"))
+            {
+                Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
+                if (acceptinput)
+                    if (Console.ReadKey().KeyChar != 'y')
+                    {
+                        Console.WriteLine("Did not save file.");
+                        Console.ReadKey();
+                        return false;
+                    }
+            }
+
+            File.Copy("current.play", fileName + ".play", true);
+            return true;
+        }
+
+        public void LetsBoogy()
+        {
+            new Task(() =>
+            {
+                Random r = new Random();
+                MusicDictionary Music = new MusicDictionary();
+                while (true)
+                {
+                    if (this.node != null && this.node.isBridge())
+                    {
+                        Thread.Sleep(60);
+                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 100);
+                    }
+                    else if (this.node != null && this.node.IsExit)
+                    {
+                        Thread.Sleep(180);
+                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 150);
+                    }
+                    else
+                    {
+                        Thread.Sleep(120);
+                        Console.Beep(Music.NoteArray[r.Next(0, 5)], 100);
+                    }
+                }
+            }).Start();
+        }
+
+        ~GameManager()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                logger.Dispose();
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

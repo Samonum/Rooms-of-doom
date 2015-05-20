@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoomsOfDoom;
 using RoomsOfDoom.Items;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
@@ -24,6 +25,16 @@ namespace TestRoomsOfDoom
         public static void ClassInit(TestContext t)
         {
             testSubject = new GameManager(false);
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            if(testSubject != null)
+            {
+                testSubject.Dispose();
+                testSubject = null;
+            }
         }
 
         [TestCleanup]
@@ -124,60 +135,69 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void MoveRoomAndPlacePlayerTest()
         {
-            Node oldNode = testSubject.CurrentNode;
-            Exit exit = (Exit)1;
-            while (!oldNode.AdjacencyList.ContainsKey(exit))
-                Assert.IsTrue((int)(exit = (Exit)((int)exit * 2)) <= 8);
-            Node newNode = oldNode.AdjacencyList[exit];
-            testSubject.PlacePlayer(exit);
-            switch(exit)
+            for (int i = 1; i <= 4; i++)
             {
-                case Exit.Top:
-                    testSubject.HandleCombatRound('w');
-                    testSubject.HandleCombatRound('w');
-                    break;
-                case Exit.Bot:
-                    testSubject.HandleCombatRound('s');
-                    testSubject.HandleCombatRound('s');
-                    break;
-                case Exit.Left:
-                    testSubject.HandleCombatRound('a');
-                    testSubject.HandleCombatRound('a');
-                    break;
-                case Exit.Right:
-                    testSubject.HandleCombatRound('d');
-                    testSubject.HandleCombatRound('d');
-                    break;
-            }
+                testSubject.Dispose();
+                testSubject = new GameManager(false);
+                Node oldNode = testSubject.CurrentNode;
+                Exit exit = (Exit)1;
+                foreach (KeyValuePair<Exit, Node> kvp in oldNode.AdjacencyList)
+                {
+                    testSubject.ChangeRooms(oldNode);
+                    exit = kvp.Key;
+                    Node newNode = oldNode.AdjacencyList[exit];
+                    testSubject.PlacePlayer(exit);
+                    switch (exit)
+                    {
+                        case Exit.Top:
+                            testSubject.HandleCombatRound('w');
+                            testSubject.HandleCombatRound('w');
+                            break;
+                        case Exit.Bot:
+                            testSubject.HandleCombatRound('s');
+                            testSubject.HandleCombatRound('s');
+                            break;
+                        case Exit.Left:
+                            testSubject.HandleCombatRound('a');
+                            testSubject.HandleCombatRound('a');
+                            break;
+                        case Exit.Right:
+                            testSubject.HandleCombatRound('d');
+                            testSubject.HandleCombatRound('d');
+                            break;
 
-            Assert.AreEqual(newNode, testSubject.CurrentNode);
+                    }
 
-            Player p = testSubject.GetPlayer; 
-            if(p.Location.X == 2)
-            {
-                Assert.AreEqual(testSubject.leftExit, p.Location.Y);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Left], oldNode);
-                return;
+                    Assert.AreEqual(newNode, testSubject.CurrentNode);
+
+                    Player p = testSubject.GetPlayer;
+                    if (p.Location.X == 2)
+                    {
+                        Assert.AreEqual(testSubject.leftExit, p.Location.Y);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Left], oldNode);
+                        continue;
+                    }
+                    if (p.Location.Y == 2)
+                    {
+                        Assert.AreEqual(testSubject.topExit, p.Location.X);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Top], oldNode);
+                        continue;
+                    }
+                    if (p.Location.X == GameManager.Width - 3)
+                    {
+                        Assert.AreEqual(testSubject.rightExit, p.Location.Y);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Right], oldNode);
+                        continue;
+                    }
+                    if (p.Location.Y == GameManager.Height - 3)
+                    {
+                        Assert.AreEqual(testSubject.botExit, p.Location.X);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Bot], oldNode);
+                        continue;
+                    }
+                    Assert.Fail("Not at an exit");
+                }
             }
-            if (p.Location.Y == 2)
-            {
-                Assert.AreEqual(testSubject.topExit, p.Location.X);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Top], oldNode);
-                return;
-            }
-            if (p.Location.X == GameManager.Width - 3)
-            {
-                Assert.AreEqual(testSubject.rightExit, p.Location.Y);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Right], oldNode);
-                return;
-            }
-            if (p.Location.Y == GameManager.Height - 3)
-            {
-                Assert.AreEqual(testSubject.botExit, p.Location.X);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Bot], oldNode);
-                return;
-            }
-                Assert.Fail("Not at an exit");
         }
 
         [TestMethod]
@@ -231,20 +251,20 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void SaveTest()
         {
-            Assert.IsFalse(testSubject.Save(""), "No empty string saves");
-            Assert.IsFalse(testSubject.Save(new string(Path.GetInvalidFileNameChars())), "No bad names");
+            Assert.IsFalse(testSubject.SaveGame(""), "No empty string saves");
+            Assert.IsFalse(testSubject.SaveGame(new string(Path.GetInvalidFileNameChars())), "No bad names");
             string filename = ".testSave.donotmake.willberemoved";
 
             MakeAbsurd();
             if (File.Exists(filename))
                 File.Delete(filename);
 
-            Assert.IsFalse(testSubject.Load(filename));
+            Assert.IsFalse(testSubject.LoadGame(filename));
 
-            Assert.IsTrue(testSubject.Save(filename));
+            Assert.IsTrue(testSubject.SaveGame(filename));
             testSubject.GameOver();
 
-            Assert.IsTrue(testSubject.Load(filename));
+            Assert.IsTrue(testSubject.LoadGame(filename));
             IsAbsurd();
 
             File.Delete(filename);
@@ -265,6 +285,7 @@ namespace TestRoomsOfDoom
             Assert.AreEqual(13, testSubject.GetPlayer.GetCrystalCount);
             Assert.AreEqual(14, testSubject.GetPlayer.GetScrollCount);
         }
+    
 
     }
 }

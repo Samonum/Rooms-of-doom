@@ -26,19 +26,22 @@ namespace TestRoomsOfDoom
             TimeCrystal t = new TimeCrystal();
             Assert.IsTrue(t.Glyph == '2');
 
-            GameManager g = new RoomsOfDoom.GameManager(false);
+            GameManager g = new GameManager(false);
 
             MagicScroll m = new MagicScroll(random, g);
             Assert.IsTrue(m.Glyph == '3');
 
             LevelKey k = new LevelKey(g);
-            Assert.IsTrue(k.Glyph == '>');*/
+
+            Assert.IsTrue(k.Glyph == '>');
+
+            g.Dispose();*/
         }
 
         [TestMethod]
         public void MagicScrollUseTest()
         {
-            GameManager g = new RoomsOfDoom.GameManager(false);
+            GameManager g = new GameManager(false);
             MagicScroll m = new MagicScroll(new NotSoRandom(1.0), g);
             DungeonCreator d = new DungeonCreator(random);
             Dungeon dungeon = d.CreateDungeon(1, 10, 15);
@@ -54,6 +57,7 @@ namespace TestRoomsOfDoom
             g.InitRoom(dungeon.nodes[0]);
             m.Use(p, dungeon);
             Assert.IsTrue(dungeon.nodes.Count == 1);
+            g.Dispose();
         }
     }
 }
