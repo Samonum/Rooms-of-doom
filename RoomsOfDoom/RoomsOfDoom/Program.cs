@@ -22,7 +22,7 @@ namespace RoomsOfDoom
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.OutputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.Unicode;
             GameManager manager = new GameManager();
             while (true)
             {

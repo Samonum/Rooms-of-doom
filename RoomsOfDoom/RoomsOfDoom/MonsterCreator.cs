@@ -52,7 +52,7 @@ namespace RoomsOfDoom
         {
             string[] adjectives = new string[] {"Giant", "Smelly", "Tiny", "Powerful", "Shady","Evil","Funky", "Quick", "Partying","Hooded","Infernal","Mutant","Sparkling","Shiny","Teenage","Ninja","Sneaky","Magnificent","Hairy","Quantum","Mighty","Bearded","Magical","Arcane","Divine","Jolly","Royal","Sophisticated","Overpowered","Travelling","Wandering","Awkward","Confident","Well-Mannered","Strange","Exotic"};
             Dictionary<string,string> names = new Dictionary<string,string>();
-            
+            //TODO this is not efficient
             using (StreamReader reader = new StreamReader("Enemies and packs/Names.txt"))
             {
                 string line;

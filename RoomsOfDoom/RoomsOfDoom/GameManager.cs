@@ -60,7 +60,8 @@ namespace RoomsOfDoom
                 {
                     case 'r':
                     case 'R':
-                        LoadReplay();
+                        Console.WriteLine("What replay do you wish to load?");
+                        LoadReplay(Console.ReadLine());
                         break;
                     case 'l':
                     case 'L':
@@ -99,9 +100,9 @@ namespace RoomsOfDoom
             CreateDungeon(10, 10);
         }
 
-        public void LoadReplay()
+        public void LoadReplay(string s)
         {
-            string s = Console.ReadLine();
+            acceptinput = false;
             string replay;
             using(StreamReader reader = new StreamReader(s))
             {
@@ -114,6 +115,12 @@ namespace RoomsOfDoom
                 Thread.Sleep(100);
                 Update(replay[i]);
             }
+            acceptinput = true;
+        }
+
+        public void SaveReplay()
+        {
+
         }
 
         public void StartNextLevel()
@@ -314,14 +321,21 @@ namespace RoomsOfDoom
             Console.WriteLine();
             Console.WriteLine(" YOU LOSE!");
             Console.WriteLine(" We're very sorry and wish you all the best in your next adventure.");
-            Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
-            Console.WriteLine();
-            Console.WriteLine("By the way, you managed to get a score of {0}.", player.GetScore);
+
+            HighScores highscores = new HighScores();
             if(acceptinput)
+                highscores.EnterHighScore(player.GetScore);
+            highscores.displayHighScores();
+            Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items. Yeah, you could chose not to, but then you would remain death.");
+            if (acceptinput)
+            {
+                Console.WriteLine("Type the name under which you wish to save the replay. Leave empty to not save the replay.");
+                Console.ReadLine();
                 Console.ReadKey();
+            }
             difficulty = 0;
             player = new Player();
-            StartNextLevel();
+            StartFirstLevel(null);
         }
 
         public void UpdateEnemies()
@@ -513,7 +527,9 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 return false;
             }
 
-            if(File.Exists(fileName))
+            File.Copy("current.play", fileName + ".inplay", true);
+
+            if(File.Exists(fileName + ".sav"))
             {
                 Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
                 if(acceptinput)
@@ -553,6 +569,8 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     Console.ReadKey();
                 return false;
             }
+
+            File.Copy(fileName + ".inplay", "current.play", true);
 
             using (StreamReader reader = new StreamReader(fileName))
             {
@@ -594,7 +612,14 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
 
         public void Dispose()
         {
-            logger.Dispose();
+            try
+            {
+                logger.Dispose();
+            }
+            catch
+            {
+
+            }
         }
     }
 }
