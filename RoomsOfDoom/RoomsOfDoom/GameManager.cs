@@ -291,18 +291,35 @@ namespace RoomsOfDoom
 
         public void UpdateEnemies()
         {
-
+            //if more than 70% damage has been done to the pack all enemies flee, otherwise they fight to the death
             if(enemies.CurrentPackHP >= (0.3 * enemies.MaxPackHP))
             {
                 foreach (Enemy e in enemies)
                 {
-                    e.Move(player);
+                    e.Move(player);//move towards the player to attack
                 }
             }
             else
             {
                 //get random door to flee to
-                Point doorLocation = new Point(topExit, 2);
+                Exit randomExit = node.AdjacencyList.ElementAt(random.Next(0, 0)).Key;
+                Point doorLocation = new Point(0, 0);
+                switch (randomExit)
+                {
+                    case Exit.Top:
+                        doorLocation = new Point(topExit,1);
+                        break;
+                    case Exit.Bot:
+                        doorLocation = new Point(botExit, Height -2);
+                        break;
+                    case Exit.Left:
+                        doorLocation = new Point(1, leftExit);
+                        break;
+                    case Exit.Right:
+                        doorLocation = new Point(Width - 2, rightExit);
+                        break;
+                }
+
                 Enemy target = new Enemy("dummy", '?', 999);
                 target.Location = doorLocation;
                 foreach (Enemy e in enemies)
