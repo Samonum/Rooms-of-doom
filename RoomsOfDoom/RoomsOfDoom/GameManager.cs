@@ -17,17 +17,13 @@ namespace RoomsOfDoom
         private char[][] map;
         public const int Width = 37, Height = 25;
         private Exit exits;
-        public int topExit, leftExit, rightExit, botExit;
         private Node node;
 
-        public Pack enemies;
         int curPack;//what is this ??? remove?
         private Player player;
 
         bool inCombat;
 
-        public List<IItem> items;
-        ItemGenerator itemGenerator;
 
         private DungeonCreator dungeonCreator;
         public Dungeon dungeon;
@@ -110,22 +106,19 @@ namespace RoomsOfDoom
                 }
             }
             CreateDungeon(10, 10);
+            ItemGenerator.Init(random, dungeon, player);
         }
 
         public void ChangeRooms(Node newNode)
         {
-            dungeon.Update();
+            dungeon.MacroUpdate();
             InitRoom(newNode);
         }
 
         public void InitRoom(Node newNode)
         {
-
-            items = new List<IItem>(2);
-            LevelKey key = new LevelKey(this);
-            key.Location = GetRandomLocation(8);
-            if (newNode.IsExit && player.inventory[3] < 1)
-                items.Add(key);
+            // TODO: Add Key somewhere
+    
 
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
@@ -138,48 +131,44 @@ namespace RoomsOfDoom
             exits = 0;
             foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)
                 exits |= exit.Key;
+            /*
             topExit = 10 + random.Next(Width - 20);
             leftExit = 10 + random.Next(Height - 20);
             rightExit = 10 + random.Next(Height - 20);
             botExit = 10 + random.Next(Width - 20);
-
-            if (node.PackList.Count == 0)
-            {
-                inCombat = false;
-                enemies = new Pack(0);
-            }
-            else
-            {
+            */
+            inCombat = false;
+            if (node.CurrentPack != null)
                 inCombat = true;
-                enemies = node.PackList[0];
-            }
 
-            PlaceEnemies(enemies);
+            node.PlaceEnemies();
             PlacePlayer(entrance);
-
         }
 
         public void PlacePlayer(Exit entrance)
         {
+            Node n;
             switch (entrance)
             {
                 case Exit.Top:
-                    player.Location = new Point(topExit, 2);
+                    player.Location = new Point(node.TopExit, 2);
                     break;
                 case Exit.Bot:
-                    player.Location = new Point(botExit, Height - 3);
+                    player.Location = new Point(node.BotExit, Height - 3);
                     break;
                 case Exit.Right:
-                    player.Location = new Point(Width - 3, rightExit);
+                    player.Location = new Point(Width - 3, node.RightExit);
                     break;
                 case Exit.Left:
-                    player.Location = new Point(2, leftExit);
+                    player.Location = new Point(2, node.LeftExit);
                     break;
                 default:
                     player.Location = GetRandomLocation(4);
-                    for (int i = 0; i < enemies.Size; i++)
+                    if (node.CurrentPack == null)
+                        break;
+                    for (int i = 0; i < node.CurrentPack.Size; i++)
                     {
-                        if (enemies[i].Location == player.Location)
+                        if (node.CurrentPack[i].Location == player.Location)
                         {
                             i = 0;
                             player.Location = GetRandomLocation(3);
@@ -190,53 +179,32 @@ namespace RoomsOfDoom
             }
         }
 
-        public void PlaceEnemies(Pack enemies)
-        {
-            for (int i = 0; i < enemies.Size; i++)
-            {
-                enemies[i].Location = GetRandomLocation(4);
-                for (int j = 0; j < i; j++)
-                    if (enemies[i].Location == enemies[j].Location)
-                    {
-                        i--;
-                        break;
-                    }
-                    else if (enemies[i].Location == player.Location)
-                        i--;
-            }
-        }
-
         public bool HandleCombatRound(char input)
         {
             bool act = true;
             switch (input)
             {
+                //TODO: Move this to node
+                
                 case 'w':
-                    if (!player.Move(Direction.Up, enemies) &&
-                        (exits & Exit.Top) == Exit.Top && 
-                            player.Location.X > topExit - doorsize &&
-                            player.Location.X < topExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Top]);
+                    if (!player.Move(Direction.Up, node.CurrentPack) &&
+                        node.WithinTopGate(player.Location.X))
+                            ChangeRooms(node.AdjacencyList[Exit.Top]);
                     break;
-                case 'a': 
-                    if (!player.Move(Direction.Left, enemies) &&
-                        (exits & Exit.Left) == Exit.Left &&
-                        player.Location.Y > leftExit - doorsize && 
-                            player.Location.Y < leftExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Left]);
+                case 'a':
+                    if (!player.Move(Direction.Left, node.CurrentPack) &&
+                        node.WithinLeftGate(player.Location.Y))
+                            ChangeRooms(node.AdjacencyList[Exit.Left]);
                     break;
-                case 's': 
-                    if (!player.Move(Direction.Down, enemies) &&
-                        (exits & Exit.Bot) == Exit.Bot &&
-                        player.Location.X > botExit - doorsize && 
-                        player.Location.X < botExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Bot]);
+                case 's':
+                    if (!player.Move(Direction.Down, node.CurrentPack) &&
+                        node.WithinBotGate(player.Location.X))
+                            ChangeRooms(node.AdjacencyList[Exit.Bot]);
                     break;
-                case 'd': 
-                    if (!player.Move(Direction.Right, enemies))
-                        if ((exits & Exit.Right) == Exit.Right)
-                            if (player.Location.Y > rightExit - doorsize && player.Location.Y < rightExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Right]);
+                case 'd':
+                    if (!player.Move(Direction.Right, node.CurrentPack) &&
+                        node.WithinRightGate(player.Location.Y))
+                            ChangeRooms(node.AdjacencyList[Exit.Right]);
                     break;
                 case '1': 
                     player.UseItem(new Potion(), dungeon);
@@ -261,8 +229,9 @@ namespace RoomsOfDoom
 
         public void TryPickUpLoot()
         {
-            for(int i = 0; i < items.Count; i++)
-                if(player.Location == items[i].Location)
+            List<Loot> items = node.lootList;
+            for(int i = 0; i < node.lootList.Count; i++)
+                if (player.Location == items[i].Location)
                 {
                     player.AddItem(items[i]);
                     items.RemoveAt(i);
@@ -291,107 +260,13 @@ namespace RoomsOfDoom
 
         public void UpdateEnemies()
         {
-
-            if(enemies.CurrentPackHP >= (0.3 * enemies.MaxPackHP))
-            {
-                foreach (Enemy e in enemies)
-                {
-                    e.Move(player);
-                }
-            }
-            else
-            {
-                //get random door to flee to
-                Point doorLocation = new Point(topExit, 2);
-                Enemy target = new Enemy("dummy", '?', 999);
-                target.Location = doorLocation;
-                foreach (Enemy e in enemies)
-                {
-                    //FLY YOU FOOLS!
-                    e.Move(target);
-                }
-            }
-
-
-            if (enemies.Size == 0)
-            {
-                node.RemovePack(enemies);
-                if (inCombat)
-                {
-                    IItem loot = itemGenerator.GetItem(node.Multiplier);
-                    if (loot != null)
-                    {
-                        loot.Location = GetRandomLocation(4);
-                        items.Add(loot);
-                    }
-                }
-                inCombat = false;
-
-                if (node.PackList.Count > 0)
-                {
-                    enemies = node.PackList[0];
-                    inCombat = true;
-                    PlaceEnemies(enemies);
-                }
-            }
-        }
-
-        public char[][] GetUpdatedMap()
-        {
-            CreateBackground();
-            foreach (ITile i in items)
-                map[i.Location.Y][i.Location.X] = i.Glyph;
-
-            foreach (Enemy e in enemies)
-                if(e.Alive)
-                    map[e.Location.Y][e.Location.X] = e.Glyph;
-            map[player.Location.Y][player.Location.X] = player.Glyph;
-            return map;
+            node.MicroUpdates(player);
         }
 
         public Point GetRandomLocation(int distFromWall)
         {
             return new Point(random.Next(Width - distFromWall - 2) + 1 + distFromWall / 2,
                 random.Next(Height - distFromWall - 2) + 1 + distFromWall / 2);
-        }
-
-        private void CreateBackground()
-        {
-            map = new char[Height][];
-            map[0] = new char[Width];
-            for (int j = 0; j < map[0].Length; j++)
-                if ((exits & Exit.Top) != Exit.Top || j <= topExit - doorsize || j >= topExit + doorsize)
-                    map[0][j] = '█';
-                else
-                    map[0][j] = '▒';
-            for (int i = 1; i < map.Length - 1; i++)
-            {
-                map[i] = new char[Width];
-                for (int j = 0; j < map[i].Length; j++)
-                    if (j == 0)
-                    {
-                        if ((exits & Exit.Left) != Exit.Left || i <= leftExit - doorsize || i >= leftExit + doorsize)
-                            map[i][j] = '█';
-                        else
-                            map[i][j] = '▒';
-                    }
-                    else if (j == map[i].Length - 1)
-                    {
-                        if ((exits & Exit.Right) != Exit.Right || i <= rightExit - doorsize || i >= rightExit + doorsize)
-                            map[i][j] = '█';
-                        else
-                            map[i][j] = '▒';
-                    }
-                    else
-                        map[i][j] = '.';
-
-                map[map.Length - 1] = new char[Width];
-                for (int j = 0; j < map[0].Length; j++)
-                    if ((exits & Exit.Bot) != Exit.Bot || j <= botExit - doorsize || j >= botExit + doorsize)
-                        map[map.Length - 1][j] = '█';
-                    else
-                        map[map.Length - 1][j] = '▒';
-            }
         }
 
         public Node CurrentNode
@@ -433,22 +308,22 @@ namespace RoomsOfDoom
         {
             dungeonCreator = new DungeonCreator(random);
             dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
-            this.itemGenerator = new ItemGenerator(dungeon, player, random);
             InitRoom(dungeon.nodes[0]);
         }
 
         public string[] CreateEnemyOverview()
         {
-            char[][] map = GetUpdatedMap();
+            char[][] map = /*GetUpdatedMap();*/node.GetUpdatedMap(player.Location, player.Glyph);
             string[] drawMap = new string[map.Length];
-            int i;
+            int i = 0;
             drawMap[0] = new string(map[0]);
-            for (i = 0; i < enemies.Size; i++ )
-            {
-                Enemy e = enemies[i];
-                drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
-                drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
-            }
+            if (node.CurrentPack != null)
+                for (i = 0; i < node.CurrentPack.Size; i++)
+                {
+                    Enemy e = node.CurrentPack[i];
+                    drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
+                    drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
+                }
             for (i = i * 2 + 1; i < map.Length; i++)
                 drawMap[i] = new string(map[i]);
             return drawMap;
@@ -482,6 +357,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
+           // Console.WriteLine(dungeon.ToString());
         }
 
         public bool Save(string fileName)

@@ -66,7 +66,9 @@ namespace RoomsOfDoom
                     n = new Node(random, i, maxCapacity, i == size - 1);
 
                 nodes.Add(n);
+
                 int neighbourAmount = 1 + random.Next(maxNeighbours - 1);
+
                 for (int j = 0; j < neighbourAmount; j++)
                 {
                     if (availibleNodes.Count == 0)
@@ -74,13 +76,15 @@ namespace RoomsOfDoom
                     int neighbourIndex = random.Next(availibleNodes.Count);
                     Node newNeighbour = availibleNodes[neighbourIndex];
 
+                    //n.AddGate(newNeighbour);
+                    
                     if (!n.AdjacencyList.ContainsValue(newNeighbour))
                     {
                         Exit rn = (Exit)Math.Pow(2, random.Next(maxNeighbours));
                         while (n.AdjacencyList.ContainsKey(rn))
                             rn = (Exit)Math.Pow(2, random.Next(maxNeighbours));
 
-                        n.AdjacencyList.Add((Exit)rn, newNeighbour);
+                        n.AddGate((Exit)rn, newNeighbour);
 
                         switch (rn)
                         {
@@ -101,7 +105,7 @@ namespace RoomsOfDoom
                         while (newNeighbour.AdjacencyList.ContainsKey(rn))
                             rn = (Exit)Math.Pow(2, random.Next(maxNeighbours));    
 
-                        newNeighbour.AdjacencyList.Add(rn, n);
+                        newNeighbour.AddGate(rn, n);
 
                         if (newNeighbour.AdjacencyList.Count >= maxNeighbours)
                             availibleNodes.Remove(newNeighbour);
@@ -109,6 +113,24 @@ namespace RoomsOfDoom
                 }
                 if (bridgeTarget == i)
                 {
+                    /*
+                    foreach(Node availibleNode in availibleNodes)
+                    {
+                        if (availibleNode.AdjacencyList.Count == 0)
+                        {
+                            int neighbourIndex = random.Next(availibleNodes.Count);
+                            Node newNeighbour = availibleNodes[neighbourIndex];
+
+                            while (!n.AddGate(newNeighbour))
+                            {
+                                neighbourIndex = random.Next(availibleNodes.Count);
+                                newNeighbour = availibleNodes[neighbourIndex];
+                                while (newNeighbour == availibleNode)
+                                    newNeighbour = availibleNodes[neighbourIndex];
+                            }
+                        }
+                    }*/
+
                     availibleNodes.Clear();
                     if (counter < difficulty)
                     {
@@ -116,8 +138,8 @@ namespace RoomsOfDoom
                         counter++;
                     }
                 }
-                
-                availibleNodes.Add(n);
+                if (n.AdjacencyList.Count < maxNeighbours)
+                    availibleNodes.Add(n);
             }
 
             // 100 7 =  14 (+ 2) {0 14 28 42 56 70 84 98}

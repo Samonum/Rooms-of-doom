@@ -50,16 +50,5 @@ namespace RoomsOfDoom.Items
         {
             get { return 2; }
         }
-
-        public System.Drawing.Point Location
-        {
-            get;
-            set;
-        }
-
-        public char Glyph
-        {
-            get { return '3'; }
-        }
     }
 }

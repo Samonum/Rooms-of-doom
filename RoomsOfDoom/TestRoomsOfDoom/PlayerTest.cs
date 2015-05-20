@@ -102,11 +102,13 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void PotionTest()
         {
+            throw new NotImplementedException();
             int pots = p.GetPotCount;
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddItem(new Potion());
+                // TODO
+                //p.AddItem(new Potion());
                 pots++;
             }
             Assert.AreEqual(pots, p.GetPotCount, "Pots don't add up well.");

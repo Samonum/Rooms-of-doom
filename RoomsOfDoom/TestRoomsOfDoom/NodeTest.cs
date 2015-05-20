@@ -32,13 +32,13 @@ namespace TestRoomsOfDoom
             Node node = new Node(new NotSoRandom(0.0), 0, 20);
             Pack a = new Pack(0);
             node.AddPack(a);
-            node.Update();
+            node.MacroUpdate();
             Assert.IsTrue(node.PackList.Count == 0);
 
             MonsterCreator mc = new MonsterCreator(random, 6);
             Pack b = mc.GeneratePack(1);
             node.AddPack(b);
-            node.Update();
+            node.MacroUpdate();
             Assert.IsTrue(node.PackList.Count == 1);
         }
     }

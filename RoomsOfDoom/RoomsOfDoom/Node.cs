@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoomsOfDoom.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace RoomsOfDoom
 {
-    public class Node
+    public partial class Node
     {
         protected Dictionary<Exit, Node> adjacencyList;
+
+        //protected Dictionary<Exit, Gate> gateList;
         protected Random random;
         protected List<Pack> packs;
         public int id;
@@ -21,14 +24,17 @@ namespace RoomsOfDoom
             this.id = id;
             this.random = random;
             adjacencyList = new Dictionary<Exit, Node>();
+            //gateList = new Dictionary<Exit, Gate>();
             packs = new List<Pack>();
             stringName = "N";
             multiplier = 1;
             this.maxCapacity = maxCapacity * multiplier;
             IsExit = isExit;
+
+            InitSizes();
         }
 
-        public void Update()
+        public void MacroUpdate()
         {
             List<Pack> removeList = new List<Pack>();
 
@@ -37,6 +43,12 @@ namespace RoomsOfDoom
                 if (p.Size == 0)
                 {
                     removeList.Add(p);
+                    Loot loot = ItemGenerator.GetItem(Multiplier);
+                    if (loot != null)
+                    {
+                        loot.Location = GetRandomLocation(4);
+                        lootList.Add(loot);
+                    }
                     continue;
                 }
 
@@ -133,6 +145,43 @@ namespace RoomsOfDoom
             get { return adjacencyList; }
         }
 
+        /*
+        public Dictionary<Exit, Gate> GateList
+        {
+            get { return gateList; }
+        }
+        */
+
+        public bool AddGate(Exit exit, Node node)
+        {
+            if (AdjacencyList.ContainsKey(exit))
+                return false;
+
+            if (AdjacencyList.ContainsValue(node))
+                return false;
+
+            adjacencyList.Add(exit, node);
+            exits |= exit;
+
+            /*
+            Gate gate = new Gate(1, 1, node);
+
+            GateList.Add(exit, gate);
+            */
+            return true;
+        }
+
+        public bool RemoveGate(Exit exit)
+        {
+            if (!AdjacencyList.ContainsKey(exit))
+                return false;
+
+            adjacencyList.Remove(exit);
+            exits &= ~exit;
+
+            return true;
+        }
+
         public virtual bool isBridge()
         {
             return false;
@@ -195,6 +244,18 @@ namespace RoomsOfDoom
                     total += p.Size;
                 return total;
             }
+        }
+
+        public String ToString()
+        {
+            string s = stringName + id + "(";
+
+            foreach (KeyValuePair<Exit, Node> kvp in AdjacencyList)
+                s += kvp.Value.id + ",";
+
+            s += ")";
+
+            return s;
         }
     }
 }

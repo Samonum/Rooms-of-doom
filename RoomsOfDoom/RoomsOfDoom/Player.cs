@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoomsOfDoom.Items;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -108,13 +109,13 @@ namespace RoomsOfDoom
                         return false;
                     break;
             }
-
-            foreach(Enemy enemy in enemies)
-                if(enemy.Location == loc)
-                {
-                    Combat(enemy);
-                    return true;
-                }
+            if (enemies != null)
+                foreach (Enemy enemy in enemies)
+                    if (enemy.Location == loc)
+                    {
+                        Combat(enemy);
+                        return true;
+                    }
 
             Location = loc;
             return true;
@@ -197,13 +198,13 @@ namespace RoomsOfDoom
             inventory[2] = scroll;
         }
 
-        public void AddItem(IItem item)
+        public void AddItem(Loot loot)
         {
-            if (item.Id < 0 || item.Id > inventory.Length)
+            if (loot.ID < 0 || loot.ID > inventory.Length)
                 return;
-            if (inventory[item.Id] == 255)
+            if (inventory[loot.ID] == 255)
                 return;
-            inventory[item.Id]++;
+            inventory[loot.ID]++;
         }
 
         public int GetPotCount

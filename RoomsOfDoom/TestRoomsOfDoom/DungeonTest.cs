@@ -25,14 +25,14 @@ namespace TestRoomsOfDoom
             Node d = new Node(random, 2, 15);
             Node e = new Node(random, 2, 15);
 
-            a.AdjacencyList.Add(Exit.Right, b);
-            b.AdjacencyList.Add(Exit.Left, a);
-            b.AdjacencyList.Add(Exit.Right, c);
-            c.AdjacencyList.Add(Exit.Left, b);
-            c.AdjacencyList.Add(Exit.Right, d);
-            d.AdjacencyList.Add(Exit.Left, c);
-            d.AdjacencyList.Add(Exit.Right, e);
-            e.AdjacencyList.Add(Exit.Left, d);
+            a.AddGate(Exit.Right, b);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            d.AddGate(Exit.Right, e);
+            e.AddGate(Exit.Left, d);
 
             nodes.Add(a);
             nodes.Add(b);
@@ -100,16 +100,16 @@ namespace TestRoomsOfDoom
             Node d = new Node(random, 3, 15);
             Node e = new Node(random, 4, 15);
 
-            a.AdjacencyList.Add(Exit.Right, b);
-            a.AdjacencyList.Add(Exit.Left, c);
-            b.AdjacencyList.Add(Exit.Left, a);
-            b.AdjacencyList.Add(Exit.Right, c);
-            b.AdjacencyList.Add(Exit.Top, e);
-            c.AdjacencyList.Add(Exit.Top, a);
-            c.AdjacencyList.Add(Exit.Left, b);
-            c.AdjacencyList.Add(Exit.Right, d);
-            d.AdjacencyList.Add(Exit.Left, c);
-            e.AdjacencyList.Add(Exit.Left, b);
+            a.AddGate(Exit.Right, b);
+            a.AddGate(Exit.Left, c);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            b.AddGate(Exit.Top, e);
+            c.AddGate(Exit.Top, a);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            e.AddGate(Exit.Left, b);
 
             nodes.Add(a);
             nodes.Add(b);
@@ -150,14 +150,14 @@ namespace TestRoomsOfDoom
             Node d = new Node(random, 3, 15);
             Node e = new Node(random, 4, 15);
 
-            a.AdjacencyList.Add(Exit.Right, b);
-            a.AdjacencyList.Add(Exit.Left, c);
-            b.AdjacencyList.Add(Exit.Left, a);
-            b.AdjacencyList.Add(Exit.Right, c);
-            c.AdjacencyList.Add(Exit.Top, a);
-            c.AdjacencyList.Add(Exit.Left, b);
-            c.AdjacencyList.Add(Exit.Right, d);
-            d.AdjacencyList.Add(Exit.Left, c);
+            a.AddGate(Exit.Right, b);
+            a.AddGate(Exit.Left, c);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Top, a);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
 
             nodes.Add(a);
             nodes.Add(b);

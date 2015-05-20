@@ -15,7 +15,7 @@ namespace RoomsOfDoom
             {
                 Console.Title = "👹👹👹　Rooms of Dooooooooooooom　👹👹👹";
                 Console.SetWindowSize(75, 31);
-                Console.SetBufferSize(75, 31);
+            //    Console.SetBufferSize(75, 31);
             }
             catch
             { }

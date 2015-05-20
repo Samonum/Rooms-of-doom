@@ -56,14 +56,19 @@ namespace TestRoomsOfDoom
 
             for (int i = 0; i < 100; i++)
             {
-                Dungeon d = D.CreateDungeon(random.Next(0, 100), random.Next(0, 100), 15);
+                Dungeon d = D.CreateDungeon(1, 0, 15);
                 
                 Assert.IsNotNull(d);
                 Assert.IsTrue(d.Size > 2);
 
                 foreach (Node n in d.nodes)
                 {
-                    Assert.IsTrue(n.AdjacencyList.Count > 0);
+                    if (!(n.AdjacencyList.Count > 0))
+                    {
+                        int a = 0;
+                        a = d.nodes.Count;
+                    }
+                    Assert.IsTrue(n.AdjacencyList.Count > 0, "No" + i + " "+ n.id);
                     Assert.IsTrue(n.AdjacencyList.Count <= DungeonCreator.maxNeighbours);
                 }
                 

@@ -28,11 +28,11 @@ namespace RoomsOfDoom
                 endNode = nodes[nodes.Count - 1];
         }
 
-        public void Update()
+        public void MacroUpdate()
         {
             foreach (Node n in nodes)
             {
-                n.Update();
+                n.MacroUpdate();
             }
         }
 
@@ -95,7 +95,7 @@ namespace RoomsOfDoom
                         foreach (KeyValuePair<Exit, Node> neighbour in n.AdjacencyList)
                         {
                             Exit direction = neighbour.Value.AdjacencyList.First(kvp => kvp.Value == rNode).Key;
-                            neighbour.Value.AdjacencyList.Remove(direction);
+                            neighbour.Value.RemoveGate(direction);
                         }
 
                         Dictionary<int, int> a = new Dictionary<int, int>();
@@ -121,6 +121,15 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return nodes.Count; }
+        }
+
+        public String ToString()
+        {
+            string s = "";
+
+            foreach (Node n in nodes)
+                s += n.ToString() + "\n";
+            return s;
         }
     }
 }

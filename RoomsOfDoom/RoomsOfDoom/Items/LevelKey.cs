@@ -22,7 +22,7 @@ namespace RoomsOfDoom.Items
                 manager.StartNextLevel();
             }
             else 
-                player.AddItem(this);
+                player.AddItem(new Loot(3, '>'));
         }
 
         public void Finish(Player player)
@@ -43,17 +43,6 @@ namespace RoomsOfDoom.Items
         public int Id
         {
             get { return 3; }
-        }
-
-        public char Glyph
-        {
-            get { return '>'; }
-        }
-
-        public System.Drawing.Point Location
-        {
-            get;
-            set;
         }
     }
 }

@@ -18,6 +18,8 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void GlyphsTest()
         {
+            Assert.IsTrue(false);
+            /*
             Potion p = new Potion();
             Assert.IsTrue(p.Glyph == '1');
 
@@ -30,7 +32,7 @@ namespace TestRoomsOfDoom
             Assert.IsTrue(m.Glyph == '3');
 
             LevelKey k = new LevelKey(g);
-            Assert.IsTrue(k.Glyph == '>');
+            Assert.IsTrue(k.Glyph == '>');*/
         }
 
         [TestMethod]
