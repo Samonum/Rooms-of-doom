@@ -11,6 +11,7 @@ namespace RoomsOfDoom
         int packSize;
         List<Enemy> enemies;
         private Order order;
+        protected int maxPackHP;
 
         public Pack(int packSize)
         {
@@ -28,6 +29,7 @@ namespace RoomsOfDoom
                 return;
             this.enemies.Add(enemy);
             enemy.myPack = this;
+            this.maxPackHP += enemy.MaxHP;
         }
 
         public void GiveOrder(Order o)
@@ -63,6 +65,24 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return enemies.Count; }
+        }
+
+        public int MaxPackHP
+        {
+            get { return maxPackHP; }
+        }
+
+        public int CurrentPackHP
+        {
+            get 
+            {
+                int countHP = 0;
+                foreach (Enemy e in enemies)
+                {
+                    countHP += e.CurrentHP;
+                }
+                return countHP;
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
