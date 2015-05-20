@@ -103,7 +103,7 @@ namespace RoomsOfDoom
                 }
             }
 
-            if (loc == target.Location)
+            if (loc == target.Location && target.Glyph == '☻')
             {
                 KillTheHeretic(target);
                 return true;

@@ -34,6 +34,9 @@ namespace RoomsOfDoom
         public int difficulty;
         private bool acceptinput;
 
+        //TODO_FLEE variables
+        Pack fledEnemies = new Pack(50); 
+
         public GameManager(bool testMode = true, Random random = null)
         {
 
@@ -291,6 +294,7 @@ namespace RoomsOfDoom
 
         public void UpdateEnemies()
         {
+            //TODO_FLEE
             //if more than 70% damage has been done to the pack all enemies flee, otherwise they fight to the death
             if(enemies.CurrentPackHP >= (0.3 * enemies.MaxPackHP))
             {
@@ -301,6 +305,7 @@ namespace RoomsOfDoom
             }
             else
             {
+                //TODO_FLEE
                 //get random door to flee to
                 Exit randomExit = node.AdjacencyList.ElementAt(random.Next(0, 0)).Key;
                 Point doorLocation = new Point(0, 0);
@@ -310,29 +315,58 @@ namespace RoomsOfDoom
                         doorLocation = new Point(topExit,1);
                         break;
                     case Exit.Bot:
-                        doorLocation = new Point(botExit, Height -2);
+                        doorLocation = new Point(botExit, Height -3);
                         break;
                     case Exit.Left:
-                        doorLocation = new Point(1, leftExit);
+                        doorLocation = new Point(3, leftExit);
                         break;
                     case Exit.Right:
-                        doorLocation = new Point(Width - 2, rightExit);
+                        doorLocation = new Point(Width - 3, rightExit);
                         break;
                 }
 
-                Enemy target = new Enemy("dummy", '?', 999);
+                Enemy target = new Enemy("dummy", '?',999);
                 target.Location = doorLocation;
+                List<Enemy> enemiesToRemove = new List<Enemy>();
                 foreach (Enemy e in enemies)
                 {
-                    //FLY YOU FOOLS!
+                    //FLY YOU FOOLS! TODO_FLEE
+                    //TODO fix bug where enemy.move checks for collision with the player instead of just the target. Or make a new method for this since this method is a bit hacky
                     e.Move(target);
+                    //TODO_FLEE add enemies to fleelist removing them from the dungeon
+                    if(e.Location == target.Location)
+                    {
+                        //enemies.Enemies.Remove(e); not allowed to edit collection in a foreach over that collection derp
+                        enemiesToRemove.Add(e);
+                        fledEnemies.Add(e);
+                    }
+                }
+                foreach(Enemy e in enemiesToRemove)
+                {
+                    enemies.Enemies.Remove(e);
                 }
             }
 
+            
 
             if (enemies.Size == 0)
             {
                 node.RemovePack(enemies);
+                Node neighbourExit = node.AdjacencyList.ElementAt(random.Next(0, 0)).Value;
+                Pack fled = new Pack(fledEnemies.Enemies.Count);
+                foreach(Enemy e in fledEnemies.Enemies)
+                {
+                    fled.Add(e);
+                }
+                if (neighbourExit.AddPack(fled))
+                {
+                    //yay
+                }
+                else 
+                {
+                    fledEnemies = new Pack(50);
+                }
+                
                 if (inCombat)
                 {
                     IItem loot = itemGenerator.GetItem(node.Multiplier);
