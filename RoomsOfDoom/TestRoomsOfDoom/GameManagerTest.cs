@@ -173,25 +173,25 @@ namespace TestRoomsOfDoom
                     Player p = testSubject.GetPlayer;
                     if (p.Location.X == 2)
                     {
-                        Assert.AreEqual(testSubject.leftExit, p.Location.Y);
+                        Assert.AreEqual(testSubject.CurrentNode.LeftExit, p.Location.Y);
                         Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Left], oldNode);
                         continue;
                     }
                     if (p.Location.Y == 2)
                     {
-                        Assert.AreEqual(testSubject.topExit, p.Location.X);
+                        Assert.AreEqual(testSubject.CurrentNode.TopExit, p.Location.X);
                         Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Top], oldNode);
                         continue;
                     }
                     if (p.Location.X == GameManager.Width - 3)
                     {
-                        Assert.AreEqual(testSubject.rightExit, p.Location.Y);
+                        Assert.AreEqual(testSubject.CurrentNode.RightExit, p.Location.Y);
                         Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Right], oldNode);
                         continue;
                     }
                     if (p.Location.Y == GameManager.Height - 3)
                     {
-                        Assert.AreEqual(testSubject.botExit, p.Location.X);
+                        Assert.AreEqual(testSubject.CurrentNode.BotExit, p.Location.X);
                         Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Bot], oldNode);
                         continue;
                     }
@@ -229,11 +229,13 @@ namespace TestRoomsOfDoom
             foreach (Node n in testSubject.dungeon.nodes)
                 if (n.IsExit)
                     testSubject.InitRoom(n);
-            Assert.IsInstanceOfType(testSubject.items[0], typeof(LevelKey));
-            testSubject.items[0].Location = new Point(testSubject.GetPlayer.Location.X - 1, testSubject.GetPlayer.Location.Y);
-            foreach (Enemy e in testSubject.enemies)
-                if(e.Location == testSubject.items[0].Location)
-                    e.Location = new Point();
+            Assert.IsInstanceOfType(testSubject.CurrentNode.lootList[0], typeof(Loot));
+            Assert.AreEqual(testSubject.CurrentNode.lootList[0].ID, 3);
+            testSubject.CurrentNode.lootList[0].Location = new Point(testSubject.GetPlayer.Location.X - 1, testSubject.GetPlayer.Location.Y);
+            if (testSubject.CurrentNode != null)
+                foreach (Enemy e in testSubject.CurrentNode.CurrentPack)
+                    if (e.Location == testSubject.CurrentNode.lootList[0].Location)
+                        e.Location = new Point();
             testSubject.Update('a');
             Assert.AreEqual(1, testSubject.GetPlayer.inventory[3]);
             testSubject.Update('4');

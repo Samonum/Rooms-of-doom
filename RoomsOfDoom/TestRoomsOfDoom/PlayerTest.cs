@@ -102,13 +102,11 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void PotionTest()
         {
-            throw new NotImplementedException();
             int pots = p.GetPotCount;
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                // TODO
-                //p.AddItem(new Potion());
+                p.AddItem(new Loot(0, '1'));
                 pots++;
             }
             Assert.AreEqual(pots, p.GetPotCount, "Pots don't add up well.");
@@ -130,7 +128,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddItem(new TimeCrystal());
+                p.AddItem(new Loot(1, '2'));
                 crystals++;
             }
             Assert.AreEqual(crystals, p.GetCrystalCount, "Crystals don't add up well.");
@@ -143,7 +141,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddItem(new MagicScroll(random, null));
+                p.AddItem(new Loot(2, '3'));
                 scrolls++;
             }
             Assert.AreEqual(scrolls, p.GetScrollCount, "Scrolls don't add up well.");

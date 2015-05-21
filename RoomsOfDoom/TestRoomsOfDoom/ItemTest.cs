@@ -18,6 +18,8 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void GlyphsTest()
         {
+            // TODO: Should probably remove this test, as items no longer have a glyph property
+            // TODO: Perhaps create a dictionary for items to link items, item IDs and their corresponding glyphs
             Assert.IsTrue(false);
             /*
             Potion p = new Potion();
