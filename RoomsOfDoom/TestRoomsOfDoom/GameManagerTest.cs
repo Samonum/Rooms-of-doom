@@ -287,13 +287,13 @@ namespace TestRoomsOfDoom
         {
             testSubject.GetPlayer.IncreaseScore(1000);
             testSubject.GetPlayer.SetItems(12, 13, 14);
-            testSubject.difficulty = 9001;
+            testSubject.difficulty = 9;
         }
 
         public void IsAbsurd()
         {
             Assert.AreEqual(1000, testSubject.GetPlayer.GetScore);
-            Assert.AreEqual(9001, testSubject.difficulty);
+            Assert.AreEqual(9, testSubject.difficulty);
             Assert.AreEqual(12, testSubject.GetPlayer.GetPotCount);
             Assert.AreEqual(13, testSubject.GetPlayer.GetCrystalCount);
             Assert.AreEqual(14, testSubject.GetPlayer.GetScrollCount);
