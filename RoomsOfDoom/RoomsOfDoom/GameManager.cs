@@ -63,7 +63,7 @@ namespace RoomsOfDoom
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
-                        inMenu = LoadGame(Console.ReadLine());
+                        inMenu = !LoadGame(Console.ReadLine());
                         break;
                     case 'c':
                     case 'C':
@@ -116,6 +116,8 @@ namespace RoomsOfDoom
                 char input = 'c';
                 if (acceptinput)
                     input = Console.ReadKey().KeyChar;
+                if (!acceptinput)
+                    Thread.Sleep(100);
 
                 switch (input)
                 {
@@ -127,8 +129,7 @@ namespace RoomsOfDoom
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
-                        LoadGame(Console.ReadLine());
-                        inMenu = false;
+                        inMenu = !LoadGame(Console.ReadLine());
                         break;
                     case 'c':
                     case 'C':
