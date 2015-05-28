@@ -43,12 +43,6 @@ namespace RoomsOfDoom
                 if (p.Size == 0)
                 {
                     removeList.Add(p);
-                    Loot loot = ItemGenerator.GetItem(Multiplier);
-                    if (loot != null)
-                    {
-                        loot.Location = GetRandomLocation(4);
-                        lootList.Add(loot);
-                    }
                     continue;
                 }
 

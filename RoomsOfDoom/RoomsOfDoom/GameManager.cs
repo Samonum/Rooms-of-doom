@@ -12,7 +12,7 @@ namespace RoomsOfDoom
     public class GameManager : IDisposable
     {
         private const int doorsize = 3;
-        Random random;
+        public Random random;
 
         private char[][] map;
         public const int Width = 37, Height = 25;
@@ -63,8 +63,7 @@ namespace RoomsOfDoom
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
-                        LoadGame(Console.ReadLine());
-                        inMenu = false;
+                        inMenu = LoadGame(Console.ReadLine());
                         break;
                     case 'c':
                     case 'C':
@@ -88,7 +87,7 @@ namespace RoomsOfDoom
             }
 
             this.random = random;
-            if (random == null)
+            if (this.random == null)
             {
                 random = new Random();
                 int seed = random.Next();
@@ -101,7 +100,7 @@ namespace RoomsOfDoom
 
             player = new Player();
             CreateDungeon(10, 10);
-            ItemGenerator.Init(random, dungeon, player);
+            ItemGenerator.Init(this.random, dungeon, player);
         }
 
         public void StartNextLevel()
@@ -169,9 +168,7 @@ namespace RoomsOfDoom
             rightExit = 10 + random.Next(Height - 20);
             botExit = 10 + random.Next(Width - 20);
             */
-            inCombat = false;
-            if (node.CurrentPack != null)
-                inCombat = true;
+            inCombat = node.CurrentPack != null;
 
             node.PlaceEnemies();
             PlacePlayer(entrance);
@@ -501,19 +498,22 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
 
             initialize(new Random(int.Parse(replay[0].Trim())), false);
             for (int n = 1; n < replay.Length; n++)
+            {
+                replay[n] = replay[n].Trim();
                 if ((n & 1) == 1)
                     for (int i = 0; i < replay[n].Length; i++)
                     {
                         Thread.Sleep(speed);
-                        if (replay[n][i] != 4 || i < replay[n].Length - 1)
+                        //if (replay[n][i] != 4 || i < replay[n].Length - 1)
                             Update(replay[n][i]);
                     }
                 else
                 {
-                    random = new Random(int.Parse(replay[n].Trim()));
+                    random = new Random(int.Parse(replay[n]));
                     difficulty--;
                     StartNextLevel();
                 }
+            }
             acceptinput = true;
             return true;
         }
