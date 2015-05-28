@@ -34,6 +34,9 @@ namespace RoomsOfDoom
 
         public bool GiveOrder(Order o)
         {
+            if (o == null)
+                return false;
+
             if (order != null)
                 return false;
             order = o;

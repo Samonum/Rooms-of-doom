@@ -36,14 +36,15 @@ namespace RoomsOfDoom
             }
         }
 
-        public void DefendOrder()
+        public bool DefendOrder()
         {
             Bridge b = GetLastUnconqueredBridge();
             if (b == null)
-                return;
+                return false;
 
             int deficit = b.bridgeNr - b.PackList.Count;
             GiveOrder(new Order(b), deficit);
+            return true;
         }
 
         public Bridge GetLastUnconqueredBridge()
