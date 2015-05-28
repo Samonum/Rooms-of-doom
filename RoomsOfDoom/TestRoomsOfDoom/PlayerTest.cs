@@ -26,6 +26,22 @@ namespace TestRoomsOfDoom
             random = new Random();
         }
 
+        [TestMethod]
+        public void PlayerCombatTest()
+        {
+            Pack pa = new Pack(1);
+            Enemy badGuy = new Enemy("long name", 'l', (int)(Player.strength * 2.5));
+            pa.Add(badGuy);
+            p.Combat(badGuy);
+            Assert.IsTrue(badGuy.Alive);
+            Assert.AreEqual((int)Player.strength * 1.5, badGuy.CurrentHP);
+            p.AddItem(new Loot(2,'2'));
+            p.UseItem(new MagicScroll(new NotSoRandom(0f), null), null);
+            p.Combat(badGuy);
+            Assert.IsFalse(badGuy.Alive);
+            Assert.IsTrue(p.GetScore > 0);
+        }
+
         public override IHittable getHittable()
         {
             return p;

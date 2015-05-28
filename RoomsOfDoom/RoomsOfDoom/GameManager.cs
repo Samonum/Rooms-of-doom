@@ -269,6 +269,7 @@ namespace RoomsOfDoom
             return act;
         }
 
+        //Move to node?
         public void TryPickUpLoot()
         {
             List<Loot> items = node.lootList;

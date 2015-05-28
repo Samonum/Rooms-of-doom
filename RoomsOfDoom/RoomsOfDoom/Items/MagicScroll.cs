@@ -37,7 +37,7 @@ namespace RoomsOfDoom.Items
         public void Finish(Player player)
         {
             if(undoable)
-                player.Multiplier /= 2; ;
+                player.Multiplier /= 2;
         }
 
         public int Duration
