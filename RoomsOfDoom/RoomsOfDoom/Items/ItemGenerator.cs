@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
     public static class ItemGenerator
     {
-        static Random random;
+        public static Random random;
         static Dungeon dungeon;
         static Player player;
 

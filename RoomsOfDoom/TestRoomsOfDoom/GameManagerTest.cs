@@ -225,6 +225,13 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
+        public void RandomConsistencyTest()
+        {
+            testSubject.initialize(null);
+            RandomConsistency();
+        }
+
+        [TestMethod]
         public void LootKeyCheck() 
         {
             // TODO: This test breaks completely as it does not follow new rules
@@ -271,6 +278,7 @@ namespace TestRoomsOfDoom
 
             Assert.IsTrue(testSubject.LoadGame(filename));
             IsAbsurd();
+            RandomConsistency();
 
             File.Delete(filename);
         }
@@ -290,7 +298,12 @@ namespace TestRoomsOfDoom
             Assert.AreEqual(13, testSubject.GetPlayer.GetCrystalCount);
             Assert.AreEqual(14, testSubject.GetPlayer.GetScrollCount);
         }
-    
+        
+        public void RandomConsistency()
+        {
+            Assert.AreSame(testSubject.random, ItemGenerator.random, "Bad item generator");
+            Assert.AreSame(testSubject.random, testSubject.dungeon.random, "Bad Dungeon");
+        }
 
     }
 }
