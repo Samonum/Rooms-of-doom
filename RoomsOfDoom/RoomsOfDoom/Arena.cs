@@ -200,31 +200,10 @@ namespace RoomsOfDoom
         }
 
         // TODO: Adjust move, no longer give player
-        public void MicroUpdates(Player player)
+        public void MicroUpdates()
         { 
             if (CurrentPack == null)
                 return;
-
-            if (CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
-            {
-                foreach (Enemy e in CurrentPack)
-                {
-                    // TODO: Plz move
-                    e.AggressiveMove(player);
-                }
-            }
-            else
-            {
-                //get random door to flee to
-                // TODO: Change the 5
-                Point doorLocation = new Point(5, 2);
-                foreach (Enemy e in CurrentPack)
-                {
-                    //FLY YOU FOOLS!
-                    e.NeutralMove(doorLocation);
-                }
-            }
-
 
             if (CurrentPack.Size == 0)
             {
@@ -237,9 +216,72 @@ namespace RoomsOfDoom
                     lootList.Add(loot);
                 }
 
-                if (CurrentPack != null)
-                    PlaceEnemies();
+                if (CurrentPack == null)
+                    return;
+                PlaceEnemies();
             }
+
+            // TODO: THis if staement shouldnt be here
+            if (Player == null)
+                return;
+
+            if (CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
+            {
+                foreach (Enemy e in CurrentPack)
+                {
+                    // TODO: Plz move
+                    Move(e, Player.Location);
+                }
+            }
+
+            else
+            {
+                //get random door to flee to
+                // TODO: Change the doorlocation to something suitable
+                Point doorLocation = new Point(5, 2);
+                foreach (Enemy e in CurrentPack)
+                {
+                    //FLY YOU FOOLS!
+                    Move(e, doorLocation);
+                }
+            }
+        }
+
+        public bool Move(Enemy e, Point target)
+        {
+            int x = target.X - e.Location.X;
+            int y = target.Y - e.Location.Y;
+            Point loc = Math.Abs(x) > Math.Abs(y) ?
+                new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
+                new Point(e.Location.X, e.Location.Y + Math.Sign(y));
+
+            if (CurrentPack != null)
+                foreach (Enemy teammate in CurrentPack)
+                {
+                    if (teammate.Location == loc)
+                    {
+                        loc = Math.Abs(x) <= Math.Abs(y) ?
+                            new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
+                            new Point(e.Location.X, e.Location.Y + Math.Sign(y));
+                        foreach (Enemy teamy in CurrentPack)
+                        {
+                            if (teamy.Location == loc)
+                                return false;
+                        }
+                        break;
+                    }
+                }
+
+            // TODO: This if statement should nto exist
+            if (Player != null)
+                if (loc == Player.Location)
+                {
+                    e.KillTheHeretic(Player);
+                    return true;
+                }
+
+            e.Location = loc;
+            return true;
         }
     }
 }

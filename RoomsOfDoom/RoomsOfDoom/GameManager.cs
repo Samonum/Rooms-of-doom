@@ -143,6 +143,8 @@ namespace RoomsOfDoom
 
         public void ChangeRooms(Node newNode)
         {
+            CurrentNode.Player = null;
+            newNode.Player = player;
             dungeon.MacroUpdate();
             InitRoom(newNode);
         }
@@ -150,8 +152,6 @@ namespace RoomsOfDoom
         public void InitRoom(Node newNode)
         {
             // TODO: Add Key somewhere
-    
-
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
                 if (n.Value == node)
@@ -295,7 +295,7 @@ namespace RoomsOfDoom
 
         public void UpdateEnemies()
         {
-            node.MicroUpdates(player);
+            node.MicroUpdates();
         }
 
         public Point GetRandomLocation(int distFromWall)

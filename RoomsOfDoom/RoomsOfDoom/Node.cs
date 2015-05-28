@@ -30,6 +30,7 @@ namespace RoomsOfDoom
             multiplier = 1;
             this.maxCapacity = maxCapacity * multiplier;
             IsExit = isExit;
+            Player = null;
 
             InitSizes();
         }
@@ -233,6 +234,12 @@ namespace RoomsOfDoom
         public int Multiplier
         {
             get { return multiplier; }
+        }
+
+        public Player Player
+        {
+            get;
+            set;
         }
 
         public int MonsterCount

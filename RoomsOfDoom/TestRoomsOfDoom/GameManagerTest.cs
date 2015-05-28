@@ -204,6 +204,7 @@ namespace TestRoomsOfDoom
         public void EnemyUpdateTest()
         {
             Node n = new Bridge(new Random(), 9, 200, 9);
+            n.Player = testSubject.GetPlayer;
             MonsterCreator creator = new MonsterCreator(random, 1);
             Pack p = creator.GeneratePack(1);
             n.AddPack(p);

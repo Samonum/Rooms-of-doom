@@ -8,7 +8,7 @@ namespace TestRoomsOfDoom
     public class EnemyTest : HittableTest
     {
         Enemy e;
-        Random r;
+        Random random;
         public EnemyTest() : base()
         {
         }
@@ -16,8 +16,8 @@ namespace TestRoomsOfDoom
         [TestInitialize]
         public void Init()
         {
-            r = new Random();
-            MonsterCreator M = new MonsterCreator(r, 1);
+            random = new Random();
+            MonsterCreator M = new MonsterCreator(random, 1);
             e = M.GeneratePack(2)[0];
         }
 
@@ -30,7 +30,7 @@ namespace TestRoomsOfDoom
         public void EnemySetterTest()
         {
             //Arrange
-            MonsterCreator M = new MonsterCreator(r, 20);
+            MonsterCreator M = new MonsterCreator(random, 20);
             Enemy e = M.CreateMonster(1);
             //act
             e.CurrentHP = 1;
@@ -51,8 +51,9 @@ namespace TestRoomsOfDoom
         [Timeout(5000)]
         public void EnemyMovementTest()//test if monsters do not enter the spaces of other monsters in their pack
         {
+            Node n = new Node(random, 0, 100);
             //arrange
-            MonsterCreator M = new MonsterCreator(r, 20);
+            MonsterCreator M = new MonsterCreator(random, 20);
             Pack pack = new Pack(10);
 
             while(pack.Enemies.Count < pack.Enemies.Capacity)
@@ -72,11 +73,14 @@ namespace TestRoomsOfDoom
             pack[5].Location = new System.Drawing.Point(4, 4);
             pack[6].Location = new System.Drawing.Point(3, 3);
 
+            n.AddPack(pack);
+            n.Player = p;
+
             y.Location = new System.Drawing.Point(2,2);
             //act
             for(int i = 0; i < 100;i++)
             {
-                y.AggressiveMove(p);
+                n.Move(y, p.Location);
                 //assert
                 foreach (Enemy en in pack)
                 {
@@ -92,14 +96,17 @@ namespace TestRoomsOfDoom
         public void PlayerDamageTest()
         {
             //arrange
-            MonsterCreator M = new MonsterCreator(r, 10);
+            MonsterCreator M = new MonsterCreator(random, 10);
             Player p = new Player();
             p.Location = new System.Drawing.Point(5, 5);
+            Node node = new Node(random, 0, 100);
             Pack pack = M.GeneratePack(1);
             Enemy x = pack[0];
+            node.AddPack(pack);
+            node.Player = p;
             x.Location = new System.Drawing.Point(4, 5);
             //act
-            x.AggressiveMove(p);
+            node.Move(x, p.Location);
             //assert
             Assert.IsTrue(p.CurrentHP < p.MaxHP);
         }
