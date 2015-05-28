@@ -234,6 +234,7 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void LootKeyCheck() 
         {
+            Assert.IsTrue(false);
             // TODO: This test breaks completely as it does not follow new rules
             int curdif = testSubject.difficulty;
             foreach (Node n in testSubject.dungeon.nodes)

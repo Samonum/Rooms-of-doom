@@ -15,12 +15,10 @@ namespace RoomsOfDoom
         private const int doorsize = 3;
         public Random random;
 
-        private char[][] map;
         public const int Width = 37, Height = 25;
         private Exit exits;
         private Node node;
 
-        int curPack;//what is this ??? remove?
         private Player player;
 
         bool inCombat;
@@ -153,7 +151,6 @@ namespace RoomsOfDoom
 
         public void InitRoom(Node newNode)
         {
-            // TODO: Add Key somewhere
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
                 if (n.Value == node)
@@ -165,12 +162,7 @@ namespace RoomsOfDoom
             exits = 0;
             foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)
                 exits |= exit.Key;
-            /*
-            topExit = 10 + random.Next(Width - 20);
-            leftExit = 10 + random.Next(Height - 20);
-            rightExit = 10 + random.Next(Height - 20);
-            botExit = 10 + random.Next(Width - 20);
-            */
+
             inCombat = node.CurrentPack != null;
 
             node.PlaceEnemies();
@@ -179,7 +171,6 @@ namespace RoomsOfDoom
 
         public void PlacePlayer(Exit entrance)
         {
-            Node n;
             switch (entrance)
             {
                 case Exit.Top:

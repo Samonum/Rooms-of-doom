@@ -9,7 +9,6 @@ namespace RoomsOfDoom
     public class Dungeon
     {
         public int difficulty;
-        //TODO for testing purposes it is public
         public List<Node> nodes;
         public Node endNode;
         public Random random;
@@ -37,14 +36,15 @@ namespace RoomsOfDoom
             }
         }
 
-        public void DefendOrder()
+        public bool DefendOrder()
         {
             Bridge b = GetLastUnconqueredBridge();
             if (b == null)
-                return;
+                return false;
 
             int deficit = b.bridgeNr - b.PackList.Count;
             GiveOrder(new Order(b), deficit);
+            return true;
         }
 
         public Bridge GetLastUnconqueredBridge()
@@ -63,6 +63,7 @@ namespace RoomsOfDoom
                         if (b.locked)
                             return b;
                     }
+                    // This is backup code, beacuse the order of lists is not guaranteed.
                     else if (b.locked)
                         bridges.Add(b);
                 }
@@ -117,12 +118,6 @@ namespace RoomsOfDoom
         {
             List<Node> pre = new List<Node>();
             Queue<Node> queue = new Queue<Node>();
-
-            // TODO: Pretty sure bridges can be destroyed
-            /*
-            if (rNode.isBridge())
-                return false;
-            */
 
             if (rNode == endNode)
                 return null;
@@ -195,7 +190,7 @@ namespace RoomsOfDoom
             set;
         }
 
-        public String ToString()
+        public override String ToString()
         {
             string s = "";
 

@@ -8,7 +8,6 @@ namespace RoomsOfDoom
 {
     public class Bridge : Node
     {
-        // TODO bridgeNr may be redundant
         public int bridgeNr;
 
         public Bridge(Random random, int id, int maxCapacity, int bridgeNr)

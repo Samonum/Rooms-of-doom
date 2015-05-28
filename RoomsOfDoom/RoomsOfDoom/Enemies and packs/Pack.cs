@@ -10,7 +10,7 @@ namespace RoomsOfDoom
     {
         int packSize;
         List<Enemy> enemies;
-        private Order order;
+        public Order order;
         protected int maxPackHP;
 
         public Pack(int packSize)
@@ -34,6 +34,9 @@ namespace RoomsOfDoom
 
         public bool GiveOrder(Order o)
         {
+            if (o == null)
+                return false;
+
             if (order != null)
                 return false;
             order = o;
@@ -88,7 +91,7 @@ namespace RoomsOfDoom
             }
         }
 
-        public String ToString()
+        public override String ToString()
         {
             string s = "(";
 
