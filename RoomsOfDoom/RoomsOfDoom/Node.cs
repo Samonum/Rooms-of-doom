@@ -248,7 +248,7 @@ namespace RoomsOfDoom
             }
         }
 
-        public String ToString()
+        public override String ToString()
         {
             string s = "";
 

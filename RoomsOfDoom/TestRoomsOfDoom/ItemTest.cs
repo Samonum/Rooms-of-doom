@@ -16,31 +16,6 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
-        public void GlyphsTest()
-        {
-            // TODO: Should probably remove this test, as items no longer have a glyph property
-            // TODO: Perhaps create a dictionary for items to link items, item IDs and their corresponding glyphs
-            Assert.IsTrue(false);
-            /*
-            Potion p = new Potion();
-            Assert.IsTrue(p.Glyph == '1');
-
-            TimeCrystal t = new TimeCrystal();
-            Assert.IsTrue(t.Glyph == '2');
-
-            GameManager g = new GameManager(false);
-
-            MagicScroll m = new MagicScroll(random, g);
-            Assert.IsTrue(m.Glyph == '3');
-
-            LevelKey k = new LevelKey(g);
-
-            Assert.IsTrue(k.Glyph == '>');
-
-            g.Dispose();*/
-        }
-
-        [TestMethod]
         public void LootConsistencyTest()
         {
             for (int i = 0; i < 50; i++)

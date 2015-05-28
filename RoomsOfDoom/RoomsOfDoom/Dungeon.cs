@@ -9,7 +9,6 @@ namespace RoomsOfDoom
     public class Dungeon
     {
         public int difficulty;
-        //TODO for testing purposes it is public
         public List<Node> nodes;
         public Node endNode;
         public Random random;
@@ -118,12 +117,6 @@ namespace RoomsOfDoom
             List<Node> pre = new List<Node>();
             Queue<Node> queue = new Queue<Node>();
 
-            // TODO: Pretty sure bridges can be destroyed
-            /*
-            if (rNode.isBridge())
-                return false;
-            */
-
             if (rNode == endNode)
                 return null;
 
@@ -195,7 +188,7 @@ namespace RoomsOfDoom
             set;
         }
 
-        public String ToString()
+        public override String ToString()
         {
             string s = "";
 
