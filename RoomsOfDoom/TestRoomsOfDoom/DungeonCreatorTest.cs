@@ -83,5 +83,22 @@ namespace TestRoomsOfDoom
             Assert.IsFalse(d.nodes[0].isBridge());
             Assert.IsTrue(d.nodes[3].isBridge());
         }
+
+        [TestMethod]
+        public void AddRemoveGateTest()
+        {
+            Node a = new Node(random, 0, 15);
+            Node b = new Node(random, 1, 15);
+            Node c = new Node(random, 2, 15);
+
+            Assert.IsTrue(a.AddGate(Exit.Right, b));
+            Assert.IsFalse(a.AddGate(Exit.Left, b));
+            Assert.IsFalse(a.AddGate(Exit.Right, c));
+            Assert.IsTrue(a.AddGate(Exit.Left, c));
+
+            Assert.IsFalse(a.RemoveGate(Exit.Bot));
+            Assert.IsTrue(a.RemoveGate(Exit.Left));
+            Assert.IsFalse(a.RemoveGate(Exit.Left));
+        }
     }
 }
