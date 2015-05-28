@@ -9,7 +9,8 @@ namespace RoomsOfDoom
     public class Bridge : Node
     {
         // TODO bridgeNr may be redundant
-        int bridgeNr;
+        public int bridgeNr;
+
         public Bridge(Random random, int id, int maxCapacity, int bridgeNr)
             :base(random, id, maxCapacity)
         {
@@ -17,6 +18,7 @@ namespace RoomsOfDoom
             stringName = "B";
             multiplier = bridgeNr;
             maxCapacity = multiplier * maxCapacity;
+            locked = true;
         }
 
         public override bool isBridge()

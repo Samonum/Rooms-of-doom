@@ -32,9 +32,12 @@ namespace RoomsOfDoom
             this.maxPackHP += enemy.MaxHP;
         }
 
-        public void GiveOrder(Order o)
+        public bool GiveOrder(Order o)
         {
+            if (order != null)
+                return false;
             order = o;
+            return true;
         }
 
         public Node Target
@@ -83,6 +86,18 @@ namespace RoomsOfDoom
                 }
                 return countHP;
             }
+        }
+
+        public String ToString()
+        {
+            string s = "(";
+
+            foreach (Enemy e in enemies)
+                s += e.Glyph;
+
+            s += ")";
+
+            return s;
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()

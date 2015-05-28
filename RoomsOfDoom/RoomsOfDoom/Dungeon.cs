@@ -30,10 +30,76 @@ namespace RoomsOfDoom
 
         public void MacroUpdate()
         {
+            DefendOrder();
             foreach (Node n in nodes)
             {
                 n.MacroUpdate();
             }
+        }
+
+        public void DefendOrder()
+        {
+            Bridge b = GetLastUnconqueredBridge();
+            if (b == null)
+                return;
+
+            int deficit = b.bridgeNr - b.PackList.Count;
+            GiveOrder(new Order(b), deficit);
+        }
+
+        public Bridge GetLastUnconqueredBridge()
+        {
+            int counter = 1;
+            List<Bridge> bridges = new List<Bridge>();
+            
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].isBridge())
+                {
+                    Bridge b = (Bridge)nodes[i];
+                    if (b.bridgeNr == counter)
+                    {
+                        counter++;
+                        if (b.locked)
+                            return b;
+                    }
+                    else if (b.locked)
+                        bridges.Add(b);
+                }
+            }
+
+            foreach (Bridge b in bridges)
+                if (b.bridgeNr == counter)
+                    return b;
+
+            return null;
+        }
+
+        public void GiveOrder(Order o, int count)
+        {
+            if (o == null)
+                return;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (!SingleOrder(o))
+                    return;
+            }
+        }
+
+        private bool SingleOrder(Order o)
+        {
+            foreach (Node n in nodes)
+            {
+                if (o.Target == n)
+                    continue;
+                foreach (Pack p in n.PackList)
+                {
+                    if (p.GiveOrder(o))
+                        return true;
+                }
+            }
+            return false;
         }
 
         public List<Node> ShortestPath(Node from, Node to)
@@ -121,6 +187,12 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return nodes.Count; }
+        }
+
+        public Node PlayerNode
+        {
+            get;
+            set;
         }
 
         public String ToString()
