@@ -338,10 +338,10 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public void CreateDungeon(int packCount, int maxCapacity)
+        public void CreateDungeon(int basePackCount, int maxCapacity)
         {
             dungeonCreator = new DungeonCreator(random);
-            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
+            dungeon = dungeonCreator.CreateDungeon(difficulty, basePackCount * difficulty, maxCapacity + maxCapacity * difficulty / 3);
             dungeon.nodes[0].Player = GetPlayer;
             InitRoom(dungeon.nodes[0]);
         }
