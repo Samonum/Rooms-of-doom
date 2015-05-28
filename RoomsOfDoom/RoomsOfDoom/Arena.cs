@@ -54,6 +54,8 @@ namespace RoomsOfDoom
 
         public bool WithinTopGate(int x)
         {
+            if (locked)
+                return false;
             if ((exits & Exit.Top) != Exit.Top)
                 return false;
             if (topLocation - topSize > x || topLocation + topSize < x)
@@ -63,6 +65,8 @@ namespace RoomsOfDoom
 
         public bool WithinBotGate(int x)
         {
+            if (locked)
+                return false;
             if ((exits & Exit.Bot) != Exit.Bot)
                 return false;
             if (botLocation - botSize > x || botLocation + botSize < x)
@@ -72,6 +76,8 @@ namespace RoomsOfDoom
 
         public bool WithinLeftGate(int x)
         {
+            if (locked)
+                return false;
             if ((exits & Exit.Left) != Exit.Left)
                 return false;
             if (leftLocation - leftSize > x || leftLocation + leftSize < x)
@@ -81,6 +87,8 @@ namespace RoomsOfDoom
         
         public bool WithinRightGate(int x)
         {
+            if (locked)
+                return false;
             if ((exits & Exit.Right) != Exit.Right)
                 return false;
             if (rightLocation - rightSize > x || rightLocation + rightSize < x)
@@ -124,7 +132,7 @@ namespace RoomsOfDoom
             }
         }
 
-        private Point GetRandomLocation(int distFromWall)
+        protected Point GetRandomLocation(int distFromWall)
         {
             return new Point(random.Next(Width - distFromWall - 2) + 1 + distFromWall / 2,
                 random.Next(Height - distFromWall - 2) + 1 + distFromWall / 2);
@@ -134,11 +142,10 @@ namespace RoomsOfDoom
 
         private char[][] CreateBackground()
         {
-
             char[][] map = new char[Height][];
             map[0] = new char[Width];
             for (int j = 0; j < map[0].Length; j++)
-                if (!WithinTopGate(j))
+                if (!WithinTopGate(j) || locked)
                     map[0][j] = '█';
                 else
                     map[0][j] = '▒';
@@ -148,14 +155,14 @@ namespace RoomsOfDoom
                 for (int j = 0; j < map[i].Length; j++)
                     if (j == 0)
                     {
-                        if (!WithinLeftGate(i))
+                        if (!WithinLeftGate(i) || locked)
                             map[i][j] = '█';
                         else
                             map[i][j] = '▒';
                     }
                     else if (j == map[i].Length - 1)
                     {
-                        if (!WithinRightGate(i))
+                        if (!WithinRightGate(i) || locked)
                             map[i][j] = '█';
                         else
                             map[i][j] = '▒';
@@ -165,7 +172,7 @@ namespace RoomsOfDoom
 
                 map[map.Length - 1] = new char[Width];
                 for (int j = 0; j < map[0].Length; j++)
-                    if (!WithinBotGate(j))
+                    if (!WithinBotGate(j) || locked)
                         map[map.Length - 1][j] = '█';
                     else
                         map[map.Length - 1][j] = '▒';
@@ -229,10 +236,14 @@ namespace RoomsOfDoom
             }
         }
 
-        public void MicroUpdates()
-        { 
+        public virtual void MicroUpdates()
+        {
             if (CurrentPack == null)
+            {
+                if (locked)
+                    locked = false;
                 return;
+            }
 
             if (CurrentPack.Size == 0)
             {
@@ -246,7 +257,11 @@ namespace RoomsOfDoom
                 }
 
                 if (CurrentPack == null)
+                {
+                    if (locked)
+                        locked = false;
                     return;
+                }
                 PlaceEnemies();
             }
 

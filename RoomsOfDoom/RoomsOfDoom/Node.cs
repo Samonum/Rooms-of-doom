@@ -18,6 +18,7 @@ namespace RoomsOfDoom
         protected string stringName;
         protected int multiplier;
         protected int maxCapacity;
+        public bool locked;
 
         public Node(Random random, int id, int maxCapacity, bool isExit = false)
         {
@@ -31,7 +32,7 @@ namespace RoomsOfDoom
             this.maxCapacity = maxCapacity * multiplier;
             IsExit = isExit;
             Player = null;
-
+            locked = false;
             InitSizes();
         }
 
@@ -255,12 +256,22 @@ namespace RoomsOfDoom
 
         public String ToString()
         {
-            string s = stringName + id + "(";
+            string s = "";
+
+            if (Player != null)
+                s += ">";
+
+            s += stringName + id + "(";
 
             foreach (KeyValuePair<Exit, Node> kvp in AdjacencyList)
                 s += kvp.Value.id + ",";
 
-            s += ")";
+            s += ")[";
+
+            foreach (Pack p in PackList)
+                s += p.ToString();
+
+            s += "]";
 
             return s;
         }

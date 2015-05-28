@@ -143,6 +143,7 @@ namespace RoomsOfDoom
 
         public void ChangeRooms(Node newNode)
         {
+            dungeon.PlayerNode = newNode;
             CurrentNode.Player = null;
             newNode.Player = player;
             dungeon.MacroUpdate();
@@ -252,6 +253,9 @@ namespace RoomsOfDoom
                     break;
                 case 'e':
                     break;
+                case 'x':
+                    dungeon.MacroUpdate();
+                    break;
                 default:
                     act = false;
                     break;
@@ -345,27 +349,9 @@ namespace RoomsOfDoom
             dungeonCreator = new DungeonCreator(random);
             dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
             dungeon.nodes[0].Player = GetPlayer;
+            dungeon.PlayerNode = dungeon.nodes[0];
             InitRoom(dungeon.nodes[0]);
         }
-        /*
-        public string[] CreateEnemyOverview()
-        {
-            char[][] map = node.GetUpdatedMap(player.Location, player.Glyph);
-            string[] drawMap = new string[map.Length];
-            int i = 0;
-            drawMap[0] = new string(map[0]);
-            if (node.CurrentPack != null)
-                for (i = 0; i < node.CurrentPack.Size; i++)
-                {
-                    Enemy e = node.CurrentPack[i];
-                    drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
-                    drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
-                }
-            for (i = i * 2 + 1; i < map.Length; i++)
-                drawMap[i] = new string(map[i]);
-            return drawMap;
-        }*/
-
 
         public string FormatHud()
         {
@@ -394,7 +380,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
-           // Console.WriteLine(dungeon.ToString());
+            Console.WriteLine(dungeon.ToString());
         }
 
         public bool SaveGame(string fileName)
