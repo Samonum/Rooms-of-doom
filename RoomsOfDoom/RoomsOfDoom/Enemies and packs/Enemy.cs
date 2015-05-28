@@ -79,7 +79,40 @@ namespace RoomsOfDoom
         set;
         }
 
-        public virtual bool Move<T>(T target) where T : IHittable, ITile
+        // TODO: Enemies still walk through the player when not targeting the player
+        public virtual bool NeutralMove(Point p)
+        {
+            int x = p.X - Location.X;
+            int y = p.Y - Location.Y;
+            Point loc = Math.Abs(x) > Math.Abs(y) ?
+                new Point(Location.X + Math.Sign(x), Location.Y) :
+                new Point(Location.X, Location.Y + Math.Sign(y));
+
+            foreach (Enemy teammate in myPack)
+            {
+                if (teammate.Location == loc)
+                {
+                    loc = Math.Abs(x) <= Math.Abs(y) ?
+                        new Point(Location.X + Math.Sign(x), Location.Y) :
+                        new Point(Location.X, Location.Y + Math.Sign(y));
+                    foreach (Enemy teamy in myPack)
+                    {
+                        if (teamy.Location == loc)
+                            return false;
+                    }
+                    break;
+                }
+            }
+
+            if (loc == p)
+            {
+                // Insert logic for gates here
+            }
+            Location = loc;
+            return true;
+        }
+
+        public virtual bool AggressiveMove<T>(T target) where T : IHittable, ITile
         {
             int x = target.Location.X - Location.X;
             int y = target.Location.Y - Location.Y;
@@ -108,6 +141,7 @@ namespace RoomsOfDoom
                 KillTheHeretic(target);
                 return true;
             }
+
             Location = loc;
             return true;
         }

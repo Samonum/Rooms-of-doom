@@ -76,7 +76,7 @@ namespace TestRoomsOfDoom
             //act
             for(int i = 0; i < 100;i++)
             {
-                y.Move(p);
+                y.AggressiveMove(p);
                 //assert
                 foreach (Enemy en in pack)
                 {
@@ -99,7 +99,7 @@ namespace TestRoomsOfDoom
             Enemy x = pack[0];
             x.Location = new System.Drawing.Point(4, 5);
             //act
-            x.Move(p);
+            x.AggressiveMove(p);
             //assert
             Assert.IsTrue(p.CurrentHP < p.MaxHP);
         }

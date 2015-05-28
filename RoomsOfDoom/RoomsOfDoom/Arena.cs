@@ -210,7 +210,7 @@ namespace RoomsOfDoom
                 foreach (Enemy e in CurrentPack)
                 {
                     // TODO: Plz move
-                    e.Move(player);
+                    e.AggressiveMove(player);
                 }
             }
             else
@@ -218,12 +218,10 @@ namespace RoomsOfDoom
                 //get random door to flee to
                 // TODO: Change the 5
                 Point doorLocation = new Point(5, 2);
-                Enemy target = new Enemy("dummy", '?', 999);
-                target.Location = doorLocation;
                 foreach (Enemy e in CurrentPack)
                 {
                     //FLY YOU FOOLS!
-                    e.Move(target);
+                    e.NeutralMove(doorLocation);
                 }
             }
 
