@@ -11,6 +11,7 @@ namespace RoomsOfDoom
 {
     public class GameManager : IDisposable
     {
+        private bool debug = false;
         private const int doorsize = 3;
         public Random random;
 
@@ -252,7 +253,14 @@ namespace RoomsOfDoom
                 case 'e':
                     break;
                 case 'x':
-                    dungeon.MacroUpdate();
+                    if (debug)
+                    {
+                        dungeon.MacroUpdate();
+                        node.PlaceEnemies();
+                    }
+                    break;
+                case 'z':
+                    debug = !debug;
                     break;
                 default:
                     act = false;
@@ -378,7 +386,8 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
-            Console.WriteLine(dungeon.ToString());
+            if (debug)
+                Console.WriteLine(dungeon.ToString());
         }
 
         public bool SaveGame(string fileName)

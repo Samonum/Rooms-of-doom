@@ -255,6 +255,9 @@ namespace RoomsOfDoom
             if (Player != null)
                 s += ">";
 
+            if (locked)
+                s += "!";
+
             s += stringName + id + "(";
 
             foreach (KeyValuePair<Exit, Node> kvp in AdjacencyList)
