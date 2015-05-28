@@ -68,7 +68,6 @@
     <Compile Include="Enemies and packs\Enemy.cs" />
     <Compile Include="Enemies and packs\Pack.cs" />
     <Compile Include="Exit.cs" />
-    <Compile Include="Gate.cs" />
     <Compile Include="HighScores.cs" />
     <Compile Include="IHittable.cs" />
     <Compile Include="Items\Loot.cs" />

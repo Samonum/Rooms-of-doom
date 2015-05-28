@@ -10,7 +10,7 @@ namespace RoomsOfDoom
     {
         int packSize;
         List<Enemy> enemies;
-        private Order order;
+        public Order order;
         protected int maxPackHP;
 
         public Pack(int packSize)

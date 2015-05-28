@@ -78,5 +78,25 @@ namespace TestRoomsOfDoom
             Dungeon d = new Dungeon(random, nodes, 1, 10);
             Assert.IsFalse(d.DefendOrder());
         }
+
+        [TestMethod]
+        public void FakeOrderTest()
+        {
+            // TODO: GiveOrder with amount higher than existing packs.
+            // TODO: GiveOrder to a no longer existing node.
+            List<Node> nodes = new List<Node>();
+
+            Node a = new Node(random, 1, 10);
+            nodes.Add(a);
+
+            MonsterCreator mc = new MonsterCreator(random, 1);
+            Pack p = mc.GeneratePack(1);
+            a.AddPack(p);
+
+            Dungeon d = new Dungeon(random, nodes, 1, 10);
+            d.GiveOrder(null, 1);
+
+            Assert.IsNull(p.order);
+        }
     }
 }

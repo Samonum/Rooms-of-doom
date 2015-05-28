@@ -63,6 +63,7 @@ namespace RoomsOfDoom
                         if (b.locked)
                             return b;
                     }
+                    // This is backup code, beacuse the order of lists is not guaranteed.
                     else if (b.locked)
                         bridges.Add(b);
                 }
