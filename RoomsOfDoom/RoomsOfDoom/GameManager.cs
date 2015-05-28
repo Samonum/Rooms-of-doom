@@ -142,6 +142,8 @@ namespace RoomsOfDoom
 
         public void ChangeRooms(Node newNode)
         {
+            CurrentNode.Player = null;
+            newNode.Player = player;
             dungeon.MacroUpdate();
             InitRoom(newNode);
         }
@@ -149,8 +151,6 @@ namespace RoomsOfDoom
         public void InitRoom(Node newNode)
         {
             // TODO: Add Key somewhere
-    
-
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
                 if (n.Value == node)
@@ -292,7 +292,7 @@ namespace RoomsOfDoom
 
         public void UpdateEnemies()
         {
-            node.MicroUpdates(player);
+            node.MicroUpdates();
         }
 
         public Point GetRandomLocation(int distFromWall)
@@ -341,12 +341,13 @@ namespace RoomsOfDoom
         {
             dungeonCreator = new DungeonCreator(random);
             dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
+            dungeon.nodes[0].Player = GetPlayer;
             InitRoom(dungeon.nodes[0]);
         }
-
+        /*
         public string[] CreateEnemyOverview()
         {
-            char[][] map = /*GetUpdatedMap();*/node.GetUpdatedMap(player.Location, player.Glyph);
+            char[][] map = node.GetUpdatedMap(player.Location, player.Glyph);
             string[] drawMap = new string[map.Length];
             int i = 0;
             drawMap[0] = new string(map[0]);
@@ -360,7 +361,7 @@ namespace RoomsOfDoom
             for (i = i * 2 + 1; i < map.Length; i++)
                 drawMap[i] = new string(map[i]);
             return drawMap;
-        }
+        }*/
 
 
         public string FormatHud()
@@ -386,7 +387,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
             else
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-            string[] drawmap = CreateEnemyOverview();
+            string[] drawmap = CurrentNode.CreateEnemyOverview();
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());

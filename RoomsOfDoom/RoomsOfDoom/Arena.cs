@@ -50,6 +50,8 @@ namespace RoomsOfDoom
             }
         }
 
+        #region Check if within a gate
+
         public bool WithinTopGate(int x)
         {
             if ((exits & Exit.Top) != Exit.Top)
@@ -86,6 +88,10 @@ namespace RoomsOfDoom
             return true;
         }
 
+        #endregion
+
+        #region Get gate locations
+
         public int TopExit
         {
             get { return topLocation; }
@@ -106,6 +112,8 @@ namespace RoomsOfDoom
             get { return rightLocation; }
         }
 
+        #endregion
+
         public Pack CurrentPack
         {
             get 
@@ -121,6 +129,8 @@ namespace RoomsOfDoom
             return new Point(random.Next(Width - distFromWall - 2) + 1 + distFromWall / 2,
                 random.Next(Height - distFromWall - 2) + 1 + distFromWall / 2);
         }
+
+        #region Visualization of the current node
 
         private char[][] CreateBackground()
         {
@@ -164,7 +174,7 @@ namespace RoomsOfDoom
             return map;
         }
 
-        public char[][] GetUpdatedMap(Point playerLocation, char playerGlyph)
+        private char[][] GetUpdatedMap(Point playerLocation, char playerGlyph)
         {
             char[][] map = CreateBackground();
             foreach (Loot l in lootList)
@@ -176,6 +186,26 @@ namespace RoomsOfDoom
             map[playerLocation.Y][playerLocation.X] = playerGlyph;
             return map;
         }
+
+        public string[] CreateEnemyOverview()
+        {
+            char[][] map = GetUpdatedMap(Player.Location, Player.Glyph);
+            string[] drawMap = new string[map.Length];
+            int i = 0;
+            drawMap[0] = new string(map[0]);
+            if (CurrentPack != null)
+                for (i = 0; i < CurrentPack.Size; i++)
+                {
+                    Enemy e = CurrentPack[i];
+                    drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
+                    drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
+                }
+            for (i = i * 2 + 1; i < map.Length; i++)
+                drawMap[i] = new string(map[i]);
+            return drawMap;
+        }
+
+        #endregion
 
         public void PlaceEnemies()
         {
@@ -199,34 +229,10 @@ namespace RoomsOfDoom
             }
         }
 
-        // TODO: Adjust move, no longer give player
-        public void MicroUpdates(Player player)
+        public void MicroUpdates()
         { 
             if (CurrentPack == null)
                 return;
-
-            if (CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
-            {
-                foreach (Enemy e in CurrentPack)
-                {
-                    // TODO: Plz move
-                    e.Move(player);
-                }
-            }
-            else
-            {
-                //get random door to flee to
-                // TODO: Change the 5
-                Point doorLocation = new Point(5, 2);
-                Enemy target = new Enemy("dummy", '?', 999);
-                target.Location = doorLocation;
-                foreach (Enemy e in CurrentPack)
-                {
-                    //FLY YOU FOOLS!
-                    e.Move(target);
-                }
-            }
-
 
             if (CurrentPack.Size == 0)
             {
@@ -239,9 +245,66 @@ namespace RoomsOfDoom
                     lootList.Add(loot);
                 }
 
-                if (CurrentPack != null)
-                    PlaceEnemies();
+                if (CurrentPack == null)
+                    return;
+                PlaceEnemies();
             }
+
+            // TODO: THis if staement shouldnt be here
+            if (Player == null)
+                return;
+
+            if (CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
+            {
+                foreach (Enemy e in CurrentPack)
+                    Move(e, Player.Location);
+            }
+
+            else
+            {
+                //get random door to flee to
+                // TODO: Change the doorlocation to something suitable
+                Point doorLocation = new Point(5, 2);
+                foreach (Enemy e in CurrentPack)
+                    Move(e, doorLocation);
+            }
+        }
+
+        public bool Move(Enemy e, Point target)
+        {
+            int x = target.X - e.Location.X;
+            int y = target.Y - e.Location.Y;
+            Point loc = Math.Abs(x) > Math.Abs(y) ?
+                new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
+                new Point(e.Location.X, e.Location.Y + Math.Sign(y));
+
+            if (CurrentPack != null)
+                foreach (Enemy teammate in CurrentPack)
+                {
+                    if (teammate.Location == loc)
+                    {
+                        loc = Math.Abs(x) <= Math.Abs(y) ?
+                            new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
+                            new Point(e.Location.X, e.Location.Y + Math.Sign(y));
+                        foreach (Enemy teamy in CurrentPack)
+                        {
+                            if (teamy.Location == loc)
+                                return false;
+                        }
+                        break;
+                    }
+                }
+
+            // TODO: This if statement should nto exist
+            if (Player != null)
+                if (loc == Player.Location)
+                {
+                    e.KillTheHeretic(Player);
+                    return true;
+                }
+
+            e.Location = loc;
+            return true;
         }
     }
 }

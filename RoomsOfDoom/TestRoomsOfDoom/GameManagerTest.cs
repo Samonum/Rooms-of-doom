@@ -96,7 +96,8 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void ScreenWidthTest()
         {
-            string[] screen = testSubject.CreateEnemyOverview();
+            testSubject.CurrentNode.Player = testSubject.GetPlayer;
+            string[] screen = testSubject.CurrentNode.CreateEnemyOverview();
             foreach(string s in screen)
                 Assert.IsTrue(s.Length <= Console.WindowWidth);
         }
@@ -204,6 +205,7 @@ namespace TestRoomsOfDoom
         public void EnemyUpdateTest()
         {
             Node n = new Bridge(new Random(), 9, 200, 9);
+            n.Player = testSubject.GetPlayer;
             MonsterCreator creator = new MonsterCreator(random, 1);
             Pack p = creator.GeneratePack(1);
             n.AddPack(p);
@@ -232,6 +234,7 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void LootKeyCheck() 
         {
+            // TODO: This test breaks completely as it does not follow new rules
             int curdif = testSubject.difficulty;
             foreach (Node n in testSubject.dungeon.nodes)
                 if (n.IsExit)
