@@ -210,21 +210,25 @@ namespace RoomsOfDoom
                 //TODO: Move this to node
                 
                 case 'w':
+                case 'W':
                     if (!player.Move(Direction.Up, node.CurrentPack) &&
                         node.WithinTopGate(player.Location.X))
                             ChangeRooms(node.AdjacencyList[Exit.Top]);
                     break;
                 case 'a':
+                case 'A':
                     if (!player.Move(Direction.Left, node.CurrentPack) &&
                         node.WithinLeftGate(player.Location.Y))
                             ChangeRooms(node.AdjacencyList[Exit.Left]);
                     break;
                 case 's':
+                case 'S':
                     if (!player.Move(Direction.Down, node.CurrentPack) &&
                         node.WithinBotGate(player.Location.X))
                             ChangeRooms(node.AdjacencyList[Exit.Bot]);
                     break;
                 case 'd':
+                case 'D':
                     if (!player.Move(Direction.Right, node.CurrentPack) &&
                         node.WithinRightGate(player.Location.Y))
                             ChangeRooms(node.AdjacencyList[Exit.Right]);
@@ -242,8 +246,10 @@ namespace RoomsOfDoom
                     player.UseItem(new LevelKey(this), dungeon);
                     break;
                 case 'e':
+                case 'E':
                     break;
                 case 'x':
+                case 'X':
                     if (debug)
                     {
                         dungeon.MacroUpdate();
@@ -251,6 +257,7 @@ namespace RoomsOfDoom
                     }
                     break;
                 case 'z':
+                case 'Z':
                     debug = !debug;
                     break;
                 default:
