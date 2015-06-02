@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Arena.cs" />
     <Compile Include="Bridge.cs" />
+    <Compile Include="DebugableRandom.cs" />
     <Compile Include="DungeonMaster.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Direction.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Items\Potion.cs" />
     <Compile Include="Items\TimeCrystal.cs" />
     <Compile Include="ITile.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="MonsterCreator.cs" />
     <Compile Include="MusicDictionary.cs" />
     <Compile Include="Node.cs" />

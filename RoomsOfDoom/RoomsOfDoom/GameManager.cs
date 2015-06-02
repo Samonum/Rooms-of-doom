@@ -27,7 +27,7 @@ namespace RoomsOfDoom
         private DungeonCreator dungeonCreator;
         public Dungeon dungeon;
         public int difficulty;
-        private bool acceptinput;
+        public bool acceptinput;
         private StreamWriter logger;
 
 
@@ -57,17 +57,22 @@ namespace RoomsOfDoom
                     case 'r':
                     case 'R':
                         Console.WriteLine("What replay do you wish to load?");
-                        LoadReplay(Console.ReadLine());
+                        new Log(this, Console.ReadLine()).PlayReplay(100);
                         break;
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
                         inMenu = !LoadGame(Console.ReadLine());
+                        if (!inMenu)
+                        {
+                            CreateDungeon(10, 10);
+                            ItemGenerator.Init(this.random, dungeon, player);
+                        }
                         break;
                     case 'c':
                     case 'C':
                         inMenu = false;
-                        initialize(random);
+                        Initialize(random);
                         break;
                 }
             }
@@ -75,7 +80,7 @@ namespace RoomsOfDoom
 
 
 
-        public void initialize(Random random, bool log = true)
+        public void Initialize(Random random, bool log = true)
         {
             if (log)
             {
@@ -90,7 +95,7 @@ namespace RoomsOfDoom
             {
                 random = new Random();
                 int seed = random.Next();
-                this.random = new Random(seed);
+                this.random = new DebugableRandom(seed);
                 logger.WriteLine(seed);
             }
 
@@ -210,6 +215,7 @@ namespace RoomsOfDoom
                 //TODO: Move this to node
                 
                 case 'w':
+
                     if (!player.Move(Direction.Up, node.CurrentPack) &&
                         node.WithinTopGate(player.Location.X))
                             ChangeRooms(node.AdjacencyList[Exit.Top]);
@@ -380,6 +386,13 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             Console.WriteLine(FormatHud());
             if (debug)
                 Console.WriteLine(dungeon.ToString());
+
+            DebugableRandom r = (DebugableRandom)random;
+            if(r != null)
+            {
+                Console.WriteLine(r.initialSeed);
+                Console.WriteLine(r.callCount);
+            }
         }
 
         public bool SaveGame(string fileName)
@@ -461,51 +474,10 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 random = new Random();
             int seed = random.Next();
             logger.Write("\n" + seed + "\n");
-            random = new Random(seed);
-            difficulty--;
-            StartNextLevel();
+            random = new DebugableRandom(1);//seed);
             return true;
         }
 
-        public bool LoadReplay(string s, int speed = 100)
-        {
-            s += ".play";
-            if (!File.Exists(s))
-            {
-                Console.WriteLine("File Does Not Exist. Press any Key to return.");
-                if (acceptinput)
-                    Console.ReadKey();
-                return false;
-            }
-
-            acceptinput = false;
-            string[] replay;
-            using (StreamReader reader = new StreamReader(s))
-            {
-                replay = reader.ReadToEnd().Split('\n');
-            }
-
-            initialize(new Random(int.Parse(replay[0].Trim())), false);
-            for (int n = 1; n < replay.Length; n++)
-            {
-                replay[n] = replay[n].Trim();
-                if ((n & 1) == 1)
-                    for (int i = 0; i < replay[n].Length; i++)
-                    {
-                        Thread.Sleep(speed);
-                        //if (replay[n][i] != 4 || i < replay[n].Length - 1)
-                            Update(replay[n][i]);
-                    }
-                else
-                {
-                    random = new Random(int.Parse(replay[n]));
-                    difficulty--;
-                    StartNextLevel();
-                }
-            }
-            acceptinput = true;
-            return true;
-        }
 
         public bool SaveReplay(string fileName)
         {

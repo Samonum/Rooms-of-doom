@@ -227,7 +227,7 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void RandomConsistencyTest()
         {
-            testSubject.initialize(null);
+            testSubject.Initialize(null);
             RandomConsistency();
         }
 
