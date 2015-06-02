@@ -303,7 +303,7 @@ namespace RoomsOfDoom
             if (Player == null)
                 return;
 
-            if (CurrentPack.order != null || !CurrentPack.WillFlee())
+            if (CurrentPack.order != null || !CurrentPack.WillFlee() || locked)
             {
                 foreach (Enemy e in CurrentPack)
                     if (Move(e, Player.Location))

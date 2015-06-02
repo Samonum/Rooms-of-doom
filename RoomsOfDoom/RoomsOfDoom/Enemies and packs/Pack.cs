@@ -102,6 +102,9 @@ namespace RoomsOfDoom
         {
             string s = "(";
 
+            if (order != null)
+                s += order.Target.id + "█";
+
             foreach (Enemy e in enemies)
                 s += e.Glyph;
 
