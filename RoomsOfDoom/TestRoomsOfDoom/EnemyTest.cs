@@ -106,7 +106,8 @@ namespace TestRoomsOfDoom
             node.Player = p;
             x.Location = new System.Drawing.Point(4, 5);
             //act
-            node.Move(x, p.Location);
+            Assert.IsTrue(node.Move(x, p.Location));
+            e.KillTheHeretic(p);
             //assert
             Assert.IsTrue(p.CurrentHP < p.MaxHP);
         }

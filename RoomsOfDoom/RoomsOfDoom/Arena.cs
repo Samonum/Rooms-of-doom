@@ -333,6 +333,9 @@ namespace RoomsOfDoom
 
         public bool Move(Enemy e, Point target)
         {
+            if (random.NextDouble() > 0.85)
+                return false;
+
             int x = target.X - e.Location.X;
             int y = target.Y - e.Location.Y;
         

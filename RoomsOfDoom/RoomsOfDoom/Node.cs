@@ -57,7 +57,7 @@ namespace RoomsOfDoom
                     // Target node does not exist (anymore)
                     if (path == null)
                     {
-                        p.GiveOrder(null);
+                        p.order = null;
                         continue;
                     }
 

@@ -177,9 +177,11 @@ namespace TestRoomsOfDoom
             for (int i = 1; i < 3; i++)
                 Assert.AreEqual(100, enemies[i].CurrentHP, "base");
 
+            DungeonCreator dc = new DungeonCreator(random);
+            Dungeon dungeon = dc.CreateDungeon(1,0,0);
             TimeCrystal crystal = new TimeCrystal();
             crystal.Duration = 1;
-            p.UseItem(crystal, null);
+            p.UseItem(crystal, dungeon);
 
             p.Combat(enemies[1]);
             Assert.AreEqual(initHp - 2 * Player.strength, enemies[0].CurrentHP, "Crystal");
