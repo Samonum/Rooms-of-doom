@@ -7,10 +7,11 @@ namespace RoomsOfDoom
 {
     public class Order
     {
-        public static Order HuntOrder = new Order(null);
+        public static Order HuntOrder = new Order(null, "▒");
 
-        public Order(Node targetNode)
+        public Order(Node targetNode, string glyph = "█")
         {
+            Glyph = glyph;
             Target = targetNode;
         }
 
@@ -18,6 +19,12 @@ namespace RoomsOfDoom
         {
             get;
             set;
+        }
+
+        public string Glyph
+        {
+            get;
+            private set;
         }
     }
 }

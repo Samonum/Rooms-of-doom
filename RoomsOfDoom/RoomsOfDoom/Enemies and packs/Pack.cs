@@ -104,9 +104,9 @@ namespace RoomsOfDoom
 
             if (order != null)
                 if (order.Target != null)
-                    s += order.Target.id + "█";
+                    s += order.Target.id + order.Glyph;
                 else
-                    s += -1 + "█";
+                    s += -1 + order.Glyph;
 
             foreach (Enemy e in enemies)
                 s += e.Glyph;
