@@ -5,7 +5,8 @@ using System.Text;
 
 namespace RoomsOfDoom
 {
-    class DungeonMaster
+    static class DungeonMaster
     {
+        static Node LastKnownLocation;
     }
 }

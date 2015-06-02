@@ -13,6 +13,7 @@ namespace RoomsOfDoom
         public Node endNode;
         public Random random;
         private int maxCapacity;
+        public static Node LastKnownLocation;
 
         public Dungeon(Random random, List<Node> nodes, int difficulty, int maxCapacity)
         {
@@ -25,6 +26,7 @@ namespace RoomsOfDoom
                 endNode = null;
             else
                 endNode = nodes[nodes.Count - 1];
+            LastKnownLocation = null;
         }
 
         public void MacroUpdate()

@@ -7,16 +7,17 @@ namespace RoomsOfDoom
 {
     public class Order
     {
-        Node targetNode;
+        public static Order HuntOrder = new Order(null);
 
         public Order(Node targetNode)
         {
-            this.targetNode = targetNode;
+            Target = targetNode;
         }
 
         public Node Target
         {
-            get { return targetNode; }
+            get;
+            set;
         }
     }
 }

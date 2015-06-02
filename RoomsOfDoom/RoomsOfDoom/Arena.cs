@@ -221,6 +221,8 @@ namespace RoomsOfDoom
         {
             if (CurrentPack == null)
                 return;
+
+            Order.HuntOrder.Target = this;
             
             Exit rn;
 

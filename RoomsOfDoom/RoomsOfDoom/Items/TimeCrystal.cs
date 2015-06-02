@@ -16,7 +16,7 @@ namespace RoomsOfDoom.Items
         public void Use(Player player, Dungeon dungeon)
         {
             player.OP = true;
-            dungeon.GiveOrder(new Order(dungeon.PlayerNode), 1);
+            dungeon.GiveOrder(Order.HuntOrder, 1);
         }
 
         public void Finish(Player player)

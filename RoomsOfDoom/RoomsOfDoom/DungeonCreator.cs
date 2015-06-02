@@ -23,7 +23,7 @@ namespace RoomsOfDoom
 
         public Dungeon CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
-            if (difficulty * 15 < packCount)
+            if (packCount > difficulty * 15)
                 packCount = difficulty * 15;
 
             this.maxCapacity = maxCapacity;
