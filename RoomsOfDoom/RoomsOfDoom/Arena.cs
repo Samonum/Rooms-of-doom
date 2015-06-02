@@ -269,19 +269,60 @@ namespace RoomsOfDoom
             if (Player == null)
                 return;
 
-            if (CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
+            foreach (Enemy e in CurrentPack)
             {
-                foreach (Enemy e in CurrentPack)
-                    Move(e, Player.Location);
-            }
+                if (CurrentPack.order != null || CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
+                {
+                    if (Move(e, Player.Location))
+                        e.KillTheHeretic(Player);
+                }
 
+                else
+                    MoveFlee(e);
+            }
+        }
+
+        private void MoveFlee(Enemy e)
+        {
+            Node targetNode;
+            Point targetLocation;
+
+            if ((exits & Exit.Top) == Exit.Top)
+            {
+                targetNode = adjacencyList[Exit.Top];
+                targetLocation = new Point(TopExit, 0);
+            }
+            else if ((exits & Exit.Bot) == Exit.Bot)
+            {
+                targetNode = adjacencyList[Exit.Bot];
+                targetLocation = new Point(BotExit, Height - 1);
+            }
+            else if ((exits & Exit.Left) == Exit.Left)
+            {
+                targetNode = adjacencyList[Exit.Left];
+                targetLocation = new Point(0, LeftExit);
+            }
+            else if ((exits & Exit.Top) == Exit.Top)
+            {
+                targetNode = adjacencyList[Exit.Right];
+                targetLocation = new Point(Width, RightExit - 1);
+            }
             else
             {
-                //get random door to flee to
-                // TODO: Change the doorlocation to something suitable
-                Point doorLocation = new Point(5, 2);
-                foreach (Enemy e in CurrentPack)
-                    Move(e, doorLocation);
+                targetNode = this;
+                targetLocation = new Point(Width / 2, Height / 2);
+            }
+
+            bool remove = false;
+            if (Move(e, targetLocation))
+                if (CurrentPack.Size == 1)
+                    if (targetNode.AddPack(CurrentPack))
+                        remove = true;    
+
+            if (remove)
+            {
+                RemovePack(CurrentPack);
+                PlaceEnemies();
             }
         }
 
@@ -289,6 +330,7 @@ namespace RoomsOfDoom
         {
             int x = target.X - e.Location.X;
             int y = target.Y - e.Location.Y;
+        
             Point loc = Math.Abs(x) > Math.Abs(y) ?
                 new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
                 new Point(e.Location.X, e.Location.Y + Math.Sign(y));
@@ -301,25 +343,23 @@ namespace RoomsOfDoom
                         loc = Math.Abs(x) <= Math.Abs(y) ?
                             new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
                             new Point(e.Location.X, e.Location.Y + Math.Sign(y));
+                        
                         foreach (Enemy teamy in CurrentPack)
-                        {
                             if (teamy.Location == loc)
                                 return false;
-                        }
+                        
                         break;
                     }
                 }
 
-            // TODO: This if statement should nto exist
-            if (Player != null)
-                if (loc == Player.Location)
-                {
-                    e.KillTheHeretic(Player);
-                    return true;
-                }
+            if (loc == Player.Location && target != Player.Location)
+                return false;
+
+            if (loc == target)
+                return true;
 
             e.Location = loc;
-            return true;
+            return false;
         }
     }
 }
