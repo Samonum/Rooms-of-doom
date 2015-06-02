@@ -12,6 +12,7 @@ namespace RoomsOfDoom
     public class GameManager : IDisposable
     {
         private bool debug = false;
+        private bool randomDebug = false;
         private const int doorsize = 3;
         public Random random;
 
@@ -215,11 +216,7 @@ namespace RoomsOfDoom
                 //TODO: Move this to node
                 
                 case 'w':
-<<<<<<< HEAD
-
-=======
                 case 'W':
->>>>>>> f9de0e6b86000808feb66f62fb695b8cf8e5fffa
                     if (!player.Move(Direction.Up, node.CurrentPack) &&
                         node.WithinTopGate(player.Location.X))
                             ChangeRooms(node.AdjacencyList[Exit.Top]);
@@ -268,6 +265,10 @@ namespace RoomsOfDoom
                 case 'z':
                 case 'Z':
                     debug = !debug;
+                    break;
+                case 'r':
+                case 'R':
+                    randomDebug = !randomDebug;
                     break;
                 default:
                     act = false;
@@ -395,13 +396,18 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
             if (debug)
+            {
                 Console.WriteLine(dungeon.ToString());
 
-            DebugableRandom r = (DebugableRandom)random;
-            if(r != null)
-            {
-                Console.WriteLine(r.initialSeed);
-                Console.WriteLine(r.callCount);
+                if (randomDebug)
+                {
+                    DebugableRandom r = (DebugableRandom)random;
+                    if (r != null)
+                    {
+                        Console.WriteLine(r.initialSeed);
+                        Console.WriteLine(r.callCount);
+                    }
+                }
             }
         }
 
@@ -484,7 +490,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 random = new Random();
             int seed = random.Next();
             logger.Write("\n" + seed + "\n");
-            random = new DebugableRandom(1);//seed);
+            random = new DebugableRandom(seed);
             return true;
         }
 

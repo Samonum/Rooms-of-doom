@@ -77,7 +77,7 @@ namespace RoomsOfDoom
 
             if ((n & 1) == 0)
             {
-                manager.random = new DebugableRandom(1);//int.Parse(replay[n]));
+                manager.random = new DebugableRandom(int.Parse(replay[n]));
                 manager.difficulty--;
                 manager.StartNextLevel();
                 n++;
