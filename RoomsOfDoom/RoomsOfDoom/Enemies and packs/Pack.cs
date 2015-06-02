@@ -91,9 +91,19 @@ namespace RoomsOfDoom
             }
         }
 
+        public bool WillFlee()
+        {
+            if (CurrentPackHP < (0.3 * MaxPackHP))
+                return true;
+            return false;
+        }
+
         public override String ToString()
         {
             string s = "(";
+
+            if (order != null)
+                s += order.Target.id + "█";
 
             foreach (Enemy e in enemies)
                 s += e.Glyph;

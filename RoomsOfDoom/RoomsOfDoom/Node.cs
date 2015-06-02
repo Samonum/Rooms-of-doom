@@ -67,6 +67,9 @@ namespace RoomsOfDoom
                     to = path[0];
                 }
 
+                else if (p.WillFlee())
+                    continue;
+
                 else
                 {
                     if (random.NextDouble() > 0.5)

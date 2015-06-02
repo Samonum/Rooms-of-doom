@@ -21,6 +21,9 @@ namespace RoomsOfDoom
         public int topLocation, botLocation, leftLocation, rightLocation;
         public int topSize, botSize, leftSize, rightSize;
 
+        public Node fleeNode;
+        public Point fleeLocation;
+
         public void InitSizes()
         {
             topSize = random.Next(minDoorSize, maxDoorSize + 1);
@@ -218,6 +221,42 @@ namespace RoomsOfDoom
         {
             if (CurrentPack == null)
                 return;
+            
+            Exit rn;
+
+            if (AdjacencyList.Count > 0)
+            {
+                rn = (Exit)Math.Pow(2, random.Next(4));
+                while (!AdjacencyList.ContainsKey(rn))
+                    rn = (Exit)Math.Pow(2, random.Next(4));
+                
+                fleeNode = adjacencyList[rn];
+            }
+
+            else
+            {
+                rn = 0;
+                fleeNode = this;
+            }
+
+            switch (rn)
+            {
+                case Exit.Top:
+                    fleeLocation = new Point(TopExit, 1);
+                    break;
+                case Exit.Bot:
+                    fleeLocation = new Point(BotExit, Height - 2);
+                    break;
+                case Exit.Left:
+                    fleeLocation = new Point(1, LeftExit);
+                    break;
+                case Exit.Right:
+                    fleeLocation = new Point(Width - 2, RightExit);
+                    break;
+                default:
+                    fleeLocation = new Point(Width / 2, Height / 2);
+                    break;
+            }
 
             for (int i = 0; i < CurrentPack.Size; i++)
             {
@@ -228,11 +267,6 @@ namespace RoomsOfDoom
                         i--;
                         break;
                     }
-                // Check for dem enemies on player locationd
-                    /*
-                    else if (CurrentPack[i].Location == player.Location)
-                        i--;
-                     * */
             }
         }
 
@@ -269,26 +303,37 @@ namespace RoomsOfDoom
             if (Player == null)
                 return;
 
-            if (CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
+            if (CurrentPack.order != null || !CurrentPack.WillFlee() || locked)
             {
                 foreach (Enemy e in CurrentPack)
-                    Move(e, Player.Location);
+                    if (Move(e, Player.Location))
+                        e.KillTheHeretic(Player);
             }
 
             else
-            {
-                //get random door to flee to
-                // TODO: Change the doorlocation to something suitable
-                Point doorLocation = new Point(5, 2);
-                foreach (Enemy e in CurrentPack)
-                    Move(e, doorLocation);
-            }
+                MoveFlee();
+        }
+
+        private void MoveFlee()
+        {
+            int counter = 0;
+            foreach (Enemy e in CurrentPack)
+                if (Move(e, fleeLocation))
+                    counter++;        
+
+            if (counter == CurrentPack.Size)
+                if (fleeNode.AddPack(CurrentPack))
+                {
+                    RemovePack(CurrentPack);
+                    PlaceEnemies();
+                }
         }
 
         public bool Move(Enemy e, Point target)
         {
             int x = target.X - e.Location.X;
             int y = target.Y - e.Location.Y;
+        
             Point loc = Math.Abs(x) > Math.Abs(y) ?
                 new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
                 new Point(e.Location.X, e.Location.Y + Math.Sign(y));
@@ -301,25 +346,23 @@ namespace RoomsOfDoom
                         loc = Math.Abs(x) <= Math.Abs(y) ?
                             new Point(e.Location.X + Math.Sign(x), e.Location.Y) :
                             new Point(e.Location.X, e.Location.Y + Math.Sign(y));
+                        
                         foreach (Enemy teamy in CurrentPack)
-                        {
                             if (teamy.Location == loc)
                                 return false;
-                        }
+                        
                         break;
                     }
                 }
 
-            // TODO: This if statement should nto exist
-            if (Player != null)
-                if (loc == Player.Location)
-                {
-                    e.KillTheHeretic(Player);
-                    return true;
-                }
+            if (loc == Player.Location && target != Player.Location)
+                return false;
+
+            if (loc == target)
+                return true;
 
             e.Location = loc;
-            return true;
+            return false;
         }
     }
 }
