@@ -21,6 +21,9 @@ namespace RoomsOfDoom
         public int topLocation, botLocation, leftLocation, rightLocation;
         public int topSize, botSize, leftSize, rightSize;
 
+        public Node fleeNode;
+        public Point fleeLocation;
+
         public void InitSizes()
         {
             topSize = random.Next(minDoorSize, maxDoorSize + 1);
@@ -218,6 +221,42 @@ namespace RoomsOfDoom
         {
             if (CurrentPack == null)
                 return;
+            
+            Exit rn;
+
+            if (AdjacencyList.Count > 0)
+            {
+                rn = (Exit)Math.Pow(2, random.Next(4));
+                while (!AdjacencyList.ContainsKey(rn))
+                    rn = (Exit)Math.Pow(2, random.Next(4));
+                
+                fleeNode = adjacencyList[rn];
+            }
+
+            else
+            {
+                rn = 0;
+                fleeNode = this;
+            }
+
+            switch (rn)
+            {
+                case Exit.Top:
+                    fleeLocation = new Point(TopExit, 0);
+                    break;
+                case Exit.Bot:
+                    fleeLocation = new Point(BotExit, Height - 1);
+                    break;
+                case Exit.Left:
+                    fleeLocation = new Point(0, LeftExit);
+                    break;
+                case Exit.Right:
+                    fleeLocation = new Point(Width, RightExit - 1);
+                    break;
+                default:
+                    fleeLocation = new Point(Width / 2, Height / 2);
+                    break;
+            }
 
             for (int i = 0; i < CurrentPack.Size; i++)
             {
@@ -228,11 +267,6 @@ namespace RoomsOfDoom
                         i--;
                         break;
                     }
-                // Check for dem enemies on player locationd
-                    /*
-                    else if (CurrentPack[i].Location == player.Location)
-                        i--;
-                     * */
             }
         }
 
@@ -271,7 +305,7 @@ namespace RoomsOfDoom
 
             foreach (Enemy e in CurrentPack)
             {
-                if (CurrentPack.order != null || CurrentPack.CurrentPackHP >= (0.3 * CurrentPack.MaxPackHP))
+                if (CurrentPack.order != null || !CurrentPack.WillFlee())
                 {
                     if (Move(e, Player.Location))
                         e.KillTheHeretic(Player);
@@ -284,39 +318,10 @@ namespace RoomsOfDoom
 
         private void MoveFlee(Enemy e)
         {
-            Node targetNode;
-            Point targetLocation;
-
-            if ((exits & Exit.Top) == Exit.Top)
-            {
-                targetNode = adjacencyList[Exit.Top];
-                targetLocation = new Point(TopExit, 0);
-            }
-            else if ((exits & Exit.Bot) == Exit.Bot)
-            {
-                targetNode = adjacencyList[Exit.Bot];
-                targetLocation = new Point(BotExit, Height - 1);
-            }
-            else if ((exits & Exit.Left) == Exit.Left)
-            {
-                targetNode = adjacencyList[Exit.Left];
-                targetLocation = new Point(0, LeftExit);
-            }
-            else if ((exits & Exit.Top) == Exit.Top)
-            {
-                targetNode = adjacencyList[Exit.Right];
-                targetLocation = new Point(Width, RightExit - 1);
-            }
-            else
-            {
-                targetNode = this;
-                targetLocation = new Point(Width / 2, Height / 2);
-            }
-
             bool remove = false;
-            if (Move(e, targetLocation))
+            if (Move(e, fleeLocation))
                 if (CurrentPack.Size == 1)
-                    if (targetNode.AddPack(CurrentPack))
+                    if (fleeNode.AddPack(CurrentPack))
                         remove = true;    
 
             if (remove)

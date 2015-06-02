@@ -91,6 +91,13 @@ namespace RoomsOfDoom
             }
         }
 
+        public bool WillFlee()
+        {
+            if (CurrentPackHP < (0.3 * MaxPackHP))
+                return true;
+            return false;
+        }
+
         public override String ToString()
         {
             string s = "(";
