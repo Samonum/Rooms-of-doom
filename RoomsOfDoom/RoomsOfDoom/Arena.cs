@@ -242,16 +242,16 @@ namespace RoomsOfDoom
             switch (rn)
             {
                 case Exit.Top:
-                    fleeLocation = new Point(TopExit, 0);
+                    fleeLocation = new Point(TopExit, 1);
                     break;
                 case Exit.Bot:
-                    fleeLocation = new Point(BotExit, Height - 1);
+                    fleeLocation = new Point(BotExit, Height - 2);
                     break;
                 case Exit.Left:
-                    fleeLocation = new Point(0, LeftExit);
+                    fleeLocation = new Point(1, LeftExit);
                     break;
                 case Exit.Right:
-                    fleeLocation = new Point(Width, RightExit - 1);
+                    fleeLocation = new Point(Width - 2, RightExit);
                     break;
                 default:
                     fleeLocation = new Point(Width / 2, Height / 2);
@@ -303,32 +303,30 @@ namespace RoomsOfDoom
             if (Player == null)
                 return;
 
-            foreach (Enemy e in CurrentPack)
+            if (CurrentPack.order != null || !CurrentPack.WillFlee())
             {
-                if (CurrentPack.order != null || !CurrentPack.WillFlee())
-                {
+                foreach (Enemy e in CurrentPack)
                     if (Move(e, Player.Location))
                         e.KillTheHeretic(Player);
-                }
-
-                else
-                    MoveFlee(e);
             }
+
+            else
+                MoveFlee();
         }
 
-        private void MoveFlee(Enemy e)
+        private void MoveFlee()
         {
-            bool remove = false;
-            if (Move(e, fleeLocation))
-                if (CurrentPack.Size == 1)
-                    if (fleeNode.AddPack(CurrentPack))
-                        remove = true;    
+            int counter = 0;
+            foreach (Enemy e in CurrentPack)
+                if (Move(e, fleeLocation))
+                    counter++;        
 
-            if (remove)
-            {
-                RemovePack(CurrentPack);
-                PlaceEnemies();
-            }
+            if (counter == CurrentPack.Size)
+                if (fleeNode.AddPack(CurrentPack))
+                {
+                    RemovePack(CurrentPack);
+                    PlaceEnemies();
+                }
         }
 
         public bool Move(Enemy e, Point target)
