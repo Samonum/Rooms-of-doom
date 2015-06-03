@@ -84,8 +84,9 @@ namespace RoomsOfDoom
             }
 
             manager.Update(replay[n][i]);
+
             i++;
-                
+
             if(i == replay[n].Length)
             {
                 n++;
