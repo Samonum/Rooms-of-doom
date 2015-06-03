@@ -163,7 +163,7 @@ namespace RoomsOfDoom
                     entrance = n.Key;
 
             this.node = newNode;
-            player.ScoreMultiplier = node.Multiplier;
+            player.ScoreMultiplier = node.Multiplier * (1 + (difficulty -1) / 2);
 
             exits = 0;
             foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)

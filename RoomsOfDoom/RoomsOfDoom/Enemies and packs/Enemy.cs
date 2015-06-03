@@ -14,11 +14,11 @@ namespace RoomsOfDoom
         protected int currentHP;
         protected bool alive;
         protected char glyph;
-        protected int damage;
+        public int damage;
         protected int speed;
         protected int moveCounter;
 
-        public Enemy(string name, char glyph, int hp, int damage = 1, int speed = 1)
+        public Enemy(string name, char glyph, int hp, int damage = MonsterCreator.minDamage, int speed = MonsterCreator.maxDamage)
         {
             this.name = name;
             myPack = null;
@@ -47,6 +47,14 @@ namespace RoomsOfDoom
 
             moveCounter++;
             return true;
+        }
+
+        public int GetScore()
+        {
+            double damageMultiplier = (double)(damage - MonsterCreator.minDamage) / (double)(MonsterCreator.maxDamage - MonsterCreator.minDamage);
+            double speedMultiplier = (double)(speed - MonsterCreator.minSpeed) / (double)(MonsterCreator.maxSpeed - MonsterCreator.minSpeed);
+            double totalMultiplier = (1.0 + (damageMultiplier + speedMultiplier) / 2.0);
+            return (int)(name.Length * totalMultiplier);
         }
 
         public Pack myPack

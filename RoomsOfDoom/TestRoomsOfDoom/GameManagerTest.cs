@@ -215,7 +215,7 @@ namespace TestRoomsOfDoom
             testSubject.Update('e');
             Assert.AreEqual(p[0].Location, new Point(2, 3));
             testSubject.Update('e');
-            Assert.AreEqual(testSubject.GetPlayer.MaxHP - 1, testSubject.GetPlayer.CurrentHP);
+            Assert.AreEqual(testSubject.GetPlayer.MaxHP - p[0].damage, testSubject.GetPlayer.CurrentHP);
             int max = p[0].MaxHP;
             testSubject.Update('s');
             if (max <= Player.strength)
