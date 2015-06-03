@@ -265,10 +265,28 @@ namespace RoomsOfDoom
                 case 'z':
                 case 'Z':
                     debug = !debug;
+                    act = false;
+                    break;
+                case '!':
+                    if (debug)
+                        player.AddItem(new Loot(0, '\n'));
+                    break;
+                case '@':
+                    if (debug)
+                        player.AddItem(new Loot(1, '\n'));
+                    break;
+                case '#':
+                    if (debug)
+                        player.AddItem(new Loot(2, '\n'));
+                    break;
+                case '$':
+                    if (debug)
+                        player.AddItem(new Loot(3, '\n'));
                     break;
                 case 'r':
                 case 'R':
                     randomDebug = !randomDebug;
+                    act = false;
                     break;
                 default:
                     act = false;
