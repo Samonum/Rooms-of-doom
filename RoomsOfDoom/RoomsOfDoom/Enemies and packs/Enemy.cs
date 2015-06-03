@@ -14,8 +14,11 @@ namespace RoomsOfDoom
         protected int currentHP;
         protected bool alive;
         protected char glyph;
+        protected int damage;
+        protected int speed;
+        protected int moveCounter;
 
-        public Enemy(string name, char glyph, int hp)
+        public Enemy(string name, char glyph, int hp, int damage = 1, int speed = 1)
         {
             this.name = name;
             myPack = null;
@@ -23,12 +26,27 @@ namespace RoomsOfDoom
             currentHP = hp;
             alive = true;
             this.glyph = glyph;
+            this.damage = damage;
+            this.speed = speed;
+            moveCounter = 0;
         }
 
         public bool Hit(int damage)
         {
             CurrentHP -= damage;
             return !Alive;
+        }
+
+        public bool CanMove()
+        {
+            if (moveCounter >= speed)
+            {
+                moveCounter = 0;
+                return false;
+            }
+
+            moveCounter++;
+            return true;
         }
 
         public Pack myPack
@@ -81,7 +99,14 @@ namespace RoomsOfDoom
 
         public void KillTheHeretic(IHittable p)
         {
-            p.Hit(1);
+            p.Hit(damage);
+        }
+
+        public String GetStats(bool debug = false)
+        {
+            if (debug)
+                return string.Format("{0} HP: {1} Spd: {2} Dmg: {3}", new string[] { Glyph.ToString(), CurrentHP.ToString(), speed.ToString(), damage.ToString() });
+            return string.Format("{0} HP: {1}", new string[] { Glyph.ToString(), CurrentHP.ToString() });
         }
     }
 }

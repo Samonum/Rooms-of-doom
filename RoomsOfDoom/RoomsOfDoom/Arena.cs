@@ -197,7 +197,7 @@ namespace RoomsOfDoom
             return map;
         }
 
-        public string[] CreateEnemyOverview()
+        public string[] CreateEnemyOverview(bool debug = false)
         {
             char[][] map = GetUpdatedMap(Player.Location, Player.Glyph);
             string[] drawMap = new string[map.Length];
@@ -208,7 +208,7 @@ namespace RoomsOfDoom
                 {
                     Enemy e = CurrentPack[i];
                     drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
-                    drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
+                    drawMap[i * 2 + 2] = string.Format("{0} {1}", new string(map[i * 2 + 2]), e.GetStats(debug));
                 }
             for (i = i * 2 + 1; i < map.Length; i++)
                 drawMap[i] = new string(map[i]);
@@ -333,7 +333,7 @@ namespace RoomsOfDoom
 
         public bool Move(Enemy e, Point target)
         {
-            if (random.NextDouble() > 0.85)
+            if (!e.CanMove())
                 return false;
 
             int x = target.X - e.Location.X;

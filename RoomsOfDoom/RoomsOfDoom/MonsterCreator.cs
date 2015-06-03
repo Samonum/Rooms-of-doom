@@ -9,6 +9,8 @@ namespace RoomsOfDoom
 {
     public class MonsterCreator
     {
+        private const int minDamage = 1, maxDamage = 10;
+        private const int minSpeed = 3, maxSpeed = 8;
         public int maximumPackSize;
         Random r;
 
@@ -40,8 +42,11 @@ namespace RoomsOfDoom
             else if(difficulty >= 10000)//difficulty cannot be extremely large(might exceed maxint when multiplied)
                 difficulty = 10000;
             string[] name = GenerateName().Split();
-            
-            Enemy e = new Enemy(name[1] + " " + name[2],name[0][0], r.Next(5*difficulty, 20 * difficulty));
+
+            int damage = r.Next(minDamage, maxDamage + 1);
+            int speed = r.Next(minSpeed, maxSpeed + 1);
+
+            Enemy e = new Enemy(name[1] + " " + name[2],name[0][0], r.Next(5*difficulty, 20 * difficulty), damage, speed);
             return e;
             //unit testing revealed bug with inputting negative difficulties
             //unit testing revealed bug with inputting very large numbers

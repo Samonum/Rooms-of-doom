@@ -392,7 +392,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
             else
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-            string[] drawmap = CurrentNode.CreateEnemyOverview();
+            string[] drawmap = CurrentNode.CreateEnemyOverview(debug);
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
