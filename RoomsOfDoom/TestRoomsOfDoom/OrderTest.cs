@@ -102,5 +102,46 @@ namespace TestRoomsOfDoom
 
             Assert.IsNull(p.order);
         }
+
+        [TestMethod]
+        public void ImpossibleOrderTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Node a = new Node(random, 0, 15);
+            Node b = new Node(random, 1, 15);
+            Node c = new Node(random, 2, 15);
+            Node d = new Node(random, 3, 15);
+            Node e = new Node(random, 4, 15);
+
+            a.AddGate(Exit.Right, b);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            d.AddGate(Exit.Right, e);
+            e.AddGate(Exit.Left, d);
+
+            nodes.Add(a);
+            nodes.Add(b);
+            nodes.Add(c);
+            nodes.Add(d);
+            nodes.Add(e);
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
+
+            MonsterCreator mc = new MonsterCreator(random, 10);
+            Pack p = mc.GeneratePack(1);
+            e.AddPack(p);
+            p.GiveOrder(new Order(a));
+            dungeon.MacroUpdate();
+            Assert.IsTrue(d.PackList.Count == 1);
+            Assert.IsTrue(e.PackList.Count == 0);
+            Assert.IsNotNull(p.order);
+
+            dungeon.Destroy(b);
+            dungeon.MacroUpdate();
+            Assert.IsNull(p.order);
+        }
     }
 }

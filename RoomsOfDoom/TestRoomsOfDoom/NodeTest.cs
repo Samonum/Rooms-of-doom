@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoomsOfDoom;
 using System.Collections.Generic;
 using RoomsOfDoom.Items;
+using System.Drawing;
 
 namespace TestRoomsOfDoom
 {
@@ -50,14 +51,41 @@ namespace TestRoomsOfDoom
             List<Node> nodes = new List<Node>();
             Bridge b = new Bridge(random, 0, 10, 1);
             Dungeon d = new Dungeon(random, nodes, 1, 10);
+            Player player = new Player();
             ItemGenerator.Init(random, d, new Player());
             Pack p = new Pack(1);
-            p.Add(new Enemy("A", 'a', 10));
+            p.Add(new Enemy("A", 'a', 1));
             b.AddPack(p);
             b.MicroUpdates();
             Assert.IsTrue(b.locked);
-            p.Enemies[0].Hit(9001);
+            player.Combat(p.Enemies[0]);
             b.MicroUpdates();
+            Assert.IsFalse(b.locked);
+            b.locked = true;
+            b.MicroUpdates();
+            Assert.IsFalse(b.locked);
+        }
+
+        [TestMethod]
+        public void FleeingEnemyTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Node a = new Node(random, 0, 10);
+            Node b = new Node(random, 1, 10);
+            b.AddGate(Exit.Left, a);
+            b.leftLocation = Node.minDoorSize;
+            Dungeon d = new Dungeon(random, nodes, 1, 10);
+            Player player = new Player();
+            b.Player = player;
+            player.Location = new Point(5, b.leftLocation);
+            Pack p = new Pack(1);
+            p.Add(new Enemy("A", 'a', 10, 5, 5));
+            b.AddPack(p);
+            p.Enemies[0].Location = new Point(6, b.leftLocation);
+            p.Enemies[0].Hit(9);
+            b.MicroUpdates();
+            Assert.AreEqual(p.Enemies[0].Location, new Point(6, b.leftLocation));
+            Assert.AreEqual(player.CurrentHP, player.MaxHP);
         }
     }
 }

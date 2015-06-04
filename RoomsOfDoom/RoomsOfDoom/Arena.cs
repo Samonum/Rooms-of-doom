@@ -9,8 +9,8 @@ namespace RoomsOfDoom
 {
     public partial class Node
     {
-        private const int minDoorSize = 1;
-        private const int maxDoorSize = 3;
+        public const int minDoorSize = 1;
+        public const int maxDoorSize = 3;
 
         private const int Width = 37, Height = 25;
 
