@@ -279,6 +279,18 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
+        public void NonexistingLogTest()
+        {
+            if (File.Exists("ShouldNotBe.play"))
+                File.Delete("ShouldNotBe.play");
+            Log log = new Log(testSubject, "ShouldNotBe.play");
+            Assert.IsTrue(log.Finished());
+            log.Initialize();
+            Assert.IsTrue(log.Finished());
+            log.CleanUp();
+        }
+
+        [TestMethod]
         public void LogItemCheatAndUseTest()
         {
             Log log = new Log(testSubject, ".DO.NOT.TOUCH.test");
