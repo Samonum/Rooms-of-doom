@@ -44,12 +44,12 @@ namespace RoomsOfDoom
         
         public void Initialize()
         {
+            input = manager.acceptinput;
+            manager.acceptinput = false;
             if (Finished())
                 return;
             readIndex = 0;
             readLineNumber = 1;
-            input = manager.acceptinput;
-            manager.acceptinput = false;
             manager.Initialize(new DebugableRandom(int.Parse(replay[0].Trim())));
         }
 
