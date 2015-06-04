@@ -52,6 +52,7 @@ namespace RoomsOfDoom
         public Bridge GetLastUnconqueredBridge()
         {
             int counter = 1;
+            int highestCount = 0;
             List<Bridge> bridges = new List<Bridge>();
             
             for (int i = 0; i < nodes.Count; i++)
@@ -65,16 +66,22 @@ namespace RoomsOfDoom
                         if (b.locked)
                             return b;
                     }
-                    // This is backup code, beacuse the order of lists is not guaranteed.
-                    else if (b.locked)
+                    // This is backup code, because the order of lists is not guaranteed.
+                    else
                         bridges.Add(b);
+
+                    if (b.bridgeNr > highestCount)
+                        highestCount = b.bridgeNr;
                 }
             }
 
-            foreach (Bridge b in bridges)
-                if (b.bridgeNr == counter)
-                    return b;
-
+            while (counter <= highestCount)
+            {
+                foreach (Bridge b in bridges)
+                    if (b.bridgeNr == counter && b.locked)
+                        return b;
+                counter++;
+            }
             return null;
         }
 
