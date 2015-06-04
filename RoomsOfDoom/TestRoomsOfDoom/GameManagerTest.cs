@@ -21,18 +21,11 @@ namespace TestRoomsOfDoom
             random = new Random();
         }
 
-        [ClassInitialize]
-        public static void ClassInit(TestContext t)
+        [TestInitialize]
+        public void TestInit()
         {
             testSubject = new GameManager(false);
-        }
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            testSubject.GameOver();
-            testSubject.basePackCount = 10;
-            testSubject.maxCapacity = 10;
+            random = new Random();
         }
 
         [TestMethod]
@@ -351,6 +344,7 @@ namespace TestRoomsOfDoom
             {
                 Assert.IsTrue(values[i - 1].Item1 >= values[i].Item1);
             }
+            scores.EnterHighScore(150, "");
             scores.EnterHighScore(350, "1337 h4x0r");
             scores.EnterHighScore(150, "");
             values = scores.LoadScores();
