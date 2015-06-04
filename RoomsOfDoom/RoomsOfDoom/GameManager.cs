@@ -443,15 +443,11 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             if (debug)
             {
                 Console.WriteLine(dungeon.ToString());
-
-                if (randomDebug)
+                DebugableRandom r = (DebugableRandom)random;
+                if (r != null)
                 {
-                    DebugableRandom r = (DebugableRandom)random;
-                    if (r != null)
-                    {
-                        Console.WriteLine(r.initialSeed);
-                        Console.WriteLine(r.callCount);
-                    }
+                    Console.WriteLine("Seed: " + r.initialSeed);
+                    Console.WriteLine("Call count: " + r.callCount);
                 }
             }
         }

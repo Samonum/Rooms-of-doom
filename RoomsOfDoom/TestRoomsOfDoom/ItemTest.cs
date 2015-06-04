@@ -59,24 +59,46 @@ namespace TestRoomsOfDoom
             }
         }
 
+        public void PotionDropTest()
+        {
+            Node n = new Node(random, 0, 100);
+            MonsterCreator mc = new MonsterCreator(new NotSoRandom(100), 100);
+            Pack p = mc.GeneratePack(9001);
+            n.AddPack(p);
+            List<Node> nodes = new List<Node>();
+            nodes.Add(n);
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 101);
+            Player player = new Player();
+            ItemGenerator.Init(random, dungeon, player);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Loot l = ItemGenerator.GetItem(0);
+                Assert.IsNotNull(l);
+                Assert.AreEqual(l.ID, 0);
+            }
+
+
+        }
+
         [TestMethod]
         public void MagicScrollUseTest()
         {
             GameManager g = new GameManager(false);
             MagicScroll m = new MagicScroll(new NotSoRandom(1.0), g);
-            DungeonCreator d = new DungeonCreator(random);
-            Dungeon dungeon = d.CreateDungeon(1, 10, 15);
-            g.InitRoom(dungeon.nodes[0]);
+            Dungeon dungeon = g.dungeon;
             int size = dungeon.nodes.Count;
-            Player p = new Player();
-            m.Use(p, dungeon);
+            m.Use(g.GetPlayer, dungeon);
+            List<Node> path = dungeon.ShortestPath(dungeon.PlayerNode, dungeon.nodes[dungeon.nodes.Count - 1]);
+            Assert.IsNotNull(path);
             Assert.IsTrue(size > dungeon.nodes.Count);
 
             List<Node> nodes = new List<Node>();
             nodes.Add(new Node(random, 0, 15, true));
             dungeon = new Dungeon(random, nodes, 1, 15);
             g.InitRoom(dungeon.nodes[0]);
-            m.Use(p, dungeon);
+            m.Use(g.GetPlayer, dungeon);
             Assert.IsTrue(dungeon.nodes.Count == 1);
         }
     }

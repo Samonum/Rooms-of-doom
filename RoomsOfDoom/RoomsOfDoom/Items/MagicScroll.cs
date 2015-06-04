@@ -25,7 +25,7 @@ namespace RoomsOfDoom.Items
             {
                 List<Node> n = dungeon.Destroy(arena.CurrentNode);
                 if (n != null)
-                    arena.InitRoom(n[0]);
+                    arena.ChangeRooms(n[0]);
             }
             else
             {

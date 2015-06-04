@@ -46,8 +46,8 @@ namespace RoomsOfDoom
         {
             if (Finished())
                 return;
-            i = 0;
-            n = 1;
+            readIndex = 0;
+            readLineNumber = 1;
             input = manager.acceptinput;
             manager.acceptinput = false;
             manager.Initialize(new DebugableRandom(int.Parse(replay[0].Trim())));
@@ -69,38 +69,38 @@ namespace RoomsOfDoom
             CleanUp();
         }
 
-        int i, n;
+        int readIndex, readLineNumber;
         public void PlayStep()
         {
             if (Finished())
                 return;
 
-            if(i == 0)
-                replay[n] = replay[n].Trim();
+            if(readIndex == 0)
+                replay[readLineNumber] = replay[readLineNumber].Trim();
 
-            if ((n & 1) == 0)
+            if ((readLineNumber & 1) == 0)
             {
-                manager.random = new DebugableRandom(int.Parse(replay[n]));
+                manager.random = new DebugableRandom(int.Parse(replay[readLineNumber]));
                 manager.difficulty--;
                 manager.StartNextLevel();
-                n++;
-                replay[n] = replay[n].Trim();
+                readLineNumber++;
+                replay[readLineNumber] = replay[readLineNumber].Trim();
             }
 
-            manager.Update(replay[n][i]);
+            manager.Update(replay[readLineNumber][readIndex]);
 
-            i++;
+            readIndex++;
 
-            if(i == replay[n].Length)
+            if(readIndex == replay[readLineNumber].Length)
             {
-                n++;
-                i = 0;
+                readLineNumber++;
+                readIndex = 0;
             }
         }
 
         public bool Finished()
         {
-            return replay == null || n >= replay.Length;
+            return replay == null || readLineNumber >= replay.Length;
         }
     }
 }

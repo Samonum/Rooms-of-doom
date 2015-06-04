@@ -33,7 +33,7 @@ namespace RoomsOfDoom.Items
 
             if (enemyHp == 0)
                 return null;
-            if ((player.CurrentHP + player.GetPotCount * Potion.healPower) / enemyHp < item)
+            if ((float)(player.CurrentHP + player.GetPotCount * Potion.healPower) / enemyHp <= item)
                 return new Loot(0, '1');
             
             return null;
