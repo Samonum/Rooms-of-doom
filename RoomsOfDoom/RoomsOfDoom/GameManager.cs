@@ -31,6 +31,9 @@ namespace RoomsOfDoom
         public bool acceptinput;
         private Logger logger;
 
+        public int seed = -1;
+        public int basePackCount = 10, maxCapacity = 10;
+
 
         public GameManager(bool acceptinput = true, Random random = null)
         {
@@ -42,6 +45,7 @@ namespace RoomsOfDoom
 
         public void StartFirstLevel(Random random)
         {
+            difficulty = 1;
             bool inMenu = true;
             while (inMenu)
             {
@@ -65,37 +69,64 @@ namespace RoomsOfDoom
                         Console.WriteLine("What savefile would you like to load?");
                         inMenu = !LoadGame(Console.ReadLine());
                         if (!inMenu)
-                            CreateDungeon(10, 10);
+                            CreateDungeon();
                         break;
                     case 'c':
                     case 'C':
                         inMenu = false;
                         Initialize(random);
                         break;
+                    case 's':
+                    case 'S':
+                        Seed();
+                        break;
                 }
             }
         }
+        
+        public void Seed()
+        {
+            Console.WriteLine("Here you can enter your dungeon creation settings. These settings are saved untill you restart the game.");
+            Console.WriteLine("Enter the seed to be used for the random number generator, leave empty to use a random seed.");
+            string s = Console.ReadLine();
+            seed = -1;
+            int.TryParse(s, out seed);
+            Console.WriteLine("The following settings will make it impossible to create a replay of your game.");
+            Console.WriteLine("Enter the difficulty level at which you wish to start.");
+            s = Console.ReadLine();
+            difficulty = 1;
+            int.TryParse(s, out difficulty);
+            Console.WriteLine("Enter the base pack count the game would start with at difficulty level 1, pack count scales up with the difficulty.");
+            s = Console.ReadLine();
+            basePackCount = 10;
+            int.TryParse(s, out basePackCount);
+            Console.WriteLine("Enter the amount of enemies that is allowed in each normal room.");
+            s = Console.ReadLine();
+            maxCapacity = 10;
+            int.TryParse(s, out maxCapacity);
+        }
 
 
-
-        public void Initialize(Random random, bool log = true)
+        public void Initialize(Random random)
         {
             logger = new Logger();
 
             this.random = random;
             if (this.random == null)
             {
-                random = new Random();
-                int seed = random.Next();
-                this.random = new DebugableRandom(seed);
-                logger.WriteLine(seed);
+                int lseed = seed;
+                if (seed == -1)
+                {
+                    random = new Random();
+                    lseed = random.Next();
+                }
+                this.random = new DebugableRandom(lseed);
+                logger.WriteLine(lseed);
             }
-
-            difficulty = 1;
 
 
             player = new Player();
-            CreateDungeon(10, 10);
+            CreateDungeon();
         }
 
         public void StartNextLevel()
@@ -132,7 +163,7 @@ namespace RoomsOfDoom
                         break;
                 }
             }
-            CreateDungeon(10, 10);
+            CreateDungeon();
         }
 
         public void ChangeRooms(Node newNode)
@@ -371,11 +402,11 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public void CreateDungeon(int basePackCount, int maxCapacity)
+        public void CreateDungeon()
         {
             dungeonCreator = new DungeonCreator(random);
-            int halfPackCount = (basePackCount / 2);
-            dungeon = dungeonCreator.CreateDungeon(difficulty, halfPackCount + difficulty * halfPackCount, maxCapacity + maxCapacity * (difficulty - 1) / 3);
+            float halfPackCount = (basePackCount / 2f);
+            dungeon = dungeonCreator.CreateDungeon(difficulty, (int)(halfPackCount + difficulty * halfPackCount), maxCapacity + maxCapacity * (difficulty - 1) / 3);
             dungeon.nodes[0].Player = GetPlayer;
             dungeon.PlayerNode = dungeon.nodes[0];
             ItemGenerator.Init(random, dungeon, player);

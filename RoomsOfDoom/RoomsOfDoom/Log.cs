@@ -50,7 +50,7 @@ namespace RoomsOfDoom
             n = 1;
             input = manager.acceptinput;
             manager.acceptinput = false;
-            manager.Initialize(new DebugableRandom(int.Parse(replay[0].Trim())), false);
+            manager.Initialize(new DebugableRandom(int.Parse(replay[0].Trim())));
         }
 
         public void CleanUp()

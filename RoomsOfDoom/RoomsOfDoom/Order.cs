@@ -27,7 +27,7 @@ namespace RoomsOfDoom
             private set;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             string s = "";
 
