@@ -166,7 +166,6 @@ namespace TestRoomsOfDoom
                             testSubject.HandleCombatRound('d');
                             testSubject.HandleCombatRound('d');
                             break;
-
                     }
 
                     Assert.AreEqual(newNode, testSubject.CurrentNode);

@@ -170,5 +170,80 @@ namespace TestRoomsOfDoom
 
             Assert.IsNull(shortPath);
         }
+
+        [TestMethod]
+        public void DungeonToStringTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Node a = new Node(random, 0, 15);
+            Bridge b = new Bridge(random, 1, 15, 1);
+            Node c = new Node(random, 2, 15);
+            Bridge d = new Bridge(random, 3, 15, 2);
+            Node e = new Node(random, 4, 15);
+
+            a.AddGate(Exit.Right, b);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            d.AddGate(Exit.Right, e);
+            e.AddGate(Exit.Left, d);
+
+            nodes.Add(a);
+            nodes.Add(b);
+            nodes.Add(c);
+            nodes.Add(d);
+            nodes.Add(e);
+
+            Player player = new Player(100);
+            b.Player = player;
+            b.locked = false;
+
+            Pack p = new Pack(2);
+            p.Enemies.Add(new Enemy("", 'a', 10));
+            p.Enemies.Add(new Enemy("", 'b', 10));
+            c.AddPack(p);
+
+            p = new Pack(1);
+            p.Enemies.Add(new Enemy("", 'c', 10));
+            d.AddPack(p);
+            d.AddPack(p);
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
+
+            Assert.AreEqual(
+                "N0(1,)[]" + "\n" +
+                ">B1(0,2,)[]" + "\n" +
+                "N2(1,3,)[(ab)]" + "\n" +
+                "!B3(2,4,)[(c)(c)]" + "\n" +
+                "N4(3,)[]" + "\n",
+                dungeon.ToString());
+        }
+
+        [TestMethod]
+        public void GetLastUnconqueredInStrangeDungeonTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Bridge a = new Bridge(random, 0, 15, 5);
+            Bridge b = new Bridge(random, 1, 15, 4);
+            Bridge c = new Bridge(random, 2, 15, 3);
+            Bridge d = new Bridge(random, 3, 15, 2);
+            Bridge e = new Bridge(random, 4, 15, 1);
+
+            nodes.Add(a);
+            nodes.Add(b);
+            nodes.Add(c);
+            nodes.Add(d);
+            nodes.Add(e);
+
+            e.locked = false;
+            d.locked = false;
+            c.locked = false;
+            b.locked = false;
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
+            Assert.AreEqual(a, dungeon.GetLastUnconqueredBridge());
+        }
     }
 }
