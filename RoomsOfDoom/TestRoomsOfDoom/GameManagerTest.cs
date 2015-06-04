@@ -337,7 +337,7 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void HighScoresTest()
         {
-            File.Copy("HighScores.testfile", "HighScores", true);
+            File.Copy("HighScores.testfile", "HighScores.txt", true);
             HighScores scores = new HighScores();
             Tuple<int, string>[] values = scores.LoadScores();
             for (int i = 1; i < values.Length; i++)
