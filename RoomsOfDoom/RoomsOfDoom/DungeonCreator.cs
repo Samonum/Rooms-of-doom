@@ -9,7 +9,7 @@ namespace RoomsOfDoom
     public class DungeonCreator
     {
         Random random;
-        MonsterCreator monsterCreator;
+        public MonsterCreator monsterCreator;
         public const int maxNeighbours = 4;
         int maxCapacity;
         List<Node> availibleNodes;
@@ -21,7 +21,7 @@ namespace RoomsOfDoom
             monsterCreator = new MonsterCreator(random, 6);
         }
 
-        int totalcap;
+        public int totalcap;
         public Dungeon CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
             if (packCount > difficulty * 15)

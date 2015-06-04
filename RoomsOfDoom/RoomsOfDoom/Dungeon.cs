@@ -12,7 +12,7 @@ namespace RoomsOfDoom
         public List<Node> nodes;
         public Node endNode;
         public Random random;
-        private int maxCapacity;
+        public int maxCapacity;
         public static Node LastKnownLocation;
 
         public Dungeon(Random random, List<Node> nodes, int difficulty, int maxCapacity)

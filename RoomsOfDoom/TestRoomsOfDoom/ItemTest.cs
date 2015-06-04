@@ -76,13 +76,13 @@ namespace TestRoomsOfDoom
             for (int i = 0; i < 100; i++)
             {
                 Loot l = ItemGenerator.GetItem(0);
-                Assert.IsNotNull(l);
-                Assert.AreEqual(l.ID, 0);
+                if (l != null)
+                    Assert.AreEqual(l.ID, 0);
             }
 
             n.RemovePack(p);
             p = new Pack(1);
-            p.Add(new Enemy("A", 'a', 1));
+            p.Add(new Enemy("A", 'a', player.CurrentHP + player.GetPotCount * Potion.healPower - 1));
             n.AddPack(p);
 
             for (int i = 0; i < 100; i++)

@@ -100,5 +100,18 @@ namespace TestRoomsOfDoom
             Assert.IsTrue(a.RemoveGate(Exit.Left));
             Assert.IsFalse(a.RemoveGate(Exit.Left));
         }
+
+        [TestMethod]
+        public void LowCapacityCreateTest()
+        {
+            DungeonCreator dc = new DungeonCreator(random);
+            Dungeon dungeon = dc.CreateDungeon(1, 9001, 1);
+            Assert.AreEqual(dungeon.maxCapacity, dc.monsterCreator.maximumPackSize);
+            int totalPacks = 0;
+            foreach (Node n in dungeon.nodes)
+                totalPacks += n.PackList.Count;
+
+            Assert.AreEqual(dc.totalcap / dc.monsterCreator.maximumPackSize, totalPacks);
+        }
     }
 }
