@@ -27,16 +27,6 @@ namespace TestRoomsOfDoom
             testSubject = new GameManager(false);
         }
 
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            if(testSubject != null)
-            {
-                testSubject.Dispose();
-                testSubject = null;
-            }
-        }
-
         [TestCleanup]
         public void TestCleanup()
         {
@@ -138,7 +128,6 @@ namespace TestRoomsOfDoom
         {
             for (int i = 1; i <= 4; i++)
             {
-                testSubject.Dispose();
                 testSubject = new GameManager(false);
                 Node oldNode = testSubject.CurrentNode;
                 Exit exit = (Exit)1;

@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoomsOfDoom;
+using System.Collections.Generic;
+using RoomsOfDoom.Items;
 
 namespace TestRoomsOfDoom
 {
@@ -45,7 +47,10 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void UnlockNodeTest()
         {
+            List<Node> nodes = new List<Node>();
             Bridge b = new Bridge(random, 0, 10, 1);
+            Dungeon d = new Dungeon(random, nodes, 1, 10);
+            ItemGenerator.Init(random, d, new Player());
             Pack p = new Pack(1);
             p.Add(new Enemy("A", 'a', 10));
             b.AddPack(p);

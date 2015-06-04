@@ -78,7 +78,6 @@ namespace TestRoomsOfDoom
             g.InitRoom(dungeon.nodes[0]);
             m.Use(p, dungeon);
             Assert.IsTrue(dungeon.nodes.Count == 1);
-            g.Dispose();
         }
     }
 }
