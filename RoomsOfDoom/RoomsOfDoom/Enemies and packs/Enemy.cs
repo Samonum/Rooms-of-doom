@@ -15,7 +15,7 @@ namespace RoomsOfDoom
         protected bool alive;
         protected char glyph;
         public int damage;
-        protected int speed;
+        public int speed;
         protected int moveCounter;
 
         public Enemy(string name, char glyph, int hp, int damage = MonsterCreator.minDamage, int speed = MonsterCreator.maxDamage)

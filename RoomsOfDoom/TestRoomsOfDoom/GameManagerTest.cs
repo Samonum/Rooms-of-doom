@@ -41,6 +41,8 @@ namespace TestRoomsOfDoom
         public void TestCleanup()
         {
             testSubject.GameOver();
+            testSubject.Dispose();
+            testSubject = new GameManager(false);
         }
 
         [TestMethod]
@@ -166,7 +168,6 @@ namespace TestRoomsOfDoom
                             testSubject.HandleCombatRound('d');
                             testSubject.HandleCombatRound('d');
                             break;
-
                     }
 
                     Assert.AreEqual(newNode, testSubject.CurrentNode);

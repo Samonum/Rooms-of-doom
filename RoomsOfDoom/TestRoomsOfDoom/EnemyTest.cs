@@ -111,5 +111,29 @@ namespace TestRoomsOfDoom
             //assert
             Assert.IsTrue(p.CurrentHP < p.MaxHP);
         }
+
+        [TestMethod]
+        public void EnemyDamageTest()
+        {
+            Assert.IsTrue(e.damage >= MonsterCreator.minDamage && e.damage <= MonsterCreator.maxDamage);
+            Player p = new Player();
+            e.KillTheHeretic(p);
+            Assert.AreEqual(p.CurrentHP, p.MaxHP - e.damage);
+        }
+
+        [TestMethod]
+        public void EnemySpeedTest()
+        {
+            Assert.IsTrue(e.speed >= MonsterCreator.minSpeed && e.speed <= MonsterCreator.maxSpeed);
+            for (int i = 0; i < e.speed; i++)
+                Assert.IsTrue(e.CanMove());
+            Assert.IsFalse(e.CanMove());
+        }
+
+        public void EnemyStatDisplayTest()
+        {
+            Enemy e = new Enemy("name", 'q', 10, 5, 5);
+            //Assert.AreEqual("q ")
+        }
     }
 }
