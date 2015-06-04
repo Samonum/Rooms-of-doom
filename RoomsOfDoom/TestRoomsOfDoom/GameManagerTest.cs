@@ -31,6 +31,8 @@ namespace TestRoomsOfDoom
         public void TestCleanup()
         {
             testSubject.GameOver();
+            testSubject.basePackCount = 10;
+            testSubject.maxCapacity = 10;
         }
 
         [TestMethod]
@@ -269,7 +271,8 @@ namespace TestRoomsOfDoom
 
             Assert.IsTrue(testSubject.LoadGame(filename));
             IsAbsurd();
-            testSubject.CreateDungeon(1, 100);
+            testSubject.basePackCount = 1;
+            testSubject.CreateDungeon();
             RandomConsistency();
 
             File.Delete(filename);
