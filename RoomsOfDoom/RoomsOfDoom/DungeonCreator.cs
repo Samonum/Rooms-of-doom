@@ -21,14 +21,19 @@ namespace RoomsOfDoom
             monsterCreator = new MonsterCreator(random, 6);
         }
 
+        int totalcap;
         public Dungeon CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
             if (packCount > difficulty * 15)
                 packCount = difficulty * 15;
 
+            if (maxCapacity < monsterCreator.maximumPackSize)
+                maxCapacity = monsterCreator.maximumPackSize;
+
             this.maxCapacity = maxCapacity;
 
             Dungeon dungeon = GenerateDungeon(difficulty);
+
             dungeon = SpreadPacks(dungeon, difficulty, packCount);
             dungeon.ShortestPath(dungeon.nodes[0], dungeon.nodes[dungeon.nodes.Count - 1]);
             return dungeon;
@@ -38,9 +43,14 @@ namespace RoomsOfDoom
         {
             int size = (int)(difficulty * (3f + random.NextDouble()) + 4);
 
-            // Added due to memoryoutofrangeexception
-            if (size > 1000)
-                size = 1000;
+            totalcap = maxCapacity * size;
+            for (int i = 0; i < difficulty; i++)
+                totalcap += difficulty * maxCapacity;
+
+
+                // Added due to memoryoutofrangeexception
+                if (size > 1000)
+                    size = 1000;
 
             int split;
             if (difficulty >= size)
@@ -150,6 +160,9 @@ namespace RoomsOfDoom
         
         private Dungeon SpreadPacks(Dungeon dungeon, int difficulty, int packCount)
         {
+            if (totalcap < packCount * monsterCreator.maximumPackSize)
+                packCount = totalcap / monsterCreator.maximumPackSize;
+
             for (int i = 0; i < packCount; i++)
             {
                 Pack pack = monsterCreator.GeneratePack(difficulty);
