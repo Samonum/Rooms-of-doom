@@ -140,11 +140,11 @@ namespace RoomsOfDoom
                 Enemy[] pack = (Enemy[])enemy.myPack.Enemies.ToArray().Clone();
                 foreach (Enemy packman in pack)
                     if (packman.Hit(strength * Multiplier))
-                        IncreaseScore(packman.name.Length);
+                        IncreaseScore(packman.GetScore());
             }
             else
                 if (enemy.Hit(strength * Multiplier))
-                    IncreaseScore(enemy.name.Length);
+                    IncreaseScore(enemy.GetScore());
         }
 
         public void UpdateItems()

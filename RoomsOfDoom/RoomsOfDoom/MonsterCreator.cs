@@ -9,8 +9,8 @@ namespace RoomsOfDoom
 {
     public class MonsterCreator
     {
-        private const int minDamage = 1, maxDamage = 10;
-        private const int minSpeed = 3, maxSpeed = 8;
+        public const int minDamage = 1, maxDamage = 10;
+        public const int minSpeed = 3, maxSpeed = 8;
         public int maximumPackSize;
         Random r;
 
