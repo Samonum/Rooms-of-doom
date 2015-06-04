@@ -39,7 +39,7 @@ namespace TestRoomsOfDoom
             p.UseItem(new MagicScroll(new NotSoRandom(0f), null), null);
             p.Combat(badGuy);
             Assert.IsFalse(badGuy.Alive);
-            Assert.IsTrue(p.GetScore > 0);
+            Assert.AreEqual(p.GetScore, badGuy.GetScore());
         }
 
         public override IHittable getHittable()

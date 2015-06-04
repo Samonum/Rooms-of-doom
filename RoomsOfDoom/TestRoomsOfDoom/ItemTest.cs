@@ -59,6 +59,7 @@ namespace TestRoomsOfDoom
             }
         }
 
+        [TestMethod]
         public void PotionDropTest()
         {
             Node n = new Node(random, 0, 100);
@@ -79,6 +80,16 @@ namespace TestRoomsOfDoom
                 Assert.AreEqual(l.ID, 0);
             }
 
+            n.RemovePack(p);
+            p = new Pack(1);
+            p.Add(new Enemy("A", 'a', 1));
+            n.AddPack(p);
+
+            for (int i = 0; i < 100; i++)
+            {
+                Loot l = ItemGenerator.GetItem(0);
+                Assert.IsNull(l);
+            }
 
         }
 

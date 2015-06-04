@@ -83,7 +83,6 @@ namespace TestRoomsOfDoom
         public void FakeOrderTest()
         {
             // TODO: GiveOrder with amount higher than existing packs.
-            // TODO: GiveOrder to a no longer existing node.
             List<Node> nodes = new List<Node>();
 
             Node a = new Node(random, 1, 10);
