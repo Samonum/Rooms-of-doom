@@ -130,10 +130,12 @@ namespace TestRoomsOfDoom
             Assert.IsFalse(e.CanMove());
         }
 
+        [TestMethod]
         public void EnemyStatDisplayTest()
         {
             Enemy e = new Enemy("name", 'q', 10, 5, 5);
-            //Assert.AreEqual("q ")
+            Assert.AreEqual("q HP: 10 Spd: 5 Dmg: 5", e.GetStats(true));
+            Assert.AreEqual("q HP: 10", e.GetStats());
         }
     }
 }

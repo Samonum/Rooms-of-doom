@@ -41,8 +41,6 @@ namespace TestRoomsOfDoom
         public void TestCleanup()
         {
             testSubject.GameOver();
-            testSubject.Dispose();
-            testSubject = new GameManager(false);
         }
 
         [TestMethod]
