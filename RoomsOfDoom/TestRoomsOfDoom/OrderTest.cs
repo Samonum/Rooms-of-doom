@@ -82,7 +82,6 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void FakeOrderTest()
         {
-            // TODO: GiveOrder with amount higher than existing packs.
             List<Node> nodes = new List<Node>();
 
             Node a = new Node(random, 1, 10);
@@ -142,5 +141,40 @@ namespace TestRoomsOfDoom
             dungeon.MacroUpdate();
             Assert.IsNull(p.order);
         }
+
+        [TestMethod]
+        public void OrderFullNodeTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Node a = new Node(random, 0, 1);
+            Node b = new Node(random, 1, 1);
+
+            a.AddGate(Exit.Right, b);
+            b.AddGate(Exit.Left, a);
+
+            nodes.Add(a);
+            nodes.Add(b);
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 1);
+
+            Pack p = new Pack(1);
+            p.Add(new Enemy("", 'a', 10));
+            b.AddPack(p);
+            p.GiveOrder(new Order(a));
+
+            dungeon.MacroUpdate();
+            Assert.AreEqual(a.PackList.Count, 1);
+            Assert.AreEqual(b.PackList.Count, 0);
+
+            p = new Pack(1);
+            p.Add(new Enemy("", 'a', 10));
+            b.AddPack(p);
+            p.GiveOrder(new Order(a));
+
+            dungeon.MacroUpdate();
+            Assert.AreEqual(a.PackList.Count, 1);
+            Assert.AreEqual(b.PackList.Count, 1);
+        }
+
     }
 }
