@@ -80,6 +80,7 @@
     <Compile Include="Items\TimeCrystal.cs" />
     <Compile Include="ITile.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MonsterCreator.cs" />
     <Compile Include="MusicDictionary.cs" />
     <Compile Include="Node.cs" />

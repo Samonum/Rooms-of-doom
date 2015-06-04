@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace RoomsOfDoom
 {
-    public class GameManager : IDisposable
+    public class GameManager
     {
         private bool debug = false;
         private bool randomDebug = false;
@@ -29,7 +29,7 @@ namespace RoomsOfDoom
         public Dungeon dungeon;
         public int difficulty;
         public bool acceptinput;
-        private StreamWriter logger;
+        private Logger logger;
 
 
         public GameManager(bool acceptinput = true, Random random = null)
@@ -80,13 +80,7 @@ namespace RoomsOfDoom
 
         public void Initialize(Random random, bool log = true)
         {
-            if (log)
-            {
-                if (logger != null)
-                    logger.Dispose();
-                logger = new StreamWriter("current.play", false);
-                logger.AutoFlush = true;
-            }
+            logger = new Logger();
 
             this.random = random;
             if (this.random == null)
@@ -378,12 +372,12 @@ namespace RoomsOfDoom
 
         public void CreateDungeon(int basePackCount, int maxCapacity)
         {
-            ItemGenerator.Init(random, dungeon, player);
             dungeonCreator = new DungeonCreator(random);
             int halfPackCount = (basePackCount / 2);
             dungeon = dungeonCreator.CreateDungeon(difficulty, halfPackCount + difficulty * halfPackCount, maxCapacity + maxCapacity * (difficulty - 1) / 3);
             dungeon.nodes[0].Player = GetPlayer;
             dungeon.PlayerNode = dungeon.nodes[0];
+            ItemGenerator.Init(random, dungeon, player);
             InitRoom(dungeon.nodes[0]);
         }
 
@@ -440,7 +434,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 return false;
             }
 
-            File.Copy("current.play", fileName + ".inplay", true);
+            logger.Save(fileName, true);
 
             if (File.Exists(fileName))
             {
@@ -482,11 +476,6 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     Console.ReadKey();
                 return false;
             }
-
-            if (logger != null)
-                logger.Dispose();
-            
-            File.Copy(fileName + ".inplay", "current.play", true);
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line = reader.ReadLine();
@@ -503,8 +492,8 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     difficulty = int.Parse(data[5]);
                 }
             }
-            logger = new StreamWriter("current.play", true);
-            logger.AutoFlush = true;
+            logger = new Logger();
+            logger.Load(fileName);
             if (random == null)
                 random = new Random();
             int seed = random.Next();
@@ -539,7 +528,8 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     }
             }
 
-            File.Copy("current.play", fileName + ".play", true);
+            logger.Save(fileName, false);
+
             return true;
         }
 
@@ -568,23 +558,6 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     }
                 }
             }).Start();
-        }
-
-        ~GameManager()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                logger.Dispose();
-            }
-            catch
-            {
-
-            }
         }
     }
 }
