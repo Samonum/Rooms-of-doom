@@ -337,6 +337,14 @@ namespace TestRoomsOfDoom
             Assert.AreEqual(2, lastDifficulty);
         }
 
+        [TestMethod]
+        public void HighScoresTest()
+        {
+            HighScores scores = new HighScores();
+            scores.EnterHighScore(350);
+            scores.EnterHighScore(150);
+        }
+
         public void MakeAbsurd()
         {
             testSubject.GetPlayer.IncreaseScore(1000);
