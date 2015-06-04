@@ -329,9 +329,20 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void HighScoresTest()
         {
+            File.Copy("HighScores.testfile", "HighScores", true);
             HighScores scores = new HighScores();
-            scores.EnterHighScore(350);
-            scores.EnterHighScore(150);
+            Tuple<int, string>[] values = scores.LoadScores();
+            for (int i = 1; i < values.Length; i++)
+            {
+                Assert.IsTrue(values[i - 1].Item1 >= values[i].Item1);
+            }
+            scores.EnterHighScore(350, "1337 h4x0r");
+            scores.EnterHighScore(150, "");
+            values = scores.LoadScores();
+            for (int i = 1; i < values.Length; i++)
+            {
+                Assert.IsTrue(values[i - 1].Item1 >= values[i].Item1);
+            }
         }
 
         public void MakeAbsurd()

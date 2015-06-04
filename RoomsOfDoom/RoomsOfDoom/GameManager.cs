@@ -308,8 +308,9 @@ namespace RoomsOfDoom
             Console.WriteLine(" We're very sorry and wish you all the best in your next adventure.");
 
             HighScores highscores = new HighScores();
+            Console.WriteLine("Your score is: " + player.GetScore + " ! Please enter your name:");
             if(acceptinput)
-                highscores.EnterHighScore(player.GetScore);
+                highscores.EnterHighScore(player.GetScore, Console.ReadLine());
             highscores.displayHighScores();
             if (acceptinput)
             {
