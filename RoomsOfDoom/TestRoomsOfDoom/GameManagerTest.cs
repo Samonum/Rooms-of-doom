@@ -279,6 +279,7 @@ namespace TestRoomsOfDoom
 
             Assert.IsTrue(testSubject.LoadGame(filename));
             IsAbsurd();
+            testSubject.CreateDungeon(1, 100);
             RandomConsistency();
 
             File.Delete(filename);
