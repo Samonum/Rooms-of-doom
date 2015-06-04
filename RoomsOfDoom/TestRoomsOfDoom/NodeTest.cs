@@ -51,13 +51,14 @@ namespace TestRoomsOfDoom
             List<Node> nodes = new List<Node>();
             Bridge b = new Bridge(random, 0, 10, 1);
             Dungeon d = new Dungeon(random, nodes, 1, 10);
-            Player player = new Player();
+            Player player = new Player(101);
             ItemGenerator.Init(random, d, new Player());
             Pack p = new Pack(1);
             p.Add(new Enemy("A", 'a', 1));
             b.AddPack(p);
             b.MicroUpdates();
             Assert.IsTrue(b.locked);
+            player.OP = true;
             player.Combat(p.Enemies[0]);
             b.MicroUpdates();
             Assert.IsFalse(b.locked);

@@ -247,5 +247,14 @@ namespace TestRoomsOfDoom
             Assert.AreEqual(e.CurrentHP, e.MaxHP - 2 * Player.strength, "No neg multiplier when not used");
         }
 
+        [TestMethod]
+        public void CannotPickupLootTest()
+        {
+            p.SetItems(255, 0, 0);
+            p.AddItem(new Loot(0, '1'));
+            p.AddItem(new Loot(-1, 'q'));
+            p.AddItem(new Loot(255, 'p'));
+            Assert.AreEqual(p.GetPotCount, 255);
+        }
     }
 }
