@@ -234,16 +234,18 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void LootKeyCheck() 
         {
-            Assert.IsTrue(false);
             // TODO: This test breaks completely as it does not follow new rules
             int curdif = testSubject.difficulty;
             foreach (Node n in testSubject.dungeon.nodes)
                 if (n.IsExit)
+                {
                     testSubject.InitRoom(n);
+                    n.Player = testSubject.GetPlayer;
+                }
             Assert.IsInstanceOfType(testSubject.CurrentNode.lootList[0], typeof(Loot));
             Assert.AreEqual(testSubject.CurrentNode.lootList[0].ID, 3);
             testSubject.CurrentNode.lootList[0].Location = new Point(testSubject.GetPlayer.Location.X - 1, testSubject.GetPlayer.Location.Y);
-            if (testSubject.CurrentNode != null)
+            if (testSubject.CurrentNode.CurrentPack != null)
                 foreach (Enemy e in testSubject.CurrentNode.CurrentPack)
                     if (e.Location == testSubject.CurrentNode.lootList[0].Location)
                         e.Location = new Point();
@@ -283,6 +285,57 @@ namespace TestRoomsOfDoom
             RandomConsistency();
 
             File.Delete(filename);
+        }
+
+        [TestMethod]
+        public void LogItemCheatAndUseTest()
+        {
+            Log log = new Log(testSubject, ".DO.NOT.TOUCH.test");
+            log.Initialize();
+            Assert.IsNotNull(log.replay);
+
+            byte[] inventory = (byte[])testSubject.GetPlayer.inventory.Clone();
+
+            log.PlayReplay(0);
+
+            for (int i = 0; i < inventory.Length; i++)
+            {
+                Assert.AreEqual(testSubject.GetPlayer.inventory[i], inventory[i]);
+            }
+
+            inventory = (byte[])testSubject.GetPlayer.inventory.Clone();
+
+            log.PlayStep();
+            for(int i = 0; i < inventory.Length; i++)
+            {
+                Assert.AreEqual(testSubject.GetPlayer.inventory[i], inventory[i]);
+            }
+        }
+
+        [TestMethod]
+        public void LogLevelUpAndLoadedTest()
+        {
+            Log log = new Log(testSubject, "test");
+            log.Initialize();
+            int difficulty = 0;
+            int lastDifficulty = 0;
+            int score = 0;
+            while (!log.Finished())
+            {
+                if (testSubject.difficulty > difficulty)
+                {
+                    difficulty++;
+                    RandomConsistency();
+                }
+
+                Assert.IsTrue(testSubject.GetPlayer.GetScore >= score);
+                score = testSubject.GetPlayer.GetScore;
+                Assert.AreEqual(difficulty, testSubject.difficulty);
+                Assert.IsTrue(testSubject.GetPlayer.Alive);
+                lastDifficulty = difficulty;
+                log.PlayStep();
+            }
+            Assert.AreEqual(2, lastDifficulty);
         }
 
         public void MakeAbsurd()

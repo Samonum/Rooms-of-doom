@@ -378,12 +378,12 @@ namespace RoomsOfDoom
 
         public void CreateDungeon(int basePackCount, int maxCapacity)
         {
-            ItemGenerator.Init(random, dungeon, player);
             dungeonCreator = new DungeonCreator(random);
             int halfPackCount = (basePackCount / 2);
             dungeon = dungeonCreator.CreateDungeon(difficulty, halfPackCount + difficulty * halfPackCount, maxCapacity + maxCapacity * (difficulty - 1) / 3);
             dungeon.nodes[0].Player = GetPlayer;
             dungeon.PlayerNode = dungeon.nodes[0];
+            ItemGenerator.Init(random, dungeon, player);
             InitRoom(dungeon.nodes[0]);
         }
 

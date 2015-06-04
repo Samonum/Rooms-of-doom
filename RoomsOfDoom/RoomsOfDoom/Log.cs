@@ -7,10 +7,10 @@ using System.Threading;
 
 namespace RoomsOfDoom
 {
-    class Log
+    public class Log
     {
         GameManager manager;
-        string[] replay;
+        public string[] replay;
         bool input;
 
 
@@ -44,10 +44,10 @@ namespace RoomsOfDoom
         
         public void Initialize()
         {
-            i = 0;
-            n = 1;
             if (Finished())
                 return;
+            i = 0;
+            n = 1;
             input = manager.acceptinput;
             manager.acceptinput = false;
             manager.Initialize(new DebugableRandom(int.Parse(replay[0].Trim())), false);
@@ -72,6 +72,9 @@ namespace RoomsOfDoom
         int i, n;
         public void PlayStep()
         {
+            if (Finished())
+                return;
+
             if(i == 0)
                 replay[n] = replay[n].Trim();
 
@@ -81,6 +84,7 @@ namespace RoomsOfDoom
                 manager.difficulty--;
                 manager.StartNextLevel();
                 n++;
+                replay[n] = replay[n].Trim();
             }
 
             manager.Update(replay[n][i]);
