@@ -65,10 +65,7 @@ namespace RoomsOfDoom
                         Console.WriteLine("What savefile would you like to load?");
                         inMenu = !LoadGame(Console.ReadLine());
                         if (!inMenu)
-                        {
                             CreateDungeon(10, 10);
-                            ItemGenerator.Init(this.random, dungeon, player);
-                        }
                         break;
                     case 'c':
                     case 'C':
@@ -105,7 +102,6 @@ namespace RoomsOfDoom
 
             player = new Player();
             CreateDungeon(10, 10);
-            ItemGenerator.Init(this.random, dungeon, player);
         }
 
         public void StartNextLevel()
@@ -143,7 +139,6 @@ namespace RoomsOfDoom
                 }
             }
             CreateDungeon(10, 10);
-            ItemGenerator.Init(random, dungeon, player);
         }
 
         public void ChangeRooms(Node newNode)
@@ -213,7 +208,7 @@ namespace RoomsOfDoom
             bool act = true;
             switch (input)
             {
-                //TODO: Move this to node
+                //TODO: Move this to node?
                 
                 case 'w':
                 case 'W':
@@ -254,6 +249,11 @@ namespace RoomsOfDoom
                 case 'e':
                 case 'E':
                     break;
+                case 'z':
+                case 'Z':
+                    debug = !debug;
+                    act = false;
+                    break;
                 case 'x':
                 case 'X':
                     if (debug)
@@ -262,24 +262,23 @@ namespace RoomsOfDoom
                         node.PlaceEnemies();
                     }
                     break;
-                case 'z':
-                case 'Z':
-                    debug = !debug;
-                    act = false;
-                    break;
                 case '!':
+                    act = false;
                     if (debug)
                         player.AddItem(new Loot(0, '\n'));
                     break;
                 case '@':
+                    act = false;
                     if (debug)
                         player.AddItem(new Loot(1, '\n'));
                     break;
                 case '#':
+                    act = false;
                     if (debug)
                         player.AddItem(new Loot(2, '\n'));
                     break;
                 case '$':
+                    act = false;
                     if (debug)
                         player.AddItem(new Loot(3, '\n'));
                     break;
@@ -379,6 +378,7 @@ namespace RoomsOfDoom
 
         public void CreateDungeon(int basePackCount, int maxCapacity)
         {
+            ItemGenerator.Init(random, dungeon, player);
             dungeonCreator = new DungeonCreator(random);
             int halfPackCount = (basePackCount / 2);
             dungeon = dungeonCreator.CreateDungeon(difficulty, halfPackCount + difficulty * halfPackCount, maxCapacity + maxCapacity * (difficulty - 1) / 3);
