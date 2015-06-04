@@ -205,18 +205,25 @@ namespace TestRoomsOfDoom
             p.Enemies.Add(new Enemy("", 'b', 10));
             c.AddPack(p);
 
+            p.GiveOrder(Order.HuntOrder);
+
             p = new Pack(1);
             p.Enemies.Add(new Enemy("", 'c', 10));
-            d.AddPack(p);
-            d.AddPack(p);
+            a.AddPack(p);
+
+            p = new Pack(1);
+            p.Enemies.Add(new Enemy("", 'd', 10));
+            a.AddPack(p);
 
             Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
 
+            dungeon.DefendOrder();
+
             Assert.AreEqual(
-                "N0(1,)[]" + "\n" +
+                "N0(1,)[(3█c)(3█d)]" + "\n" +
                 ">B1(0,2,)[]" + "\n" +
-                "N2(1,3,)[(ab)]" + "\n" +
-                "!B3(2,4,)[(c)(c)]" + "\n" +
+                "N2(1,3,)[(-1▒ab)]" + "\n" +
+                "!B3(2,4,)[]" + "\n" +
                 "N4(3,)[]" + "\n",
                 dungeon.ToString());
         }

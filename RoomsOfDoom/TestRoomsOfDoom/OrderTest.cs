@@ -97,6 +97,10 @@ namespace TestRoomsOfDoom
             d.GiveOrder(null, 1);
 
             Assert.IsNull(p.order);
+
+            p.GiveOrder(null);
+
+            Assert.IsNull(p.order);
         }
     }
 }

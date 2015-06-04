@@ -103,10 +103,7 @@ namespace RoomsOfDoom
             string s = "(";
 
             if (order != null)
-                if (order.Target != null)
-                    s += order.Target.id + order.Glyph;
-                else
-                    s += -1 + order.Glyph;
+                s += order.ToString();
 
             foreach (Enemy e in enemies)
                 s += e.Glyph;

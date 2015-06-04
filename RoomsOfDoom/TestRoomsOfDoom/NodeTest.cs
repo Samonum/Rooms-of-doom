@@ -41,5 +41,18 @@ namespace TestRoomsOfDoom
             node.MacroUpdate();
             Assert.IsTrue(node.PackList.Count == 1);
         }
+
+        [TestMethod]
+        public void UnlockNodeTest()
+        {
+            Bridge b = new Bridge(random, 0, 10, 1);
+            Pack p = new Pack(1);
+            p.Add(new Enemy("A", 'a', 10));
+            b.AddPack(p);
+            b.MicroUpdates();
+            Assert.IsTrue(b.locked);
+            p.Enemies[0].Hit(9001);
+            b.MicroUpdates();
+        }
     }
 }
