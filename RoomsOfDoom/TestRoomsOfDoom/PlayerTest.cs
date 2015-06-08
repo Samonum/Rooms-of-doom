@@ -26,6 +26,22 @@ namespace TestRoomsOfDoom
             random = new Random();
         }
 
+        [TestMethod]
+        public void PlayerCombatTest()
+        {
+            Pack pa = new Pack(1);
+            Enemy badGuy = new Enemy("long name", 'l', (int)(Player.strength * 2.5));
+            pa.Add(badGuy);
+            p.Combat(badGuy);
+            Assert.IsTrue(badGuy.Alive);
+            Assert.AreEqual((int)Player.strength * 1.5, badGuy.CurrentHP);
+            p.AddItem(new Loot(2,'2'));
+            p.UseItem(new MagicScroll(new NotSoRandom(0f), null), null);
+            p.Combat(badGuy);
+            Assert.IsFalse(badGuy.Alive);
+            Assert.AreEqual(p.GetScore, badGuy.GetScore());
+        }
+
         public override IHittable getHittable()
         {
             return p;
@@ -106,7 +122,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddItem(new Potion());
+                p.AddItem(new Loot(0, '1'));
                 pots++;
             }
             Assert.AreEqual(pots, p.GetPotCount, "Pots don't add up well.");
@@ -128,7 +144,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddItem(new TimeCrystal());
+                p.AddItem(new Loot(1, '2'));
                 crystals++;
             }
             Assert.AreEqual(crystals, p.GetCrystalCount, "Crystals don't add up well.");
@@ -141,7 +157,7 @@ namespace TestRoomsOfDoom
             int count = 100 + random.Next(50);
             for (int i = 0; i < count; i++)
             {
-                p.AddItem(new MagicScroll(random, null));
+                p.AddItem(new Loot(2, '3'));
                 scrolls++;
             }
             Assert.AreEqual(scrolls, p.GetScrollCount, "Scrolls don't add up well.");
@@ -161,9 +177,24 @@ namespace TestRoomsOfDoom
             for (int i = 1; i < 3; i++)
                 Assert.AreEqual(100, enemies[i].CurrentHP, "base");
 
+            DungeonCreator dc = new DungeonCreator(random);
+            Dungeon dungeon = dc.CreateDungeon(1, 0, 10);
             TimeCrystal crystal = new TimeCrystal();
             crystal.Duration = 1;
-            p.UseItem(crystal, null);
+
+            dungeon.nodes[1].Player = p;
+
+            dungeon.nodes[0].AddPack(enemies);
+
+            p.UseItem(crystal, dungeon);
+
+            int orderCount = 0;
+            foreach (Node n in dungeon.nodes)
+                foreach (Pack thisVerySpecialSuperPack in n.PackList)
+                    if (thisVerySpecialSuperPack.order == Order.HuntOrder)
+                        orderCount++;
+
+            Assert.AreEqual(orderCount, 1);
 
             p.Combat(enemies[1]);
             Assert.AreEqual(initHp - 2 * Player.strength, enemies[0].CurrentHP, "Crystal");
@@ -229,5 +260,24 @@ namespace TestRoomsOfDoom
             Assert.AreEqual(e.CurrentHP, e.MaxHP - 2 * Player.strength, "No neg multiplier when not used");
         }
 
+        [TestMethod]
+        public void CannotPickupLootTest()
+        {
+            p.SetItems(255, 0, 0);
+            p.AddItem(new Loot(0, '1'));
+            p.AddItem(new Loot(-1, 'q'));
+            p.AddItem(new Loot(255, 'p'));
+            Assert.AreEqual(p.GetPotCount, 255);
+        }
+
+        [TestMethod]
+        public void CannotUseKeyTest()
+        {
+            GameManager gm = new GameManager(false);
+            gm.GetPlayer.AddItem(new Loot(3, '>'));
+            gm.GetPlayer.UseItem(new LevelKey(gm), gm.dungeon);
+            Assert.AreEqual(gm.GetPlayer.inventory[3], 1);
+            Assert.AreEqual(gm.difficulty, 1);
+        }
     }
 }

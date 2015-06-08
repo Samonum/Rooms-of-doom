@@ -5,60 +5,128 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using RoomsOfDoom.Items;
+using System.Linq;
 
 namespace RoomsOfDoom
 {
     public class GameManager
     {
+        private bool debug = false;
+        private bool randomDebug = false;
         private const int doorsize = 3;
-        Random random;
+        public Random random;
 
-        private char[][] map;
         public const int Width = 37, Height = 25;
         private Exit exits;
-        public int topExit, leftExit, rightExit, botExit;
         private Node node;
 
-        public Pack enemies;
-        int curPack;
         private Player player;
 
         bool inCombat;
 
-        public List<IItem> items;
-        ItemGenerator itemGenerator;
 
         private DungeonCreator dungeonCreator;
         public Dungeon dungeon;
         public int difficulty;
-        private bool acceptinput;
+        public bool acceptinput;
+        private Logger logger;
 
-        public GameManager(bool testMode = true, Random random = null)
+        public int seed = -1;
+        public int basePackCount = 10, maxCapacity = 10;
+
+
+        public GameManager(bool acceptinput = true, Random random = null)
         {
+            this.acceptinput = acceptinput;
+
+            LetsBoogy();
+            StartFirstLevel(random);
+        }
+
+        public void StartFirstLevel(Random random)
+        {
+            difficulty = 1;
+            bool inMenu = true;
+            while (inMenu)
+            {
+                Console.Clear();
+                Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
+                Console.WriteLine("to load an old save press 'l', to load a replay press 'r' or press 'c' to conitnue");
+
+                char input = 'c';
+                if (acceptinput)
+                    input = Console.ReadKey().KeyChar;
+
+                switch (input)
+                {
+                    case 'r':
+                    case 'R':
+                        Console.WriteLine("What replay do you wish to load?");
+                        new Log(this, Console.ReadLine()).PlayReplay(100);
+                        break;
+                    case 'l':
+                    case 'L':
+                        Console.WriteLine("What savefile would you like to load?");
+                        inMenu = !LoadGame(Console.ReadLine());
+                        if (!inMenu)
+                            CreateDungeon();
+                        break;
+                    case 'c':
+                    case 'C':
+                        inMenu = false;
+                        Initialize(random);
+                        break;
+                    case 's':
+                    case 'S':
+                        Seed();
+                        break;
+                }
+            }
+        }
+        
+        public void Seed()
+        {
+            Console.WriteLine("Here you can enter your dungeon creation settings. These settings are saved untill you restart the game.");
+            Console.WriteLine("Enter the seed to be used for the random number generator, leave empty to use a random seed.");
+            string s = Console.ReadLine();
+            seed = -1;
+            int.TryParse(s, out seed);
+            Console.WriteLine("The following settings will make it impossible to create a replay of your game.");
+            Console.WriteLine("Enter the difficulty level at which you wish to start.");
+            s = Console.ReadLine();
+            difficulty = 1;
+            int.TryParse(s, out difficulty);
+            Console.WriteLine("Enter the base pack count the game would start with at difficulty level 1, pack count scales up with the difficulty.");
+            s = Console.ReadLine();
+            basePackCount = 10;
+            int.TryParse(s, out basePackCount);
+            Console.WriteLine("Enter the amount of enemies that is allowed in each normal room.");
+            s = Console.ReadLine();
+            maxCapacity = 10;
+            int.TryParse(s, out maxCapacity);
+        }
+
+
+        public void Initialize(Random random)
+        {
+            logger = new Logger();
 
             this.random = random;
-            if(random == null)
-                this.random = new Random();
-
-            this.acceptinput = testMode;
-
-            difficulty = 0;
-
-            new Task(() =>
+            if (this.random == null)
             {
-                Random r = new Random();
-                while (true)
+                int lseed = seed;
+                if (seed == -1)
                 {
-                    Thread.Sleep(100);
-                    MusicDictionary Music = new MusicDictionary();
-                    Console.Beep(Music.NoteArray[r.Next(0,8)],100);
-
-
+                    random = new Random();
+                    lseed = random.Next();
                 }
-            }).Start();
+                this.random = new DebugableRandom(lseed);
+                logger.WriteLine(lseed);
+            }
+
 
             player = new Player();
-            StartNextLevel();
+            CreateDungeon();
         }
 
         public void StartNextLevel()
@@ -72,20 +140,22 @@ namespace RoomsOfDoom
                 Console.WriteLine("If you wish to save press s, to load an old save press l or c to conitnue");
 
                 char input = 'c';
-                if(acceptinput)
+                if (acceptinput)
                     input = Console.ReadKey().KeyChar;
+                if (!acceptinput)
+                    Thread.Sleep(100);
 
                 switch (input)
                 {
                     case 's':
                     case 'S':
                         Console.WriteLine("How would you like to Call your Save?");
-                        Save(Console.ReadLine());
+                        SaveGame(Console.ReadLine());
                         break;
                     case 'l':
                     case 'L':
                         Console.WriteLine("What savefile would you like to load?");
-                        Load(Console.ReadLine());
+                        inMenu = !LoadGame(Console.ReadLine());
                         break;
                     case 'c':
                     case 'C':
@@ -93,54 +163,36 @@ namespace RoomsOfDoom
                         break;
                 }
             }
-            CreateDungeon(10, 10);
+            CreateDungeon();
         }
 
         public void ChangeRooms(Node newNode)
         {
-            dungeon.Update();
+            dungeon.PlayerNode = newNode;
+            CurrentNode.Player = null;
+            newNode.Player = player;
+            dungeon.MacroUpdate();
             InitRoom(newNode);
         }
 
         public void InitRoom(Node newNode)
         {
-
-            items = new List<IItem>(2);
-            LevelKey key = new LevelKey(this);
-            key.Location = GetRandomLocation(8);
-            if (newNode.IsExit && player.inventory[3] < 1)
-                items.Add(key);
-
             Exit entrance = 0;
             foreach (KeyValuePair<Exit, Node> n in newNode.AdjacencyList)
                 if (n.Value == node)
                     entrance = n.Key;
 
             this.node = newNode;
-            player.ScoreMultiplier = node.Multiplier;
+            player.ScoreMultiplier = node.Multiplier * (1 + (difficulty -1) / 2);
 
             exits = 0;
             foreach (KeyValuePair<Exit, Node> exit in node.AdjacencyList)
                 exits |= exit.Key;
-            topExit = 10 + random.Next(Width - 20);
-            leftExit = 10 + random.Next(Height - 20);
-            rightExit = 10 + random.Next(Height - 20);
-            botExit = 10 + random.Next(Width - 20);
 
-            if (node.PackList.Count == 0)
-            {
-                inCombat = false;
-                enemies = new Pack(0);
-            }
-            else
-            {
-                inCombat = true;
-                enemies = node.PackList[0];
-            }
+            inCombat = node.CurrentPack != null;
 
-            PlaceEnemies(enemies);
+            node.PlaceEnemies();
             PlacePlayer(entrance);
-
         }
 
         public void PlacePlayer(Exit entrance)
@@ -148,22 +200,24 @@ namespace RoomsOfDoom
             switch (entrance)
             {
                 case Exit.Top:
-                    player.Location = new Point(topExit, 2);
+                    player.Location = new Point(node.TopExit, 2);
                     break;
                 case Exit.Bot:
-                    player.Location = new Point(botExit, Height - 3);
+                    player.Location = new Point(node.BotExit, Height - 3);
                     break;
                 case Exit.Right:
-                    player.Location = new Point(Width - 3, rightExit);
+                    player.Location = new Point(Width - 3, node.RightExit);
                     break;
                 case Exit.Left:
-                    player.Location = new Point(2, leftExit);
+                    player.Location = new Point(2, node.LeftExit);
                     break;
                 default:
                     player.Location = GetRandomLocation(4);
-                    for (int i = 0; i < enemies.Size; i++)
+                    if (node.CurrentPack == null)
+                        break;
+                    for (int i = 0; i < node.CurrentPack.Size; i++)
                     {
-                        if (enemies[i].Location == player.Location)
+                        if (node.CurrentPack[i].Location == player.Location)
                         {
                             i = 0;
                             player.Location = GetRandomLocation(3);
@@ -174,53 +228,36 @@ namespace RoomsOfDoom
             }
         }
 
-        public void PlaceEnemies(Pack enemies)
-        {
-            for (int i = 0; i < enemies.Size; i++)
-            {
-                enemies[i].Location = GetRandomLocation(4);
-                for (int j = 0; j < i; j++)
-                    if (enemies[i].Location == enemies[j].Location)
-                    {
-                        i--;
-                        break;
-                    }
-                    else if (enemies[i].Location == player.Location)
-                        i--;
-            }
-        }
-
         public bool HandleCombatRound(char input)
         {
             bool act = true;
             switch (input)
             {
+                //TODO: Move this to node?
+                
                 case 'w':
-                    if (!player.Move(Direction.Up, enemies) &&
-                        (exits & Exit.Top) == Exit.Top && 
-                            player.Location.X > topExit - doorsize &&
-                            player.Location.X < topExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Top]);
+                case 'W':
+                    if (!player.Move(Direction.Up, node.CurrentPack) &&
+                        node.WithinTopGate(player.Location.X))
+                            ChangeRooms(node.AdjacencyList[Exit.Top]);
                     break;
-                case 'a': 
-                    if (!player.Move(Direction.Left, enemies) &&
-                        (exits & Exit.Left) == Exit.Left &&
-                        player.Location.Y > leftExit - doorsize && 
-                            player.Location.Y < leftExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Left]);
+                case 'a':
+                case 'A':
+                    if (!player.Move(Direction.Left, node.CurrentPack) &&
+                        node.WithinLeftGate(player.Location.Y))
+                            ChangeRooms(node.AdjacencyList[Exit.Left]);
                     break;
-                case 's': 
-                    if (!player.Move(Direction.Down, enemies) &&
-                        (exits & Exit.Bot) == Exit.Bot &&
-                        player.Location.X > botExit - doorsize && 
-                        player.Location.X < botExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Bot]);
+                case 's':
+                case 'S':
+                    if (!player.Move(Direction.Down, node.CurrentPack) &&
+                        node.WithinBotGate(player.Location.X))
+                            ChangeRooms(node.AdjacencyList[Exit.Bot]);
                     break;
-                case 'd': 
-                    if (!player.Move(Direction.Right, enemies))
-                        if ((exits & Exit.Right) == Exit.Right)
-                            if (player.Location.Y > rightExit - doorsize && player.Location.Y < rightExit + doorsize)
-                                ChangeRooms(node.AdjacencyList[Exit.Right]);
+                case 'd':
+                case 'D':
+                    if (!player.Move(Direction.Right, node.CurrentPack) &&
+                        node.WithinRightGate(player.Location.Y))
+                            ChangeRooms(node.AdjacencyList[Exit.Right]);
                     break;
                 case '1': 
                     player.UseItem(new Potion(), dungeon);
@@ -235,6 +272,45 @@ namespace RoomsOfDoom
                     player.UseItem(new LevelKey(this), dungeon);
                     break;
                 case 'e':
+                case 'E':
+                    break;
+                case 'z':
+                case 'Z':
+                    debug = !debug;
+                    act = false;
+                    break;
+                case 'x':
+                case 'X':
+                    if (debug)
+                    {
+                        dungeon.MacroUpdate();
+                        node.PlaceEnemies();
+                    }
+                    break;
+                case '!':
+                    act = false;
+                    if (debug)
+                        player.AddItem(new Loot(0, '\n'));
+                    break;
+                case '@':
+                    act = false;
+                    if (debug)
+                        player.AddItem(new Loot(1, '\n'));
+                    break;
+                case '#':
+                    act = false;
+                    if (debug)
+                        player.AddItem(new Loot(2, '\n'));
+                    break;
+                case '$':
+                    act = false;
+                    if (debug)
+                        player.AddItem(new Loot(3, '\n'));
+                    break;
+                case 'r':
+                case 'R':
+                    randomDebug = !randomDebug;
+                    act = false;
                     break;
                 default:
                     act = false;
@@ -243,10 +319,12 @@ namespace RoomsOfDoom
             return act;
         }
 
+        //Move to node?
         public void TryPickUpLoot()
         {
-            for(int i = 0; i < items.Count; i++)
-                if(player.Location == items[i].Location)
+            List<Loot> items = node.lootList;
+            for(int i = 0; i < node.lootList.Count; i++)
+                if (player.Location == items[i].Location)
                 {
                     player.AddItem(items[i]);
                     items.RemoveAt(i);
@@ -258,103 +336,34 @@ namespace RoomsOfDoom
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine(" YOU LOSE!");
-            Console.WriteLine(" We're very sorry and hope you all the best in your next adventure.");
-            Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items.");
-            Console.WriteLine();
-            Console.WriteLine("By the way, you managed to get a score of {0}.", player.GetScore);
+            Console.WriteLine(" We're very sorry and wish you all the best in your next adventure.");
+
+            HighScores highscores = new HighScores();
+            Console.WriteLine("Your score is: " + player.GetScore + " ! Please enter your name:");
             if(acceptinput)
+                highscores.EnterHighScore(player.GetScore, Console.ReadLine());
+            highscores.displayHighScores();
+            if (acceptinput)
+            {
+                Console.WriteLine("Type the name under which you wish to save the replay. Leave empty to not save the replay.");
+                while (!SaveReplay(Console.ReadLine())) ;
+                Console.WriteLine(" Press any key to resurrect yourself and lose all your points and items. Yeah, you could chose not to, but then you would remain death.");
                 Console.ReadKey();
+            }
             difficulty = 0;
             player = new Player();
-            StartNextLevel();
+            StartFirstLevel(null);
         }
 
         public void UpdateEnemies()
         {
-            foreach (Enemy e in enemies)
-            {
-                e.Move(player);
-            }
-
-            if (enemies.Size == 0)
-            {
-                node.RemovePack(enemies);
-                if (inCombat)
-                {
-                    IItem loot = itemGenerator.GetItem(node.Multiplier);
-                    if (loot != null)
-                    {
-                        loot.Location = GetRandomLocation(4);
-                        items.Add(loot);
-                    }
-                }
-                inCombat = false;
-
-                if (node.PackList.Count > 0)
-                {
-                    enemies = node.PackList[0];
-                    inCombat = true;
-                    PlaceEnemies(enemies);
-                }
-            }
-        }
-
-        public char[][] GetUpdatedMap()
-        {
-            CreateBackground();
-            foreach (ITile i in items)
-                map[i.Location.Y][i.Location.X] = i.Glyph;
-
-            foreach (Enemy e in enemies)
-                if(e.Alive)
-                    map[e.Location.Y][e.Location.X] = e.Glyph;
-            map[player.Location.Y][player.Location.X] = player.Glyph;
-            return map;
+            node.MicroUpdates();
         }
 
         public Point GetRandomLocation(int distFromWall)
         {
             return new Point(random.Next(Width - distFromWall - 2) + 1 + distFromWall / 2,
                 random.Next(Height - distFromWall - 2) + 1 + distFromWall / 2);
-        }
-
-        private void CreateBackground()
-        {
-            map = new char[Height][];
-            map[0] = new char[Width];
-            for (int j = 0; j < map[0].Length; j++)
-                if ((exits & Exit.Top) != Exit.Top || j <= topExit - doorsize || j >= topExit + doorsize)
-                    map[0][j] = '█';
-                else
-                    map[0][j] = '▒';
-            for (int i = 1; i < map.Length - 1; i++)
-            {
-                map[i] = new char[Width];
-                for (int j = 0; j < map[i].Length; j++)
-                    if (j == 0)
-                    {
-                        if ((exits & Exit.Left) != Exit.Left || i <= leftExit - doorsize || i >= leftExit + doorsize)
-                            map[i][j] = '█';
-                        else
-                            map[i][j] = '▒';
-                    }
-                    else if (j == map[i].Length - 1)
-                    {
-                        if ((exits & Exit.Right) != Exit.Right || i <= rightExit - doorsize || i >= rightExit + doorsize)
-                            map[i][j] = '█';
-                        else
-                            map[i][j] = '▒';
-                    }
-                    else
-                        map[i][j] = '.';
-
-                map[map.Length - 1] = new char[Width];
-                for (int j = 0; j < map[0].Length; j++)
-                    if ((exits & Exit.Bot) != Exit.Bot || j <= botExit - doorsize || j >= botExit + doorsize)
-                        map[map.Length - 1][j] = '█';
-                    else
-                        map[map.Length - 1][j] = '▒';
-            }
         }
 
         public Node CurrentNode
@@ -384,6 +393,7 @@ namespace RoomsOfDoom
                 return HandleCombatRound('e');
 
             char input = Console.ReadKey().KeyChar;
+            logger.Write(input);
             return HandleCombatRound(input);
         }
 
@@ -392,31 +402,16 @@ namespace RoomsOfDoom
             get { return player; }
         }
 
-        public void CreateDungeon(int packCount, int maxCapacity)
+        public void CreateDungeon()
         {
             dungeonCreator = new DungeonCreator(random);
-            dungeon = dungeonCreator.CreateDungeon(difficulty, packCount, maxCapacity);
-            this.itemGenerator = new ItemGenerator(dungeon, player, random);
+            float halfPackCount = (basePackCount / 2f);
+            dungeon = dungeonCreator.CreateDungeon(difficulty, (int)(halfPackCount + difficulty * halfPackCount), maxCapacity + maxCapacity * (difficulty - 1) / 3);
+            dungeon.nodes[0].Player = GetPlayer;
+            dungeon.PlayerNode = dungeon.nodes[0];
+            ItemGenerator.Init(random, dungeon, player);
             InitRoom(dungeon.nodes[0]);
         }
-
-        public string[] CreateEnemyOverview()
-        {
-            char[][] map = GetUpdatedMap();
-            string[] drawMap = new string[map.Length];
-            int i;
-            drawMap[0] = new string(map[0]);
-            for (i = 0; i < enemies.Size; i++ )
-            {
-                Enemy e = enemies[i];
-                drawMap[i * 2 + 1] = string.Format("{0} {1}", new string(map[i * 2 + 1]), e.name.Substring(0, Math.Min(20, e.name.Length)));
-                drawMap[i * 2 + 2] = string.Format("{0} {1} HP: {2}", new string(map[i * 2 + 2]), e.Glyph, e.CurrentHP);
-            }
-            for (i = i * 2 + 1; i < map.Length; i++)
-                drawMap[i] = new string(map[i]);
-            return drawMap;
-        }
-
 
         public string FormatHud()
         {
@@ -441,13 +436,23 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
             else
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-            string[] drawmap = CreateEnemyOverview();
+            string[] drawmap = CurrentNode.CreateEnemyOverview(debug);
             foreach (string s in drawmap)
                 Console.WriteLine(s);
             Console.WriteLine(FormatHud());
+            if (debug)
+            {
+                Console.WriteLine(dungeon.ToString());
+                DebugableRandom r = (DebugableRandom)random;
+                if (r != null)
+                {
+                    Console.WriteLine("Seed: " + r.initialSeed);
+                    Console.WriteLine("Call count: " + r.callCount);
+                }
+            }
         }
 
-        public bool Save(string fileName)
+        public bool SaveGame(string fileName)
         {
             if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || fileName == "")
             {
@@ -457,16 +462,18 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                 return false;
             }
 
-            if(File.Exists(fileName))
+            logger.Save(fileName, true);
+
+            if (File.Exists(fileName))
             {
                 Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
-                if(acceptinput)
-                if (Console.ReadKey().KeyChar != 'y')
-                {
-                    Console.WriteLine("Did not save file.");
-                    Console.ReadKey();
-                    return false;
-                }
+                if (acceptinput)
+                    if (Console.ReadKey().KeyChar != 'y')
+                    {
+                        Console.WriteLine("Did not save file.");
+                        Console.ReadKey();
+                        return false;
+                    }
             }
 
             Player p = GetPlayer;
@@ -488,7 +495,7 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
             return true;
         }
 
-        public bool Load(string fileName)
+        public bool LoadGame(string fileName)
         {
             if (!File.Exists(fileName))
             {
@@ -497,7 +504,6 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     Console.ReadKey();
                 return false;
             }
-
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line = reader.ReadLine();
@@ -514,8 +520,72 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
                     difficulty = int.Parse(data[5]);
                 }
             }
+            logger = new Logger();
+            logger.Load(fileName);
+            if (random == null)
+                random = new Random();
+            int seed = random.Next();
+            logger.Write("\n" + seed + "\n");
+            random = new DebugableRandom(seed);
             return true;
         }
 
+
+        public bool SaveReplay(string fileName)
+        {
+            if (fileName == null)
+                return true;
+
+            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                Console.WriteLine("Your filename contains illegal characters. Press any Key to return.");
+                if (acceptinput)
+                    Console.ReadKey();
+                return false;
+            }
+
+            if (File.Exists(fileName + ".play"))
+            {
+                Console.WriteLine("There already is a save with that name. Do you want to overwrite? [y/n]");
+                if (acceptinput)
+                    if (Console.ReadKey().KeyChar != 'y')
+                    {
+                        Console.WriteLine("Did not save file.");
+                        Console.ReadKey();
+                        return false;
+                    }
+            }
+
+            logger.Save(fileName, false);
+
+            return true;
+        }
+
+        public void LetsBoogy()
+        {
+            new Task(() =>
+            {
+                Random r = new Random();
+                MusicDictionary Music = new MusicDictionary();
+                while (true)
+                {
+                    if (this.node != null && this.node.isBridge())
+                    {
+                        Thread.Sleep(60);
+                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 100);
+                    }
+                    else if (this.node != null && this.node.IsExit)
+                    {
+                        Thread.Sleep(180);
+                        Console.Beep(Music.NoteArrayBlues[r.Next(0, 6)], 150);
+                    }
+                    else
+                    {
+                        Thread.Sleep(120);
+                        Console.Beep(Music.NoteArray[r.Next(0, 5)], 100);
+                    }
+                }
+            }).Start();
+        }
     }
 }

@@ -56,14 +56,19 @@ namespace TestRoomsOfDoom
 
             for (int i = 0; i < 100; i++)
             {
-                Dungeon d = D.CreateDungeon(random.Next(0, 100), random.Next(0, 100), 15);
+                Dungeon d = D.CreateDungeon(1, 0, 15);
                 
                 Assert.IsNotNull(d);
                 Assert.IsTrue(d.Size > 2);
 
                 foreach (Node n in d.nodes)
                 {
-                    Assert.IsTrue(n.AdjacencyList.Count > 0);
+                    if (!(n.AdjacencyList.Count > 0))
+                    {
+                        int a = 0;
+                        a = d.nodes.Count;
+                    }
+                    Assert.IsTrue(n.AdjacencyList.Count > 0, "No" + i + " "+ n.id);
                     Assert.IsTrue(n.AdjacencyList.Count <= DungeonCreator.maxNeighbours);
                 }
                 
@@ -77,6 +82,36 @@ namespace TestRoomsOfDoom
             Dungeon d = D.CreateDungeon(1, 10, 15);
             Assert.IsFalse(d.nodes[0].isBridge());
             Assert.IsTrue(d.nodes[3].isBridge());
+        }
+
+        [TestMethod]
+        public void AddRemoveGateTest()
+        {
+            Node a = new Node(random, 0, 15);
+            Node b = new Node(random, 1, 15);
+            Node c = new Node(random, 2, 15);
+
+            Assert.IsTrue(a.AddGate(Exit.Right, b));
+            Assert.IsFalse(a.AddGate(Exit.Left, b));
+            Assert.IsFalse(a.AddGate(Exit.Right, c));
+            Assert.IsTrue(a.AddGate(Exit.Left, c));
+
+            Assert.IsFalse(a.RemoveGate(Exit.Bot));
+            Assert.IsTrue(a.RemoveGate(Exit.Left));
+            Assert.IsFalse(a.RemoveGate(Exit.Left));
+        }
+
+        [TestMethod]
+        public void LowCapacityCreateTest()
+        {
+            DungeonCreator dc = new DungeonCreator(random);
+            Dungeon dungeon = dc.CreateDungeon(1, 9001, 1);
+            Assert.AreEqual(dungeon.maxCapacity, dc.monsterCreator.maximumPackSize);
+            int totalPacks = 0;
+            foreach (Node n in dungeon.nodes)
+                totalPacks += n.PackList.Count;
+
+            Assert.AreEqual(dc.totalcap / dc.monsterCreator.maximumPackSize, totalPacks);
         }
     }
 }

@@ -14,8 +14,11 @@ namespace RoomsOfDoom
         protected int currentHP;
         protected bool alive;
         protected char glyph;
+        public int damage;
+        public int speed;
+        protected int moveCounter;
 
-        public Enemy(string name, char glyph, int hp)
+        public Enemy(string name, char glyph, int hp, int damage = MonsterCreator.minDamage, int speed = MonsterCreator.maxDamage)
         {
             this.name = name;
             myPack = null;
@@ -23,12 +26,35 @@ namespace RoomsOfDoom
             currentHP = hp;
             alive = true;
             this.glyph = glyph;
+            this.damage = damage;
+            this.speed = speed;
+            moveCounter = 0;
         }
 
         public bool Hit(int damage)
         {
             CurrentHP -= damage;
             return !Alive;
+        }
+
+        public bool CanMove()
+        {
+            if (moveCounter >= speed)
+            {
+                moveCounter = 0;
+                return false;
+            }
+
+            moveCounter++;
+            return true;
+        }
+
+        public int GetScore()
+        {
+            double damageMultiplier = (double)(damage - MonsterCreator.minDamage) / (double)(MonsterCreator.maxDamage - MonsterCreator.minDamage);
+            double speedMultiplier = (double)(speed - MonsterCreator.minSpeed) / (double)(MonsterCreator.maxSpeed - MonsterCreator.minSpeed);
+            double totalMultiplier = (1.0 + (damageMultiplier + speedMultiplier) / 2.0);
+            return (int)(name.Length * totalMultiplier);
         }
 
         public Pack myPack
@@ -79,42 +105,16 @@ namespace RoomsOfDoom
         set;
         }
 
-        public virtual bool Move<T>(T target) where T : IHittable, ITile
-        {
-            int x = target.Location.X - Location.X;
-            int y = target.Location.Y - Location.Y;
-            Point loc = Math.Abs(x) > Math.Abs(y) ? 
-                new Point(Location.X + Math.Sign(x), Location.Y) : 
-                new Point(Location.X, Location.Y + Math.Sign(y));
-
-            foreach(Enemy teammate in myPack)
-            {
-                if(teammate.Location == loc)
-                {
-                    loc = Math.Abs(x) <= Math.Abs(y) ?
-                        new Point(Location.X + Math.Sign(x), Location.Y) :
-                        new Point(Location.X, Location.Y + Math.Sign(y));
-                    foreach (Enemy teamy in myPack)
-                    {
-                        if (teamy.Location == loc)
-                            return false;
-                    }
-                    break;
-                }
-            }
-
-            if (loc == target.Location)
-            {
-                KillTheHeretic(target);
-                return true;
-            }
-            Location = loc;
-            return true;
-        }
-
         public void KillTheHeretic(IHittable p)
         {
-            p.Hit(1);
+            p.Hit(damage);
+        }
+
+        public String GetStats(bool debug = false)
+        {
+            if (debug)
+                return string.Format("{0} HP: {1} Spd: {2} Dmg: {3}", new string[] { Glyph.ToString(), CurrentHP.ToString(), speed.ToString(), damage.ToString() });
+            return string.Format("{0} HP: {1}", new string[] { Glyph.ToString(), CurrentHP.ToString() });
         }
     }
 }

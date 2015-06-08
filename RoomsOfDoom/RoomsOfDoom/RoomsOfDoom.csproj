@@ -58,7 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Arena.cs" />
     <Compile Include="Bridge.cs" />
+    <Compile Include="DebugableRandom.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Dungeon.cs" />
@@ -66,7 +68,9 @@
     <Compile Include="Enemies and packs\Enemy.cs" />
     <Compile Include="Enemies and packs\Pack.cs" />
     <Compile Include="Exit.cs" />
+    <Compile Include="HighScores.cs" />
     <Compile Include="IHittable.cs" />
+    <Compile Include="Items\Loot.cs" />
     <Compile Include="Items\LevelKey.cs" />
     <Compile Include="Items\IItem.cs" />
     <Compile Include="Items\ItemGenerator.cs" />
@@ -74,9 +78,12 @@
     <Compile Include="Items\Potion.cs" />
     <Compile Include="Items\TimeCrystal.cs" />
     <Compile Include="ITile.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MonsterCreator.cs" />
     <Compile Include="MusicDictionary.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="Order.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +94,9 @@
   <ItemGroup>
     <Content Include="Enemies and packs\Names.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HighScores.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

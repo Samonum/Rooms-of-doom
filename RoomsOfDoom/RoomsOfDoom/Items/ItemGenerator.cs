@@ -1,38 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoomsOfDoom.Items
 {
-    public class ItemGenerator
+    public static class ItemGenerator
     {
-        public GameManager Arena
+        public static Random random;
+        static Dungeon dungeon;
+        static Player player;
+
+        public static void Init(Random r, Dungeon d, Player p)
         {
-            get;
-            set;
-        }
-        Random random;
-        Dungeon dungeon;
-        Player player;
-        public ItemGenerator(Dungeon dungeon, Player player, Random random)
-        {
-            this.random = random;
-            this.dungeon = dungeon;
-            this.player = player;
+            random = r;
+            dungeon = d;
+            player = p;
         }
 
-        public IItem GetItem(int multiplier)
+        public static Loot GetItem(int multiplier)
         {
             double item = random.NextDouble();
 
             if (item < .05 * multiplier)
-                return new TimeCrystal();
+                return new Loot(1, '2');
             else if (item < .1 * multiplier)
-                return new MagicScroll(random, Arena);
+                return new Loot(2, '3');
+            
             int enemyHp = 0;
-
+            
             foreach (Node n in dungeon.nodes)
                 foreach (Pack p in n.PackList)
                     foreach (IHittable enemy in p.Enemies)
@@ -40,8 +33,9 @@ namespace RoomsOfDoom.Items
 
             if (enemyHp == 0)
                 return null;
-            if ((player.CurrentHP + player.GetPotCount * Potion.healPower) / enemyHp < item)
-                return new Potion();
+            if ((float)(player.CurrentHP + player.GetPotCount * Potion.healPower) / enemyHp <= item)
+                return new Loot(0, '1');
+            
             return null;
         }
     }

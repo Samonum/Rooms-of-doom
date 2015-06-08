@@ -9,7 +9,7 @@ namespace RoomsOfDoom
     public class DungeonCreator
     {
         Random random;
-        MonsterCreator monsterCreator;
+        public MonsterCreator monsterCreator;
         public const int maxNeighbours = 4;
         int maxCapacity;
         List<Node> availibleNodes;
@@ -21,14 +21,19 @@ namespace RoomsOfDoom
             monsterCreator = new MonsterCreator(random, 6);
         }
 
+        public int totalcap;
         public Dungeon CreateDungeon(int difficulty, int packCount, int maxCapacity)
         {
-            if (difficulty * 15 < packCount)
+            if (packCount > difficulty * 15)
                 packCount = difficulty * 15;
+
+            if (maxCapacity < monsterCreator.maximumPackSize)
+                maxCapacity = monsterCreator.maximumPackSize;
 
             this.maxCapacity = maxCapacity;
 
             Dungeon dungeon = GenerateDungeon(difficulty);
+
             dungeon = SpreadPacks(dungeon, difficulty, packCount);
             dungeon.ShortestPath(dungeon.nodes[0], dungeon.nodes[dungeon.nodes.Count - 1]);
             return dungeon;
@@ -38,9 +43,14 @@ namespace RoomsOfDoom
         {
             int size = (int)(difficulty * (3f + random.NextDouble()) + 4);
 
-            // Added due to memoryoutofrangeexception
-            if (size > 1000)
-                size = 1000;
+            totalcap = maxCapacity * size;
+            for (int i = 0; i < difficulty; i++)
+                totalcap += difficulty * maxCapacity;
+
+
+                // Added due to memoryoutofrangeexception
+                if (size > 1000)
+                    size = 1000;
 
             int split;
             if (difficulty >= size)
@@ -66,7 +76,9 @@ namespace RoomsOfDoom
                     n = new Node(random, i, maxCapacity, i == size - 1);
 
                 nodes.Add(n);
+
                 int neighbourAmount = 1 + random.Next(maxNeighbours - 1);
+
                 for (int j = 0; j < neighbourAmount; j++)
                 {
                     if (availibleNodes.Count == 0)
@@ -74,13 +86,15 @@ namespace RoomsOfDoom
                     int neighbourIndex = random.Next(availibleNodes.Count);
                     Node newNeighbour = availibleNodes[neighbourIndex];
 
+                    //n.AddGate(newNeighbour);
+                    
                     if (!n.AdjacencyList.ContainsValue(newNeighbour))
                     {
                         Exit rn = (Exit)Math.Pow(2, random.Next(maxNeighbours));
                         while (n.AdjacencyList.ContainsKey(rn))
                             rn = (Exit)Math.Pow(2, random.Next(maxNeighbours));
 
-                        n.AdjacencyList.Add((Exit)rn, newNeighbour);
+                        n.AddGate((Exit)rn, newNeighbour);
 
                         switch (rn)
                         {
@@ -101,7 +115,7 @@ namespace RoomsOfDoom
                         while (newNeighbour.AdjacencyList.ContainsKey(rn))
                             rn = (Exit)Math.Pow(2, random.Next(maxNeighbours));    
 
-                        newNeighbour.AdjacencyList.Add(rn, n);
+                        newNeighbour.AddGate(rn, n);
 
                         if (newNeighbour.AdjacencyList.Count >= maxNeighbours)
                             availibleNodes.Remove(newNeighbour);
@@ -109,6 +123,24 @@ namespace RoomsOfDoom
                 }
                 if (bridgeTarget == i)
                 {
+                    /*
+                    foreach(Node availibleNode in availibleNodes)
+                    {
+                        if (availibleNode.AdjacencyList.Count == 0)
+                        {
+                            int neighbourIndex = random.Next(availibleNodes.Count);
+                            Node newNeighbour = availibleNodes[neighbourIndex];
+
+                            while (!n.AddGate(newNeighbour))
+                            {
+                                neighbourIndex = random.Next(availibleNodes.Count);
+                                newNeighbour = availibleNodes[neighbourIndex];
+                                while (newNeighbour == availibleNode)
+                                    newNeighbour = availibleNodes[neighbourIndex];
+                            }
+                        }
+                    }*/
+
                     availibleNodes.Clear();
                     if (counter < difficulty)
                     {
@@ -116,8 +148,8 @@ namespace RoomsOfDoom
                         counter++;
                     }
                 }
-                
-                availibleNodes.Add(n);
+                if (n.AdjacencyList.Count < maxNeighbours)
+                    availibleNodes.Add(n);
             }
 
             // 100 7 =  14 (+ 2) {0 14 28 42 56 70 84 98}
@@ -128,6 +160,9 @@ namespace RoomsOfDoom
         
         private Dungeon SpreadPacks(Dungeon dungeon, int difficulty, int packCount)
         {
+            if (totalcap < packCount * monsterCreator.maximumPackSize)
+                packCount = totalcap / monsterCreator.maximumPackSize;
+
             for (int i = 0; i < packCount; i++)
             {
                 Pack pack = monsterCreator.GeneratePack(difficulty);

@@ -16,6 +16,7 @@ namespace RoomsOfDoom.Items
         public void Use(Player player, Dungeon dungeon)
         {
             player.OP = true;
+            dungeon.GiveOrder(Order.HuntOrder, 1);
         }
 
         public void Finish(Player player)
@@ -32,17 +33,6 @@ namespace RoomsOfDoom.Items
         public int Id
         {
             get { return 1; }
-        }
-
-        public System.Drawing.Point Location
-        {
-            get;
-            set;
-        }
-
-        public char Glyph
-        {
-            get { return '2'; }
         }
     }
 }

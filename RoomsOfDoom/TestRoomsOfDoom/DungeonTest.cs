@@ -25,14 +25,14 @@ namespace TestRoomsOfDoom
             Node d = new Node(random, 2, 15);
             Node e = new Node(random, 2, 15);
 
-            a.AdjacencyList.Add(Exit.Right, b);
-            b.AdjacencyList.Add(Exit.Left, a);
-            b.AdjacencyList.Add(Exit.Right, c);
-            c.AdjacencyList.Add(Exit.Left, b);
-            c.AdjacencyList.Add(Exit.Right, d);
-            d.AdjacencyList.Add(Exit.Left, c);
-            d.AdjacencyList.Add(Exit.Right, e);
-            e.AdjacencyList.Add(Exit.Left, d);
+            a.AddGate(Exit.Right, b);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            d.AddGate(Exit.Right, e);
+            e.AddGate(Exit.Left, d);
 
             nodes.Add(a);
             nodes.Add(b);
@@ -100,16 +100,16 @@ namespace TestRoomsOfDoom
             Node d = new Node(random, 3, 15);
             Node e = new Node(random, 4, 15);
 
-            a.AdjacencyList.Add(Exit.Right, b);
-            a.AdjacencyList.Add(Exit.Left, c);
-            b.AdjacencyList.Add(Exit.Left, a);
-            b.AdjacencyList.Add(Exit.Right, c);
-            b.AdjacencyList.Add(Exit.Top, e);
-            c.AdjacencyList.Add(Exit.Top, a);
-            c.AdjacencyList.Add(Exit.Left, b);
-            c.AdjacencyList.Add(Exit.Right, d);
-            d.AdjacencyList.Add(Exit.Left, c);
-            e.AdjacencyList.Add(Exit.Left, b);
+            a.AddGate(Exit.Right, b);
+            a.AddGate(Exit.Left, c);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            b.AddGate(Exit.Top, e);
+            c.AddGate(Exit.Top, a);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            e.AddGate(Exit.Left, b);
 
             nodes.Add(a);
             nodes.Add(b);
@@ -120,13 +120,12 @@ namespace TestRoomsOfDoom
             Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
             List<Node> shortPath = dungeon.ShortestPath(d, e);
             List<Node> path = new List<Node>();
-            path.Add(d);
             path.Add(c);
             path.Add(b);
             path.Add(e);
             Assert.IsNotNull(shortPath);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
                 Assert.IsTrue(shortPath[i] == path[i]);
 
             Node f = new Node(random, 5, 15);
@@ -151,14 +150,14 @@ namespace TestRoomsOfDoom
             Node d = new Node(random, 3, 15);
             Node e = new Node(random, 4, 15);
 
-            a.AdjacencyList.Add(Exit.Right, b);
-            a.AdjacencyList.Add(Exit.Left, c);
-            b.AdjacencyList.Add(Exit.Left, a);
-            b.AdjacencyList.Add(Exit.Right, c);
-            c.AdjacencyList.Add(Exit.Top, a);
-            c.AdjacencyList.Add(Exit.Left, b);
-            c.AdjacencyList.Add(Exit.Right, d);
-            d.AdjacencyList.Add(Exit.Left, c);
+            a.AddGate(Exit.Right, b);
+            a.AddGate(Exit.Left, c);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Top, a);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
 
             nodes.Add(a);
             nodes.Add(b);
@@ -170,6 +169,88 @@ namespace TestRoomsOfDoom
             List<Node> shortPath = dungeon.ShortestPath(d, e);
 
             Assert.IsNull(shortPath);
+        }
+
+        [TestMethod]
+        public void DungeonToStringTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Node a = new Node(random, 0, 15);
+            Bridge b = new Bridge(random, 1, 15, 1);
+            Node c = new Node(random, 2, 15);
+            Bridge d = new Bridge(random, 3, 15, 2);
+            Node e = new Node(random, 4, 15);
+
+            a.AddGate(Exit.Right, b);
+            b.AddGate(Exit.Left, a);
+            b.AddGate(Exit.Right, c);
+            c.AddGate(Exit.Left, b);
+            c.AddGate(Exit.Right, d);
+            d.AddGate(Exit.Left, c);
+            d.AddGate(Exit.Right, e);
+            e.AddGate(Exit.Left, d);
+
+            nodes.Add(a);
+            nodes.Add(b);
+            nodes.Add(c);
+            nodes.Add(d);
+            nodes.Add(e);
+
+            Player player = new Player(100);
+            b.Player = player;
+            b.locked = false;
+
+            Pack p = new Pack(2);
+            p.Enemies.Add(new Enemy("", 'a', 10));
+            p.Enemies.Add(new Enemy("", 'b', 10));
+            c.AddPack(p);
+
+            p.GiveOrder(Order.HuntOrder);
+
+            p = new Pack(1);
+            p.Enemies.Add(new Enemy("", 'c', 10));
+            a.AddPack(p);
+
+            p = new Pack(1);
+            p.Enemies.Add(new Enemy("", 'd', 10));
+            a.AddPack(p);
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
+
+            dungeon.DefendOrder();
+
+            Assert.AreEqual(
+                "N0(1,)[(3█c)(3█d)]" + "\n" +
+                ">B1(0,2,)[]" + "\n" +
+                "N2(1,3,)[(-1▒ab)]" + "\n" +
+                "!B3(2,4,)[]" + "\n" +
+                "N4(3,)[]" + "\n",
+                dungeon.ToString());
+        }
+
+        [TestMethod]
+        public void GetLastUnconqueredInStrangeDungeonTest()
+        {
+            List<Node> nodes = new List<Node>();
+            Bridge a = new Bridge(random, 0, 15, 5);
+            Bridge b = new Bridge(random, 1, 15, 4);
+            Bridge c = new Bridge(random, 2, 15, 3);
+            Bridge d = new Bridge(random, 3, 15, 2);
+            Bridge e = new Bridge(random, 4, 15, 1);
+
+            nodes.Add(a);
+            nodes.Add(b);
+            nodes.Add(c);
+            nodes.Add(d);
+            nodes.Add(e);
+
+            e.locked = false;
+            d.locked = false;
+            c.locked = false;
+            b.locked = false;
+
+            Dungeon dungeon = new Dungeon(random, nodes, 1, 15);
+            Assert.AreEqual(a, dungeon.GetLastUnconqueredBridge());
         }
     }
 }

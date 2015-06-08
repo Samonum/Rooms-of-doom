@@ -8,7 +8,7 @@ namespace RoomsOfDoom.Items
 {
     public class Potion : IItem
     {
-        public const int healPower = 10;
+        public const int healPower = 25;
         public Potion()
         {
 
@@ -31,17 +31,6 @@ namespace RoomsOfDoom.Items
         public int Id
         {
             get { return 0; }
-        }
-
-        public System.Drawing.Point Location
-        {
-            get;
-            set;
-        }
-
-        public char Glyph
-        {
-            get { return '1'; }
         }
     }
 }

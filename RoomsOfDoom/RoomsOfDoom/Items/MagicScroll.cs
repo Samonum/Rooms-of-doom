@@ -25,7 +25,7 @@ namespace RoomsOfDoom.Items
             {
                 List<Node> n = dungeon.Destroy(arena.CurrentNode);
                 if (n != null)
-                    arena.InitRoom(n[0]);
+                    arena.ChangeRooms(n[0]);
             }
             else
             {
@@ -37,7 +37,7 @@ namespace RoomsOfDoom.Items
         public void Finish(Player player)
         {
             if(undoable)
-                player.Multiplier /= 2; ;
+                player.Multiplier /= 2;
         }
 
         public int Duration
@@ -49,17 +49,6 @@ namespace RoomsOfDoom.Items
         public int Id
         {
             get { return 2; }
-        }
-
-        public System.Drawing.Point Location
-        {
-            get;
-            set;
-        }
-
-        public char Glyph
-        {
-            get { return '3'; }
         }
     }
 }

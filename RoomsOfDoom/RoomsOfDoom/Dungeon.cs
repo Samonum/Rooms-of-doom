@@ -9,11 +9,11 @@ namespace RoomsOfDoom
     public class Dungeon
     {
         public int difficulty;
-        //TODO for testing purposes it is public
         public List<Node> nodes;
-        public  Node endNode;
-        private Random random;
-        private int maxCapacity;
+        public Node endNode;
+        public Random random;
+        public int maxCapacity;
+        public static Node LastKnownLocation;
 
         public Dungeon(Random random, List<Node> nodes, int difficulty, int maxCapacity)
         {
@@ -26,14 +26,90 @@ namespace RoomsOfDoom
                 endNode = null;
             else
                 endNode = nodes[nodes.Count - 1];
+            LastKnownLocation = null;
         }
 
-        public void Update()
+        public void MacroUpdate()
+        {
+            DefendOrder();
+            foreach (Node n in nodes)
+            {
+                n.MacroUpdate();
+            }
+        }
+
+        public bool DefendOrder()
+        {
+            Bridge b = GetLastUnconqueredBridge();
+            if (b == null)
+                return false;
+
+            int deficit = b.bridgeNr - b.PackList.Count;
+            GiveOrder(new Order(b), deficit);
+            return true;
+        }
+
+        public Bridge GetLastUnconqueredBridge()
+        {
+            int counter = 1;
+            int highestCount = 0;
+            List<Bridge> bridges = new List<Bridge>();
+            
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].isBridge())
+                {
+                    Bridge b = (Bridge)nodes[i];
+                    if (b.bridgeNr == counter)
+                    {
+                        counter++;
+                        if (b.locked)
+                            return b;
+                    }
+                    // This is backup code, because the order of lists is not guaranteed.
+                    else
+                        bridges.Add(b);
+
+                    if (b.bridgeNr > highestCount)
+                        highestCount = b.bridgeNr;
+                }
+            }
+
+            while (counter <= highestCount)
+            {
+                foreach (Bridge b in bridges)
+                    if (b.bridgeNr == counter && b.locked)
+                        return b;
+                counter++;
+            }
+            return null;
+        }
+
+        public void GiveOrder(Order o, int count)
+        {
+            if (o == null)
+                return;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (!SingleOrder(o))
+                    return;
+            }
+        }
+
+        private bool SingleOrder(Order o)
         {
             foreach (Node n in nodes)
             {
-                n.Update();
+                if (o.Target == n)
+                    continue;
+                foreach (Pack p in n.PackList)
+                {
+                    if (p.GiveOrder(o))
+                        return true;
+                }
             }
+            return false;
         }
 
         public List<Node> ShortestPath(Node from, Node to)
@@ -44,59 +120,13 @@ namespace RoomsOfDoom
             if (!nodes.Contains(to))
                 return null;
 
-            List<Node> path = new List<Node>();
-
-            if (from == to)
-                return path;
-
-            Dictionary<Node, Node> pre = new Dictionary<Node, Node>();
-            Queue<Node> queue = new Queue<Node>();
-
-            pre.Add(to, to);
-            queue.Enqueue(to);
-
-            while (queue.Count > 0)
-            {
-                Node curNode = queue.Dequeue();
-
-                foreach (KeyValuePair<Exit, Node> kvp in curNode.AdjacencyList)
-                {
-                    Node nextNode = kvp.Value;
-                    if (!pre.ContainsKey(nextNode))
-                    {
-                        queue.Enqueue(nextNode);
-                        pre.Add(nextNode, curNode);
-                        if (nextNode == from)
-                        {
-                            Node n = nextNode;
-
-                            // Noticed infinite loop due to 
-                            while (n != pre[n])
-                            {
-                                path.Add(n);
-                                n = pre[n];
-                            }
-
-                            path.Add(n);
-                            return path;
-                        }
-                    }
-                }
-            }
-
-            return null;
+            return from.ShortestPath(to);
         }
 
         public List<Node> Destroy(Node rNode)
         {
             List<Node> pre = new List<Node>();
             Queue<Node> queue = new Queue<Node>();
-
-            // TODO: Pretty sure bridges can be destroyed
-            /*
-            if (rNode.isBridge())
-                return false;
-            */
 
             if (rNode == endNode)
                 return null;
@@ -135,7 +165,7 @@ namespace RoomsOfDoom
                         foreach (KeyValuePair<Exit, Node> neighbour in n.AdjacencyList)
                         {
                             Exit direction = neighbour.Value.AdjacencyList.First(kvp => kvp.Value == rNode).Key;
-                            neighbour.Value.AdjacencyList.Remove(direction);
+                            neighbour.Value.RemoveGate(direction);
                         }
 
                         Dictionary<int, int> a = new Dictionary<int, int>();
@@ -161,6 +191,21 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return nodes.Count; }
+        }
+
+        public Node PlayerNode
+        {
+            get;
+            set;
+        }
+
+        public override String ToString()
+        {
+            string s = "";
+
+            foreach (Node n in nodes)
+                s += n.ToString() + "\n";
+            return s;
         }
     }
 }

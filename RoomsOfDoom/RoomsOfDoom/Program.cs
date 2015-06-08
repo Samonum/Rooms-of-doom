@@ -15,15 +15,14 @@ namespace RoomsOfDoom
             {
                 Console.Title = "👹👹👹　Rooms of Dooooooooooooom　👹👹👹";
                 Console.SetWindowSize(75, 31);
-                Console.SetBufferSize(75, 31);
+            //    Console.SetBufferSize(75, 31);
             }
             catch
             { }
 
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.OutputEncoding = Encoding.UTF8;
-            Random rand = new Random();
+            Console.OutputEncoding = Encoding.Unicode;
             GameManager manager = new GameManager();
             while (true)
             {

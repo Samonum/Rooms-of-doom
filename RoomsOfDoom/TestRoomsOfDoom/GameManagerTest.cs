@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoomsOfDoom;
 using RoomsOfDoom.Items;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
@@ -20,16 +21,11 @@ namespace TestRoomsOfDoom
             random = new Random();
         }
 
-        [ClassInitialize]
-        public static void ClassInit(TestContext t)
+        [TestInitialize]
+        public void TestInit()
         {
             testSubject = new GameManager(false);
-        }
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            testSubject.GameOver();
+            random = new Random();
         }
 
         [TestMethod]
@@ -85,7 +81,8 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void ScreenWidthTest()
         {
-            string[] screen = testSubject.CreateEnemyOverview();
+            testSubject.CurrentNode.Player = testSubject.GetPlayer;
+            string[] screen = testSubject.CurrentNode.CreateEnemyOverview();
             foreach(string s in screen)
                 Assert.IsTrue(s.Length <= Console.WindowWidth);
         }
@@ -124,66 +121,74 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void MoveRoomAndPlacePlayerTest()
         {
-            Node oldNode = testSubject.CurrentNode;
-            Exit exit = (Exit)1;
-            while (!oldNode.AdjacencyList.ContainsKey(exit))
-                Assert.IsTrue((int)(exit = (Exit)((int)exit * 2)) <= 8);
-            Node newNode = oldNode.AdjacencyList[exit];
-            testSubject.PlacePlayer(exit);
-            switch(exit)
+            for (int i = 1; i <= 4; i++)
             {
-                case Exit.Top:
-                    testSubject.HandleCombatRound('w');
-                    testSubject.HandleCombatRound('w');
-                    break;
-                case Exit.Bot:
-                    testSubject.HandleCombatRound('s');
-                    testSubject.HandleCombatRound('s');
-                    break;
-                case Exit.Left:
-                    testSubject.HandleCombatRound('a');
-                    testSubject.HandleCombatRound('a');
-                    break;
-                case Exit.Right:
-                    testSubject.HandleCombatRound('d');
-                    testSubject.HandleCombatRound('d');
-                    break;
-            }
+                testSubject = new GameManager(false);
+                Node oldNode = testSubject.CurrentNode;
+                Exit exit = (Exit)1;
+                foreach (KeyValuePair<Exit, Node> kvp in oldNode.AdjacencyList)
+                {
+                    testSubject.ChangeRooms(oldNode);
+                    exit = kvp.Key;
+                    Node newNode = oldNode.AdjacencyList[exit];
+                    testSubject.PlacePlayer(exit);
+                    switch (exit)
+                    {
+                        case Exit.Top:
+                            testSubject.HandleCombatRound('w');
+                            testSubject.HandleCombatRound('w');
+                            break;
+                        case Exit.Bot:
+                            testSubject.HandleCombatRound('s');
+                            testSubject.HandleCombatRound('s');
+                            break;
+                        case Exit.Left:
+                            testSubject.HandleCombatRound('a');
+                            testSubject.HandleCombatRound('a');
+                            break;
+                        case Exit.Right:
+                            testSubject.HandleCombatRound('d');
+                            testSubject.HandleCombatRound('d');
+                            break;
+                    }
 
-            Assert.AreEqual(newNode, testSubject.CurrentNode);
+                    Assert.AreEqual(newNode, testSubject.CurrentNode);
 
-            Player p = testSubject.GetPlayer; 
-            if(p.Location.X == 2)
-            {
-                Assert.AreEqual(testSubject.leftExit, p.Location.Y);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Left], oldNode);
-                return;
+                    Player p = testSubject.GetPlayer;
+                    if (p.Location.X == 2)
+                    {
+                        Assert.AreEqual(testSubject.CurrentNode.LeftExit, p.Location.Y);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Left], oldNode);
+                        continue;
+                    }
+                    if (p.Location.Y == 2)
+                    {
+                        Assert.AreEqual(testSubject.CurrentNode.TopExit, p.Location.X);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Top], oldNode);
+                        continue;
+                    }
+                    if (p.Location.X == GameManager.Width - 3)
+                    {
+                        Assert.AreEqual(testSubject.CurrentNode.RightExit, p.Location.Y);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Right], oldNode);
+                        continue;
+                    }
+                    if (p.Location.Y == GameManager.Height - 3)
+                    {
+                        Assert.AreEqual(testSubject.CurrentNode.BotExit, p.Location.X);
+                        Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Bot], oldNode);
+                        continue;
+                    }
+                    Assert.Fail("Not at an exit");
+                }
             }
-            if (p.Location.Y == 2)
-            {
-                Assert.AreEqual(testSubject.topExit, p.Location.X);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Top], oldNode);
-                return;
-            }
-            if (p.Location.X == GameManager.Width - 3)
-            {
-                Assert.AreEqual(testSubject.rightExit, p.Location.Y);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Right], oldNode);
-                return;
-            }
-            if (p.Location.Y == GameManager.Height - 3)
-            {
-                Assert.AreEqual(testSubject.botExit, p.Location.X);
-                Assert.AreEqual(testSubject.CurrentNode.AdjacencyList[Exit.Bot], oldNode);
-                return;
-            }
-                Assert.Fail("Not at an exit");
         }
 
         [TestMethod]
         public void EnemyUpdateTest()
         {
             Node n = new Bridge(new Random(), 9, 200, 9);
+            n.Player = testSubject.GetPlayer;
             MonsterCreator creator = new MonsterCreator(random, 1);
             Pack p = creator.GeneratePack(1);
             n.AddPack(p);
@@ -193,7 +198,7 @@ namespace TestRoomsOfDoom
             testSubject.Update('e');
             Assert.AreEqual(p[0].Location, new Point(2, 3));
             testSubject.Update('e');
-            Assert.AreEqual(testSubject.GetPlayer.MaxHP - 1, testSubject.GetPlayer.CurrentHP);
+            Assert.AreEqual(testSubject.GetPlayer.MaxHP - p[0].damage, testSubject.GetPlayer.CurrentHP);
             int max = p[0].MaxHP;
             testSubject.Update('s');
             if (max <= Player.strength)
@@ -203,17 +208,30 @@ namespace TestRoomsOfDoom
         }
 
         [TestMethod]
+        public void RandomConsistencyTest()
+        {
+            testSubject.Initialize(null);
+            RandomConsistency();
+        }
+
+        [TestMethod]
         public void LootKeyCheck() 
         {
+            // TODO: This test breaks completely as it does not follow new rules
             int curdif = testSubject.difficulty;
             foreach (Node n in testSubject.dungeon.nodes)
                 if (n.IsExit)
+                {
                     testSubject.InitRoom(n);
-            Assert.IsInstanceOfType(testSubject.items[0], typeof(LevelKey));
-            testSubject.items[0].Location = new Point(testSubject.GetPlayer.Location.X - 1, testSubject.GetPlayer.Location.Y);
-            foreach (Enemy e in testSubject.enemies)
-                if(e.Location == testSubject.items[0].Location)
-                    e.Location = new Point();
+                    n.Player = testSubject.GetPlayer;
+                }
+            Assert.IsInstanceOfType(testSubject.CurrentNode.lootList[0], typeof(Loot));
+            Assert.AreEqual(testSubject.CurrentNode.lootList[0].ID, 3);
+            testSubject.CurrentNode.lootList[0].Location = new Point(testSubject.GetPlayer.Location.X - 1, testSubject.GetPlayer.Location.Y);
+            if (testSubject.CurrentNode.CurrentPack != null)
+                foreach (Enemy e in testSubject.CurrentNode.CurrentPack)
+                    if (e.Location == testSubject.CurrentNode.lootList[0].Location)
+                        e.Location = new Point();
             testSubject.Update('a');
             Assert.AreEqual(1, testSubject.GetPlayer.inventory[3]);
             testSubject.Update('4');
@@ -231,39 +249,131 @@ namespace TestRoomsOfDoom
         [TestMethod]
         public void SaveTest()
         {
-            Assert.IsFalse(testSubject.Save(""), "No empty string saves");
-            Assert.IsFalse(testSubject.Save(new string(Path.GetInvalidFileNameChars())), "No bad names");
+            Assert.IsFalse(testSubject.SaveGame(""), "No empty string saves");
+            Assert.IsFalse(testSubject.SaveGame(new string(Path.GetInvalidFileNameChars())), "No bad names");
             string filename = ".testSave.donotmake.willberemoved";
 
             MakeAbsurd();
             if (File.Exists(filename))
                 File.Delete(filename);
 
-            Assert.IsFalse(testSubject.Load(filename));
+            Assert.IsFalse(testSubject.LoadGame(filename));
 
-            Assert.IsTrue(testSubject.Save(filename));
+            Assert.IsTrue(testSubject.SaveGame(filename));
             testSubject.GameOver();
 
-            Assert.IsTrue(testSubject.Load(filename));
+            Assert.IsTrue(testSubject.LoadGame(filename));
             IsAbsurd();
+            testSubject.basePackCount = 1;
+            testSubject.CreateDungeon();
+            RandomConsistency();
 
             File.Delete(filename);
+        }
+
+        [TestMethod]
+        public void NonexistingLogTest()
+        {
+            if (File.Exists("ShouldNotBe.play"))
+                File.Delete("ShouldNotBe.play");
+            Log log = new Log(testSubject, "ShouldNotBe.play");
+            Assert.IsTrue(log.Finished());
+            log.Initialize();
+            Assert.IsTrue(log.Finished());
+            log.CleanUp();
+        }
+
+        [TestMethod]
+        public void LogItemCheatAndUseTest()
+        {
+            Log log = new Log(testSubject, ".DO.NOT.TOUCH.test");
+            log.Initialize();
+            Assert.IsNotNull(log.replay);
+
+            byte[] inventory = (byte[])testSubject.GetPlayer.inventory.Clone();
+
+            log.PlayReplay(0);
+
+            for (int i = 0; i < inventory.Length; i++)
+            {
+                Assert.AreEqual(testSubject.GetPlayer.inventory[i], inventory[i]);
+            }
+
+            inventory = (byte[])testSubject.GetPlayer.inventory.Clone();
+
+            log.PlayStep();
+            for(int i = 0; i < inventory.Length; i++)
+            {
+                Assert.AreEqual(testSubject.GetPlayer.inventory[i], inventory[i]);
+            }
+        }
+
+        [TestMethod]
+        public void LogLevelUpAndLoadedTest()
+        {
+            Log log = new Log(testSubject, "test");
+            log.Initialize();
+            int difficulty = 0;
+            int lastDifficulty = 0;
+            int score = 0;
+            while (!log.Finished())
+            {
+                if (testSubject.difficulty > difficulty)
+                {
+                    difficulty++;
+                    RandomConsistency();
+                }
+
+                Assert.IsTrue(testSubject.GetPlayer.GetScore >= score);
+                score = testSubject.GetPlayer.GetScore;
+                Assert.AreEqual(difficulty, testSubject.difficulty);
+                Assert.IsTrue(testSubject.GetPlayer.Alive);
+                lastDifficulty = difficulty;
+                log.PlayStep();
+            }
+            Assert.AreEqual(2, lastDifficulty);
+        }
+
+        [TestMethod]
+        public void HighScoresTest()
+        {
+            File.Copy("HighScores.testfile", "HighScores.txt", true);
+            HighScores scores = new HighScores();
+            Tuple<int, string>[] values = scores.LoadScores();
+            for (int i = 1; i < values.Length; i++)
+            {
+                Assert.IsTrue(values[i - 1].Item1 >= values[i].Item1);
+            }
+            scores.EnterHighScore(150, "");
+            scores.EnterHighScore(350, "1337 h4x0r");
+            scores.EnterHighScore(150, "");
+            values = scores.LoadScores();
+            for (int i = 1; i < values.Length; i++)
+            {
+                Assert.IsTrue(values[i - 1].Item1 >= values[i].Item1);
+            }
         }
 
         public void MakeAbsurd()
         {
             testSubject.GetPlayer.IncreaseScore(1000);
             testSubject.GetPlayer.SetItems(12, 13, 14);
-            testSubject.difficulty = 9001;
+            testSubject.difficulty = 9;
         }
 
         public void IsAbsurd()
         {
             Assert.AreEqual(1000, testSubject.GetPlayer.GetScore);
-            Assert.AreEqual(9001, testSubject.difficulty);
+            Assert.AreEqual(9, testSubject.difficulty);
             Assert.AreEqual(12, testSubject.GetPlayer.GetPotCount);
             Assert.AreEqual(13, testSubject.GetPlayer.GetCrystalCount);
             Assert.AreEqual(14, testSubject.GetPlayer.GetScrollCount);
+        }
+        
+        public void RandomConsistency()
+        {
+            Assert.AreSame(testSubject.random, ItemGenerator.random, "Bad item generator");
+            Assert.AreSame(testSubject.random, testSubject.dungeon.random, "Bad Dungeon");
         }
 
     }

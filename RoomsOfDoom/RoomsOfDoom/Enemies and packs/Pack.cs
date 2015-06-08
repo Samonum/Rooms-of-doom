@@ -10,6 +10,8 @@ namespace RoomsOfDoom
     {
         int packSize;
         List<Enemy> enemies;
+        public Order order;
+        protected int maxPackHP;
 
         public Pack(int packSize)
         {
@@ -18,6 +20,7 @@ namespace RoomsOfDoom
             else
                 this.packSize = packSize;
             enemies = new List<Enemy>(this.packSize);
+            order = null;
         }
 
         public void Add(Enemy enemy)
@@ -26,6 +29,29 @@ namespace RoomsOfDoom
                 return;
             this.enemies.Add(enemy);
             enemy.myPack = this;
+            this.maxPackHP += enemy.MaxHP;
+        }
+
+        public bool GiveOrder(Order o)
+        {
+            if (o == null)
+                return false;
+
+            if (order != null)
+                return false;
+            order = o;
+            return true;
+        }
+
+        public Node Target
+        {
+            get 
+            {
+                if (order == null)
+                    return null;
+
+                return order.Target; 
+            }
         }
 
         public List<Enemy> Enemies
@@ -45,6 +71,46 @@ namespace RoomsOfDoom
         public int Size
         {
             get { return enemies.Count; }
+        }
+
+        public int MaxPackHP
+        {
+            get { return maxPackHP; }
+        }
+
+        public int CurrentPackHP
+        {
+            get 
+            {
+                int countHP = 0;
+                foreach (Enemy e in enemies)
+                {
+                    countHP += e.CurrentHP;
+                }
+                return countHP;
+            }
+        }
+
+        public bool WillFlee()
+        {
+            if (CurrentPackHP < (0.3 * MaxPackHP))
+                return true;
+            return false;
+        }
+
+        public override String ToString()
+        {
+            string s = "(";
+
+            if (order != null)
+                s += order.ToString();
+
+            foreach (Enemy e in enemies)
+                s += e.Glyph;
+
+            s += ")";
+
+            return s;
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
