@@ -11,7 +11,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
-  buildPlatform: 'x86'
+  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
@@ -27,4 +27,10 @@ steps:
     solution: '$(solution)'
     vsVersion: '14.0'
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
-    platform: 'Any CPU'
+    platform: $(buildPlatform)
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)\AppxPackages'
+    ArtifactName: 'RoD'
+    publishLocation: 'Container'
