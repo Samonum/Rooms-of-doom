@@ -17,7 +17,6 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
-
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
@@ -34,3 +33,8 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)\AppxPackages'
     ArtifactName: 'RoD'
     publishLocation: 'Container'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'ls -r'
