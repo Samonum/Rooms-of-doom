@@ -31,9 +31,12 @@ steps:
     - task: PowerShell@2
       inputs:
         targetType: 'inline'
-        script: 'ls -r'
+        script: |
+          mv "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/RoomsOfDoom"
+          mv  "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
+
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
+        PathtoPublish: '$(build.artifactStagingDirectory)'
         ArtifactName: 'RoD'
         publishLocation: 'Container'
