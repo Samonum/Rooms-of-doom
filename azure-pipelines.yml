@@ -36,7 +36,6 @@ steps:
       !**\*TestAdapter.dll
       !**\obj\**
     searchFolder: '$(System.DefaultWorkingDirectory)'
-    vsTestVersion: '14.0'
 
 - task: PublishBuildArtifacts@1
   inputs:
