@@ -34,7 +34,7 @@ steps:
         script: 'ls -r'
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '**/bin'
+        PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
         ArtifactName: 'RoD'
         publishLocation: 'Container'
 
