@@ -16,27 +16,55 @@ variables:
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
 steps:
-    - task: NuGetToolInstaller@1
-    - task: NuGetCommand@2
-      inputs:
-        restoreSolution: '$(solution)'
+- task: NuGetToolInstaller@1
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
 
-    - task: VSBuild@1
-      inputs:
-        solution: '$(solution)'
-        vsVersion: '16.0'
-        msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
-        platform: $(buildPlatform)
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    vsVersion: '16.0'
+    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
+    platform: $(buildPlatform)
 
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          mv "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/RoomsOfDoom"
-          mv "RoomsOfDoom/TestRoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      mv "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/RoomsOfDoom"
+      mv "RoomsOfDoom/TestRoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
 
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(build.artifactStagingDirectory)'
-        ArtifactName: 'RoD'
-        publishLocation: 'Container'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(build.artifactStagingDirectory)'
+    ArtifactName: 'RoD'
+    publishLocation: 'Container'
+
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: '$lastexitcode = -1'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'echo Hello'
+  condition: always()
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'echo Hi'
+
+
+
