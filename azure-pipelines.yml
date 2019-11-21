@@ -33,12 +33,11 @@ steps:
     PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
     ArtifactName: 'RoD'
     publishLocation: 'Container'
-    
-- task: VSTest@2
+
+- script: dotnet test 'RoomsOfDoom/TestRoomsOfDoom/TestRoomsOfDoom.csproj' --logger trx
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
   inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*test*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
