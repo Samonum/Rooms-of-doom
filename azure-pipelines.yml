@@ -34,15 +34,18 @@ stages:
         msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
         platform: $(buildPlatform)
 
+
 - stage: PostBuild
   jobs:
   - job: Publish
     steps:
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
+        PathtoPublish: '**/bin'
         ArtifactName: 'RoD'
         publishLocation: 'Container'
+
+
   - job: Test
     steps:
     - task: VSTest@2
