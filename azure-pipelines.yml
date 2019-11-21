@@ -33,7 +33,7 @@ steps:
         targetType: 'inline'
         script: |
           mv "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/RoomsOfDoom"
-          mv  "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
+          mv "RoomsOfDoom/TestRoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
 
     - task: PublishBuildArtifacts@1
       inputs:
