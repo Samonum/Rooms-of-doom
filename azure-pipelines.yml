@@ -28,10 +28,15 @@ steps:
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
     platform: $(buildPlatform)
 
-- task: PowerShell@2
+- task: VSTest@2
   inputs:
-    targetType: 'inline'
-    script: 'ls -r'
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    vsTestVersion: '14.0'
 
 - task: PublishBuildArtifacts@1
   inputs:
