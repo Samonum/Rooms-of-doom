@@ -28,6 +28,12 @@ steps:
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
     platform: $(buildPlatform)
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
+    ArtifactName: 'RoD'
+    publishLocation: 'Container'
+    
 - task: VSTest@2
   inputs:
     testSelector: 'testAssemblies'
@@ -36,9 +42,3 @@ steps:
       !**\*TestAdapter.dll
       !**\obj\**
     searchFolder: '$(System.DefaultWorkingDirectory)'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
-    ArtifactName: 'RoD'
-    publishLocation: 'Container'
