@@ -15,13 +15,7 @@ variables:
   buildConfiguration: 'Release'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
-
-
-stages:
-- stage: Build
-  jobs:
-  - job: Build
-    steps:
+steps:
     - task: NuGetToolInstaller@1
     - task: NuGetCommand@2
       inputs:
@@ -31,14 +25,9 @@ stages:
       inputs:
         solution: '$(solution)'
         vsVersion: '16.0'
-        #msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
+        msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
         platform: $(buildPlatform)
 
-
-- stage: PostBuild
-  jobs:
-  - job: Publish
-    steps:
     - task: PowerShell@2
       inputs:
         targetType: 'inline'
@@ -49,9 +38,6 @@ stages:
         ArtifactName: 'RoD'
         publishLocation: 'Container'
 
-
-  - job: Test
-    steps:
     - task: VSTest@2
       inputs:
         testSelector: 'testAssemblies'
