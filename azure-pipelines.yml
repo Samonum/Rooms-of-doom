@@ -33,15 +33,6 @@ steps:
     targetType: 'inline'
     script: 'ls -r'
 
-- task: VSTest@2
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*test*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
