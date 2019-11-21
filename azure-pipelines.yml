@@ -15,29 +15,41 @@ variables:
   buildConfiguration: 'Release'
   appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
 
-steps:
-- task: NuGetToolInstaller@1
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    vsVersion: '16.0'
-    msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
-    platform: $(buildPlatform)
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
-    ArtifactName: 'RoD'
-    publishLocation: 'Container'
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: NuGetToolInstaller@1
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
 
-- script: dotnet test 'RoomsOfDoom/TestRoomsOfDoom/TestRoomsOfDoom.csproj' --logger trx
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        vsVersion: '16.0'
+        msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
+        platform: $(buildPlatform)
 
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
+- stage: PostBuild
+  jobs:
+  - job: Publish
+    steps:
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'RoomsOfDoom/RoomsOfDoom/bin'
+        ArtifactName: 'RoD'
+        publishLocation: 'Container'
+  - job: Test
+    steps:
+    - task: VSTest@2
+      inputs:
+        testSelector: 'testAssemblies'
+        testAssemblyVer2: |
+          **\*test*.dll
+          !**\*TestAdapter.dll
+          !**\obj\**
+        searchFolder: '$(System.DefaultWorkingDirectory)'
