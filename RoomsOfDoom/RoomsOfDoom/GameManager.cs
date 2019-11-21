@@ -49,7 +49,13 @@ namespace RoomsOfDoom
             bool inMenu = true;
             while (inMenu)
             {
-                Console.Clear();
+                try
+                {
+                    Console.Clear();
+                }
+                catch (Exception e)
+                {
+                }
                 Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
                 Console.WriteLine("to load an old save press 'l', to load a replay press 'r' or press 'c' to conitnue");
 
@@ -135,7 +141,13 @@ namespace RoomsOfDoom
             bool inMenu = true;
             while (inMenu)
             {
-                Console.Clear();
+                try
+                {
+                    Console.Clear();
+                }
+                catch (Exception e)
+                {
+                }
                 Console.WriteLine("You will soon be entering dungeon level {0}", difficulty);
                 Console.WriteLine("If you wish to save press s, to load an old save press l or c to conitnue");
 
@@ -333,7 +345,13 @@ namespace RoomsOfDoom
 
         public void GameOver()
         {
-            Console.Clear();
+            try
+            {
+                Console.Clear();
+            }
+            catch (Exception)
+            {
+            }
             Console.WriteLine();
             Console.WriteLine(" YOU LOSE!");
             Console.WriteLine(" We're very sorry and wish you all the best in your next adventure.");
@@ -429,7 +447,14 @@ new String[] { player.CurrentHP.ToString().PadLeft(4), player.GetScore.ToString(
 
         public void Draw()
         {
-            Console.Clear();
+            try
+            {
+                Console.Clear();
+            }
+            catch (Exception e)
+            {
+            }
+            
             if (CurrentNode.isBridge())
                 Console.ForegroundColor = ConsoleColor.Red;
             else if (CurrentNode.IsExit)
