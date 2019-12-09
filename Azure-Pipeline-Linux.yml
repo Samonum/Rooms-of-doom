@@ -1,0 +1,58 @@
+# Universal Windows Platform
+# Build a Universal Windows Platform project using Visual Studio.
+# Add steps that test and distribute an app, save build artifacts, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+
+- task: DockerInstaller@0
+  inputs:
+    dockerVersion: '17.09.0-ce'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'DockerCli.exe -SwitchLinuxEngine'
+
+- task: Docker@2
+  inputs:
+    command: 'build'
+    Dockerfile: '**/Dockerfile'
+
+- task: PowerShell@2
+  inputs:
+    filePath: 'ls -r'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      mv "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/RoomsOfDoom"
+      mv "RoomsOfDoom/TestRoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(build.artifactStagingDirectory)'
+    ArtifactName: 'RoD'
+    publishLocation: 'Container'
+  name: build
