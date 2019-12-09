@@ -28,10 +28,18 @@ steps:
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload'
     platform: $(buildPlatform)
 
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'DockerCli.exe" -SwitchLinuxEngine'
+
+
+
 - task: Docker@2
   inputs:
-    command: 'buildAndPush'
+    command: 'build'
     Dockerfile: '**/Dockerfile'
+
 - task: PowerShell@2
   inputs:
     filePath: 'ls -r'
