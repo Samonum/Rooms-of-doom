@@ -26,6 +26,7 @@ steps:
   inputs:
     command: 'build'
     projects: '$(solution)'
+    arguments: '-f 3.0'
 
 - task: DockerInstaller@0
   inputs:
@@ -50,6 +51,7 @@ steps:
     script: |
       mv "RoomsOfDoom/RoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/RoomsOfDoom"
       mv "RoomsOfDoom/TestRoomsOfDoom/bin/*" "$(build.artifactStagingDirectory)/tests"
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(build.artifactStagingDirectory)'
